@@ -1,0 +1,86 @@
+.inscription-container {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  padding: 40px 16px;
+}
+
+.inscription-intro {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto 18px auto;
+  background: #fff;
+  padding: 32px 30px 18px 30px;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(30, 106, 142, 0.15);
+  text-align: center;
+}
+
+.inscription-antd-form-container {
+  width: 100%;
+  max-width: 430px;
+  background: #fff;
+  padding: 34px 30px 26px 30px;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(30, 106, 142, 0.15);
+  margin: 0 auto;
+}
+
+.inscription-antd-form .ant-form-item-label > label {
+  font-size: 1.13rem;
+  color: #0d1658;
+  font-weight: 700;
+}
+
+.inscription-antd-button {
+  background: linear-gradient(90deg, #1e6a8e 60%, #7fa22b 100%) !important;
+  color: #fff !important;
+  font-size: 1.15rem;
+  font-weight: 800;
+  border: none !important;
+  border-radius: 8px !important;
+  margin-top: 10px;
+  box-shadow: 0 2px 8px #1e6a8e22;
+  letter-spacing: 0.02em;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.inscription-antd-button:hover, .inscription-antd-button:focus {
+  background: linear-gradient(90deg, #7fa22b 60%, #1e6a8e 100%) !important;
+  box-shadow: 0 4px 16px #7fa22b33;
+}
+
+.inscription-antd-links {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 1.1rem;
+}
+
+.inscription-antd-link {
+  color: #1e6a8e;
+  text-decoration: none;
+  font-weight: 800;
+  margin: 0 8px;
+  font-size: 1.05rem;
+  transition: color 0.2s;
+}
+
+.inscription-antd-link.home {
+  color: #7fa22b;
+}
+
+.inscription-antd-link:hover {
+  text-decoration: underline;
+  color: #7fa22b;
+}
+
+@media (max-width: 600px) {
+  .inscription-intro,
+  .inscription-antd-form-container {
+    padding: 18px 3vw;
+    margin: 12px 0;
+  }
+}

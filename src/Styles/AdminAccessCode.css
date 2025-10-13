@@ -1,0 +1,304 @@
+/* Styles pour la page AdminAccessCode avec Header, Footer et Bannière */
+
+.admin-access-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
+}
+
+/* Bannière Ministère */
+.banniere-ministere {
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.banniere-image {
+  width: 100%;
+  height: auto;
+  max-height: 120px;
+  object-fit: cover;
+}
+
+.admin-access-container {
+  min-height: calc(100vh - 120px - 80px); /* 100vh - bannière - footer */
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.admin-access-content {
+  max-width: 800px;
+  width: 100%;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  margin: 0 auto;
+}
+
+.current-code-section,
+.update-code-section,
+.requirements-section {
+  margin-bottom: 30px;
+}
+
+.current-code-card,
+.update-code-card,
+.requirements-card {
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.current-code-card .ant-card-head {
+  background: #f6ffed;
+  border-bottom: 1px solid #b7eb8f;
+}
+
+.update-code-card .ant-card-head {
+  background: #e6f7ff;
+  border-bottom: 1px solid #91d5ff;
+}
+
+.requirements-card .ant-card-head {
+  background: #fff7e6;
+  border-bottom: 1px solid #ffd591;
+}
+
+.code-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px dashed #d9d9d9;
+  margin-bottom: 10px;
+}
+
+.code-display .ant-typography {
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+  color: #1890ff;
+}
+
+.requirements-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.requirements-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+  position: relative;
+  padding-left: 25px;
+}
+
+.requirements-list li:last-child {
+  border-bottom: none;
+}
+
+.requirements-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #52c41a;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.requirements-list li:last-child::before {
+  content: '✓';
+}
+
+.access-denied-card {
+  max-width: 500px;
+  margin: 100px auto;
+  text-align: center;
+  border: 1px solid #ffccc7;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(255, 77, 79, 0.1);
+}
+
+.access-denied-card .ant-card-head {
+  background: #fff2f0;
+  border-bottom: 1px solid #ffccc7;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .admin-access-content {
+    padding: 20px;
+    margin: 0 10px;
+  }
+  
+  .admin-access-container {
+    padding: 20px 10px;
+  }
+  
+  .code-display {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .ant-form-item .ant-form-item-label {
+    text-align: left;
+  }
+}
+
+/* Animation pour les cartes */
+.current-code-card,
+.update-code-card,
+.requirements-card {
+  transition: all 0.3s ease;
+}
+
+.current-code-card:hover,
+.update-code-card:hover,
+.requirements-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* Style pour le bouton de génération */
+.ant-btn:not(.ant-btn-primary) {
+  border-color: #d9d9d9;
+  color: #595959;
+}
+
+.ant-btn:not(.ant-btn-primary):hover {
+  border-color: #40a9ff;
+  color: #40a9ff;
+}
+
+/* Style pour les messages d'erreur */
+.ant-form-item-explain-error {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Style pour le titre principal */
+.admin-access-content .ant-typography {
+  margin-bottom: 0;
+}
+
+/* Style pour les séparateurs */
+.ant-divider {
+  margin: 30px 0;
+  border-color: #f0f0f0;
+}
+
+/* Style pour les icônes */
+.anticon {
+  color: #1890ff;
+}
+
+/* Style pour les inputs */
+.ant-input-affix-wrapper {
+  border-radius: 8px;
+}
+
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper-focused {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* Style pour les boutons */
+.ant-btn {
+  border-radius: 8px;
+  height: 40px;
+  font-weight: 500;
+}
+
+.ant-btn-primary {
+  background: #1890ff;
+  border-color: #1890ff;
+}
+
+.ant-btn-primary:hover {
+  background: #40a9ff;
+  border-color: #40a9ff;
+}
+
+/* Style pour les cartes */
+.ant-card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.ant-card-head-title {
+  font-weight: 600;
+  color: #262626;
+}
+
+/* Style pour le texte secondaire */
+.ant-typography-secondary {
+  color: #8c8c8c !important;
+}
+
+/* Styles pour le bouton de retour vers le dashboard */
+.back-to-dashboard-section {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.back-to-dashboard-btn {
+  background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+  border: 2px solid #d9d9d9;
+  color: #595959;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.back-to-dashboard-btn:hover {
+  background: linear-gradient(135deg, #e6e6e6 0%, #d4d4d4 100%);
+  border-color: #bfbfbf;
+  color: #262626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.back-to-dashboard-btn:active {
+    transform: translateY(0);
+}
+
+.back-to-dashboard-btn i {
+  font-size: 14px;
+  transition: transform 0.2s ease;
+}
+
+.back-to-dashboard-btn:hover i {
+  transform: translateX(-2px);
+}
+
+/* Responsive design pour le bouton de retour */
+@media (max-width: 768px) {
+  .back-to-dashboard-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .back-to-dashboard-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  
+  .back-to-dashboard-section {
+    margin-bottom: 25px;
+  }
+}

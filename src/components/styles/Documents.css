@@ -1,0 +1,34 @@
+.documents-list--flat {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.documents-list--flat .document-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.documents-list--flat .document-info {
+  flex: 1;
+  margin: 0 24px;
+}
+
+.documents-list--flat .document-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.documents-list--flat .btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+

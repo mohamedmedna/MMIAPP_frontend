@@ -1,0 +1,108 @@
+/* Conteneur des titres et sous-titres /
+.ministere-titres {
+  text-align: center;
+  margin: 3rem 1rem 4rem 1rem;
+  font-family: "Open Sans", Arial, sans-serif;
+  color: #103c57; / Bleu institutionnel */
+
+
+/* Titres en français */
+.titre-fr {
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Titres en arabe (droite à gauche) /
+.titre-ar {
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  direction: rtl;
+  font-family: "Amiri", serif; / police arabe classique à intégrer dans index.html 
+  color: #103c57;*/
+
+
+/* Sous-titres français */
+.sous-titre-fr {
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: #596275;
+  margin-bottom: 1rem;
+}
+
+/* Section projet */
+.project-title h1 {
+  font-size: 3rem;
+  color: #0b2647;
+  margin: 1.5rem 0 0.3rem 0;
+}
+
+.project-subtitle {
+  font-size: 1.3rem;
+  color: #2980b9;
+  margin-bottom: 2rem;
+}
+
+/* Main - choix des espaces /
+.main-choix {
+  display: flex;
+  justify-content: center;
+  gap: 3.5rem;
+  padding: 0 1rem 5rem 1rem;
+  flex-wrap: wrap; / Responsive */
+
+
+/* Cartes accès */
+.carte-espace {
+  background: #ffffff;
+  padding: 2rem 2rem 2.5rem 2rem;
+  width: 280px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  border-radius: 16px;
+  text-align: center;
+  text-decoration: none;
+  color: #103c57;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+}
+
+.carte-espace:hover,
+.carte-espace:focus {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  outline: none;
+}
+
+/* Icones des cartes */
+.carte-icon {
+  width: 56px;
+  height: 56px;
+  margin-bottom: 1.2rem;
+}
+
+/* Titres des cartes */
+.carte-espace h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+}
+
+/* Descriptions */
+.carte-espace p {
+  font-size: 1rem;
+  color: #596275;
+  line-height: 1.4;
+}
+
+/* Responsive */
+@media (max-width: 720px) {
+  .main-choix {
+    flex-direction: column;
+    align-items: center;
+  }
+  .carte-espace {
+    width: 90%;
+    max-width: 350px;
+  }
+}

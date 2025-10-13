@@ -1,0 +1,92 @@
+/* ==================== FOOTER ADMINSPACE - NON FIXE ==================== */
+/* Ce fichier garantit que le footer dans AdminSpace ne soit JAMAIS fixe */
+
+/* Override de tous les styles fixes possibles */
+.adminspace-bg .footer,
+.adminspace-bg footer,
+.adminspace-footer,
+.adminspace-bg .adminspace-footer {
+  /* Position NON fixe */
+  position: relative !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  
+  /* Dimensions normales */
+  width: 100% !important;
+  max-width: none !important;
+  height: auto !important;
+  min-height: auto !important;
+  
+  /* Z-index normal */
+  z-index: auto !important;
+  
+  /* Pas de mouvement fixe */
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  
+  /* Style spécifique pour AdminSpace */
+  background: linear-gradient(135deg, #1e6a8e 0%, #f4d03f 100%) !important;
+  color: white !important;
+  text-align: center !important;
+  padding: 20px 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  
+  /* Garantir que le footer bouge avec le contenu */
+  display: block !important;
+  float: none !important;
+  clear: both !important;
+}
+
+/* Override des styles de tous les enfants du footer */
+.adminspace-bg .footer *,
+.adminspace-bg footer *,
+.adminspace-footer *,
+.adminspace-bg .adminspace-footer * {
+  position: static !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+}
+
+/* Conteneur principal d'AdminSpace */
+.adminspace-bg {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.adminspace-main {
+  flex: 1;
+  position: relative;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .adminspace-bg .footer,
+  .adminspace-bg footer,
+  .adminspace-footer,
+  .adminspace-bg .adminspace-footer {
+    padding: 15px 0 !important;
+    font-size: 14px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .adminspace-bg .footer,
+  .adminspace-bg footer,
+  .adminspace-footer,
+  .adminspace-bg .adminspace-footer {
+    padding: 12px 0 !important;
+    font-size: 13px !important;
+  }
+}

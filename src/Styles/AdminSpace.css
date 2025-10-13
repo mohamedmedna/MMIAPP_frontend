@@ -1,0 +1,297 @@
+.adminspace-bg {
+  min-height: 100vh;
+  background: linear-gradient(120deg, #eafaf1 0%, #e3f2fd 100%);
+  display: flex;
+  flex-direction: column;
+}
+.adminspace-header {
+  background: #25bf2a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 32px;
+  border-bottom: 2px solid #e0e0e0;
+  box-shadow: 0 2px 12px #1e6a8e11;
+}
+.adminspace-logo {
+  height: 48px;
+}
+.adminspace-navlink {
+  color: #1e6a8e;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 1.07rem;
+  padding: 8px 18px;
+  border-radius: 8px;
+  transition: background 0.18s;
+}
+.adminspace-navlink:hover {
+  background: #e3f2fd;
+}
+.adminspace-main {
+  flex: 1;
+  padding: 40px 0 0 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+.adminspace-title {
+  text-align: center;
+  color: #1e8e4f;
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin-bottom: 36px;
+  letter-spacing: 1px;
+}
+.adminspace-roles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.adminspace-role-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px #1e6a8e22;
+  padding: 2.5rem 1.5rem;
+  text-decoration: none;
+  color: #1e6a8e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.2s, transform 0.2s, border 0.2s;
+  border: 2px solid #e3f2fd;
+  cursor: pointer;
+}
+.adminspace-role-card:hover {
+  box-shadow: 0 8px 32px #1e6a8e33;
+  border: 2px solid #1e6a8e;
+  transform: translateY(-4px) scale(1.03);
+}
+.adminspace-role-icon {
+  font-size: 2.7rem;
+  margin-bottom: 1.2rem;
+  color: #2edb5c;
+}
+.adminspace-role-title {
+  font-size: 1.23rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+}
+.adminspace-role-desc {
+  font-size: 1.01rem;
+  color: #6c757d;
+}
+.adminspace-footer {
+  background: #049926;
+  color: #fff;
+  text-align: center;
+  padding: 18px 0;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  margin-top: 32px;
+  border-radius: 16px 16px 0 0;
+}
+
+.btn-retour-dashboard {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(90deg, #eafaf1 0%, #e3f2fd 100%);
+  color: #1e6a8e;
+  border: 2px solid #1e6a8e;
+  border-radius: 30px;
+  font-size: 1.08rem;
+  font-weight: 700;
+  padding: 10px 26px;
+  margin-bottom: 22px;
+  margin-top: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 12px #1e6a8e22;
+  transition: background 0.18s, color 0.18s, border 0.18s, box-shadow 0.18s, transform 0.18s;
+}
+.btn-retour-dashboard:hover {
+  background: #1e6a8e;
+  color: #fff;
+  border-color: #1e6a8e;
+  box-shadow: 0 4px 24px #1e6a8e33;
+  transform: translateY(-2px) scale(1.03);
+}
+
+/* Styles pour la section de gestion du code d'accès */
+.adminspace-access-code-section {
+  margin-top: 60px;
+  margin-bottom: 40px;
+}
+
+.adminspace-access-code-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.adminspace-access-code-card {
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(30, 106, 142, 0.15);
+  border: 2px solid #e3f2fd;
+  padding: 2rem;
+  text-align: center;
+}
+
+.adminspace-access-code-info {
+  margin-bottom: 2rem;
+}
+
+.adminspace-access-code-info .ant-typography {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.adminspace-access-code-btn {
+  height: 48px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 0 2rem;
+  background: linear-gradient(135deg, #25bf2a 0%, #2edb5c 100%);
+  border: none;
+  box-shadow: 0 4px 16px rgba(37, 191, 42, 0.3);
+  transition: all 0.3s ease;
+}
+
+.adminspace-access-code-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 191, 42, 0.4);
+  background: linear-gradient(135deg, #1e8e4f 0%, #25bf2a 100%);
+}
+
+.adminspace-access-code-btn:active {
+  transform: translateY(0);
+}
+
+.adminspace-access-code-btn .fa-key {
+  margin-right: 8px;
+  font-size: 1rem;
+}
+
+/* Responsive design pour la section code d'accès */
+@media (max-width: 768px) {
+  .adminspace-access-code-section {
+    margin-top: 40px;
+    margin-bottom: 30px;
+  }
+  
+  .adminspace-access-code-card {
+    padding: 1.5rem;
+  }
+  
+  .adminspace-access-code-btn {
+    height: 44px;
+    font-size: 1rem;
+    padding: 0 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .adminspace-access-code-section {
+    margin-top: 30px;
+    margin-bottom: 20px;
+  }
+  
+  .adminspace-access-code-card {
+    padding: 1rem;
+  }
+  
+  .adminspace-access-code-btn {
+    height: 40px;
+    font-size: 0.9rem;
+    padding: 0 1rem;
+  }
+}
+
+/* ==================== FOOTER NON-FIXE POUR ADMINSPACE ==================== */
+.adminspace-footer,
+.adminspace-bg footer,
+.adminspace-bg .footer {
+  /* Garantir que le footer ne soit PAS fixe dans AdminSpace */
+  position: relative !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: auto !important;
+  width: auto !important;
+  z-index: auto !important;
+  
+  /* Empêcher tout style fixe */
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  
+  /* Style normal du footer */
+  text-align: center;
+  padding: 20px 0;
+  background: linear-gradient(135deg, #1e6a8e 0%, #f4d03f 100%);
+  color: white;
+  margin-top: auto; /* Pousser le footer en bas */
+}
+
+/* Garantir que le conteneur principal permet au footer de bouger */
+.adminspace-bg {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.adminspace-main {
+  flex: 1;
+  position: relative;
+}
+
+/* S'assurer qu'aucun style global ne rende le footer fixe */
+.adminspace-bg footer *,
+.adminspace-footer * {
+  position: static !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+/* ==================== STYLES GLOBAUX POUR ADMINSPACE ==================== */
+/* Empêcher que le footer global soit fixe dans AdminSpace */
+.adminspace-bg .footer,
+.adminspace-bg footer,
+.adminspace-footer {
+  /* Override de tous les styles fixes possibles */
+  position: relative !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  width: 100% !important;
+  max-width: none !important;
+  
+  /* Garantir que le footer bouge avec le contenu */
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  
+  /* Style spécifique pour AdminSpace */
+  background: linear-gradient(135deg, #1e6a8e 0%, #f4d03f 100%) !important;
+  color: white !important;
+  text-align: center !important;
+  padding: 20px 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Responsive pour AdminSpace */
+@media (max-width: 768px) {
+  .adminspace-bg .footer,
+  .adminspace-bg footer,
+  .adminspace-footer {
+    padding: 15px 0 !important;
+    font-size: 14px !important;
+  }
+}

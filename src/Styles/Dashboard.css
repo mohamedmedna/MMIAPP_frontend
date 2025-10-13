@@ -1,0 +1,134 @@
+.dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.dashboard-body {
+  display: flex;
+  flex: 1 1 auto;
+  width: 100%;
+}
+
+.dgi-sidebar {
+  width: 220px;
+  background: #229954;
+  color: #fff;
+  min-height: calc(100vh - 120px); /* ajuster selon la hauteur de la bannière */
+  box-shadow: 2px 0 5px rgba(0,0,0,0.07);
+  padding-top: 0;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.sidebar-header {
+  padding: 18px 20px;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-align: center;
+  background: #229954;
+  border-bottom: 1px solid #fff3;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.3s;
+  cursor: pointer;
+  gap: 15px;
+  border-left: 5px solid transparent;
+}
+.sidebar-link.active,
+.sidebar-link:hover {
+  background: #27ae60;
+  color: #fff;
+  border-left: 5px solid #145a32;
+}
+.sidebar-link.logout {
+  background: #fff;
+  color: #229954;
+  font-weight: bold;
+  margin-top: 30px;
+  border-left: 0;
+}
+.sidebar-link.logout:hover {
+  background: #d32f2f;
+  color: #fff;
+}
+
+.dashboard-main {
+  flex-grow: 1;
+  padding: 30px;
+  background-color: #f4f6f8;
+}
+
+.fiche-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 24px;
+  font-size: 1rem;
+  background: #fff;
+}
+.fiche-table th, .fiche-table td {
+  border: 1px solid #e3e3e3;
+  padding: 10px 14px;
+  text-align: left;
+}
+.fiche-table th {
+  background: #f5f7fa;
+  color: #229954;
+  font-weight: 700;
+}
+.fiche-table tr:hover {
+  background: #f0f6fa;
+}
+
+.fiche-table td span {
+  display: inline-block;
+  min-width: 90px;
+  text-align: center;
+  border-radius: 8px;
+  padding: 2px 10px;
+  font-weight: 600;
+  font-size: 0.98rem;
+}
+.dgi-sidebar {
+  background: #1a237e;
+}
+.dgi-sidebar .sidebar-header {
+  background: #1a237e;
+}
+.dgi-sidebar .sidebar-link.active,
+.dgi-sidebar .sidebar-link:hover {
+  background: #283593;
+  border-left: 5px solid #0d133d;
+}
+.dgi-sidebar {
+  background: #229954;
+}
+.dgi-sidebar .sidebar-header {
+  background: #229954;
+}
+.sidebar-link.active,
+.sidebar-link:hover {
+  background: #27ae60;
+  color: #fff;
+  border-left: 5px solid #145a32;
+}
+.sidebar-link.logout {
+  background: #fff;
+  color: #229954;
+  font-weight: bold;
+  margin-top: 30px;
+  border-left: 0;
+}
+.sidebar-link.logout:hover {
+  background: #d32f2f;
+  color: #fff;
+}

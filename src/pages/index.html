@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+const langLinks = document.querySelectorAll('.lang-social-group a.lang-btn');
+const currentPath = window.location.pathname;
+
+// Extrait la partie après /translations/{lang}/
+const pathParts = currentPath.split('/');
+// index 1 = 'translations', index 2 = langue (fr/en/ar)
+if (pathParts.length > 2 && pathParts[1] === 'translations') {
+const currentLang = pathParts[2];
+const relativePath = pathParts.slice(3).join('/') || 'index.html';
+
+langLinks.forEach(link => {
+// Récupère la langue cible du href (ex: /translations/fr/index.html)
+const hrefParts = link.getAttribute('href').split('/');
+const targetLang = hrefParts[2];
+
+// Reconstruit le href avec la même page relative mais dans la langue cible
+const newHref = `/translations/${targetLang}/${relativePath}`;
+link.setAttribute('href', newHref);
+
+// Ajoute ou enlève la classe selected selon la langue active
+if (targetLang === currentLang) {
+link.classList.add('selected');
+link.setAttribute('aria-current', 'page');
+} else {
+link.classList.remove('selected');
+link.removeAttribute('aria-current');
+}
+});
+}
+});
+</script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ministère de l'Industrie - Digitalisation de la chaîne industrielle</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+
+<!-- Font Awesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+<!-- CSS -->
+<link rel="stylesheet" href="styles.css?v=1.0" />
+</head>
+<body>
+<!-- Header -->
+<header class="header">
+<div class="container header-container">
+<!-- LOGO -->
+<a href="index.html" class="logo-link" aria-label="Accueil Ministère de l'Industrie">
+<img src="assets/Logo.png" alt="Logo Ministère de l'Industrie" class="logo" />
+</a>
+
+<!-- MENU -->
+<nav class="nav" aria-label="Menu principal">
+<ul class="nav-list">
+<li><a href="index.html" class="nav-link active">Accueil</a></li>
+  <li><a href="portail.html" class="nav-link">Portail de l'industrie</a></li>
+<li><a href="gestion-autorisations.html" class="nav-link">Gestion des autorisations</a></li>
+<li><a href="pmne.html" class="nav-link">PMNE</a></li>
+<li><a href="news.html" class="nav-link">News</a></li>
+<li><a href="contact.html" class="nav-link">Contact</a></li>
+</ul>
+</nav>
+
+<!-- LANGUES + ICÔNES -->
+<div class="navbar-right">
+<div class="lang-social-group" role="navigation" aria-label="Choix de la langue et réseaux sociaux">
+<a href="/translations/fr/index.html" class="lang-btn selected" role="link" aria-label="Sélectionner français">🇫🇷 Français</a>
+<a href="/translations/en/index.html" class="lang-btn" role="link" aria-label="Sélectionner anglais">🇬🇧 English</a>
+<a href="/translations/ar/index.html" class="lang-btn" role="link" aria-label="Sélectionner arabe">🇸🇦 العربية</a>
+
+<a href="https://chk.me/yxMNFpF" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="social-icon">
+<i class="fab fa-facebook"></i>
+</a>
+<a href="https://chk.me/B2HR41P" target="_blank" rel="noopener noreferrer" aria-label="Linkedin" class="social-icon">
+<i class="fab fa-linkedin"></i>
+</a>
+<a href="https://mmi.gov.mr/fr/" target="_blank" rel="noopener noreferrer" aria-label="Site Ministère" class="social-icon">
+<i class="fas fa-globe"></i>
+</a>
+</div>
+</div>
+
+</div>
+</header>
+
+
+<!-- Section Hero -->
+<section class="hero section" role="banner">
+<div class="container hero-container">
+<h1 class="hero-title">
+Digitalisation de l'industrie 
+</h1>
+<p class="hero-subtitle">
+
+</p>
+<a href="portail.html" class="btn btn-primary btn-hero" aria-label="Découvrir le Portail de l'industrie">
+Découvrir nos Apps 
+<i class="fas fa-arrow-right ms-2"></i>
+</a>
+</div>
+
+<div class="digital-animation" aria-hidden="true">
+<div class="circle big"></div>
+<div class="circle medium"></div>
+<div class="circle small"></div>
+</div>
+</section>
+
+<!-- Section Applications modernes -->
+<section class="apps section" aria-labelledby="apps-title">
+<div class="container">
+<h2 class="section-title" id="apps-title">Applications modernes</h2>
+<div class="apps-grid">
+<!-- Application 1 : Gestion des autorisations industrielles -->
+<article class="app-card animate-fade-in-up delay-0" tabindex="0">
+<i class="fas fa-file-alt app-icon" aria-hidden="true"></i>
+<h3 class="app-title">Gestion des autorisations </h3>
+<p class="app-desc">
+Digitalisation des processus de demandes d'autorisations numérisées<br>
+Simplifiez et accélérez la gestion des autorisations industrielles grâce à une plateforme numérique qui optimise le traitement des demandes, réduit les délais et améliore la transparence.
+</p>
+</article>
+
+<!-- Application 2 : Analyse Prédictive -->
+<article class="app-card animate-fade-in-up delay-1" tabindex="0">
+<i class="fas fa-chart-line app-icon" aria-hidden="true"></i>
+<h3 class="app-title">Analyse Prédictive</h3>
+<p class="app-desc">
+Application de recueil de données pour le programme de Mise à Niveau<br>
+Exploitez les données collectées en temps réel pour anticiper les besoins des entreprises industrielles et faciliter l'accès aux programmes du Ministère.
+</p>
+</article>
+
+<!-- Application 3 : Portail de l'industrie -->
+<article class="app-card animate-fade-in-up delay-2" tabindex="0">
+<i class="fas fa-industry app-icon" aria-hidden="true"></i>
+<h3 class="app-title">Portail de l'industrie</h3>
+<p class="app-desc">
+Plateforme de gestion documentaire industrielle<br>
+Accédez facilement à la documentation et simplifiez les échanges administratifs et techniques via un portail sécurisé et centralisé.
+</p>
+</article>
+</div>
+</div>
+</section>
+
+
+<!-- Section News -->
+<section class="news section" aria-labelledby="news-title">
+<div class="container">
+<h2 class="section-title" id="news-title">Actualités</h2>
+<div class="news-grid">
+<article class="news-card animate-fade-in-up delay-0" tabindex="0">
+<img src="assets/news1.jpg" alt="Nouvelle usine numérique" class="news-image" />
+<h3 class="news-title">Inauguration d'une usine numérique</h3>
+<p class="news-excerpt">Une nouvelle usine industrielle équipée des dernières technologies a été inaugurée pour moderniser la production locale.</p>
+<a href="news1.html" class="news-link" aria-label="Lire l'article sur l'inauguration d'une usine numérique">Lire la suite</a>
+</article>
+
+<article class="news-card animate-fade-in-up delay-1" tabindex="0">
+<img src="assets/news2.jpg" alt="Lancement du portail industriel" class="news-image" />
+<h3 class="news-title">Lancement du Portail de l'Industrie</h3>
+<p class="news-excerpt">Découvrez le nouveau portail numérique pour faciliter l’accès aux services industriels et améliorer la collaboration.</p>
+<a href="news2.html" class="news-link" aria-label="Lire l'article sur le lancement du portail industriel">Lire la suite</a>
+</article>
+
+<article class="news-card animate-fade-in-up delay-2" tabindex="0">
+<img src="assets/news3.jpg" alt="Formations à la transformation numérique" class="news-image" />
+<h3 class="news-title">Formations à la transformation numérique</h3>
+<p class="news-excerpt">Le ministère organise des sessions de formation visant à développer les compétences numériques dans l’industrie.</p>
+<a href="news3.html" class="news-link" aria-label="Lire l'article sur les formations à la transformation numérique">Lire la suite</a>
+</article>
+</div>
+</div>
+</section>
+
+<!-- Footer -->
+<footer class="footer" role="contentinfo">
+<div class="container footer-container">
+<p>© 2025 Ministère de l'Industrie - Tous droits réservés.</p>
+<nav class="footer-nav" aria-label="Navigation du pied de page">
+<a href="mentions-legales.html" class="footer-link">Mentions légales</a>
+<a href="politique-confidentialite.html" class="footer-link">Politique de confidentialité</a>
+<a href="contact.html" class="footer-link">Contact</a>
+</nav>
+</div>
+</footer>
+</body>
+</html>

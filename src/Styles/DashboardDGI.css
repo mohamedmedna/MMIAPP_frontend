@@ -1,0 +1,512 @@
+/* Styles pour le Dashboard DGI - Structure Header, Left Panel, Main Section, Footer */
+
+.dashboard-dgi-container {
+  min-height: 100vh;
+  display: flex;
+  background-color: #f5f5f5;
+  position: relative;
+  padding-bottom: 0; /* Pas de padding pour un alignement parfait */
+  padding-top: 0; /* Pas d'espace en haut */
+  /* Garantir que le conteneur ne bouge pas le footer */
+  overflow: visible;
+  /* Alignement parfait comme sur l'image */
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* ==================== LEFT PANEL (SIDEBAR) ==================== */
+.left-panel {
+  width: 280px;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  padding: 20px 0;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); /* Ombre à droite */
+  position: fixed;
+  height: calc(100vh - 80px); /* Ajustée pour commencer en bas du header et aller exactement au footer */
+  overflow-y: auto;
+  z-index: 1000;
+  /* Garantir que la sidebar ne bouge pas du tout */
+  left: 0; /* Positionnée à gauche */
+  top: 80px; /* Commence exactement en bas du header */
+  /* Empêcher tout mouvement */
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  /* Garantir la stabilité */
+  will-change: auto;
+  backface-visibility: hidden;
+  /* S'étendre jusqu'au footer */
+  bottom: 0; /* Aller exactement au footer */
+}
+
+.sidebar-header {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.sidebar-header h3 {
+  margin: 0 0 5px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+}
+
+.sidebar-header p {
+  margin: 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 0 15px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 20px;
+  background: transparent;
+  border: none;
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  width: 100%;
+  text-align: left;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(5px);
+}
+
+.nav-item.active {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.nav-item svg {
+  font-size: 16px;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+}
+
+/* Footer de la sidebar avec bouton de déconnexion */
+.sidebar-footer {
+  margin-top: auto;
+  padding: 20px 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.deconnexion-btn {
+  background: rgba(220, 53, 69, 0.1) !important;
+  border: 1px solid rgba(220, 53, 69, 0.3) !important;
+  color: #ff6b6b !important;
+}
+
+.deconnexion-btn:hover {
+  background: rgba(220, 53, 69, 0.2) !important;
+  border-color: rgba(220, 53, 69, 0.5) !important;
+}
+
+/* ==================== MAIN SECTION ==================== */
+.main-section {
+  flex: 1;
+  margin-left: 280px; /* Respecter la sidebar à gauche */
+  padding: 30px;
+  overflow-y: auto;
+  min-height: calc(100vh - 180px); /* Ajusté pour l'alignement parfait avec la sidebar */
+  max-height: none; /* Suppression de la hauteur maximale pour plus de visibilité */
+  /* Garantir que la section principale ne bouge pas le footer */
+  padding-bottom: 0; /* Pas de padding pour un alignement parfait */
+  /* Garantir la stabilité */
+  transform: none !important;
+  transition: none !important;
+  /* Alignement parfait comme sur l'image */
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.main-section h2 {
+  color: #333;
+  margin-bottom: 30px;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.main-section h3 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* ==================== STATISTICS CARDS ==================== */
+.ant-statistic {
+  background: white;
+  padding: 25px; /* Augmenté pour plus d'espace */
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  border-left: 4px solid #28a745;
+  margin-bottom: 20px; /* Espace entre les cartes */
+  min-height: 120px; /* Hauteur minimale pour une meilleure visibilité */
+}
+
+.ant-statistic-title {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.ant-statistic-content {
+  color: #333;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* ==================== CHARTS ==================== */
+.chart-container {
+  background: white;
+  padding: 25px; /* Augmenté pour plus d'espace */
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 25px; /* Plus d'espace entre les graphiques */
+  min-height: 400px; /* Hauteur minimale pour une meilleure visibilité */
+}
+
+/* ==================== TABLES ==================== */
+.ant-table {
+  background: white;
+  border-radius: 10px;
+  overflow: visible; /* Permet au contenu de déborder pour plus de visibilité */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px; /* Espace en bas du tableau */
+}
+
+.ant-table-wrapper {
+  overflow-x: auto; /* Scroll horizontal si nécessaire */
+  max-width: 100%;
+}
+
+.ant-table-thead > tr > th {
+  background: #f8f9fa;
+  color: #333;
+  font-weight: 600;
+  border-bottom: 1px solid #f0f0f0;
+  border-left: 4px solid #28a745;
+}
+
+.ant-table-tbody > tr > td {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: #f8f9fa;
+}
+
+/* ==================== BUTTONS ==================== */
+.ant-btn {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.ant-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.ant-btn-primary {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  border: none;
+}
+
+/* ==================== NOTIFICATIONS ==================== */
+.notification-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notification-list li {
+  background: white;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #3b82f6;
+}
+
+/* ==================== MODALS ==================== */
+.ant-modal-content {
+  border-radius: 15px;
+}
+
+.ant-modal-header {
+  border-radius: 15px 15px 0 0;
+}
+
+.ant-modal-title {
+  font-weight: 600;
+  color: #333;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 1024px) {
+  .left-panel {
+    width: 250px;
+  }
+  
+  .main-section {
+    margin-left: 250px;
+    padding: 20px;
+  }
+  
+  .ant-col {
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .left-panel {
+    width: 100%;
+    height: auto;
+    position: fixed; /* Garder fixe même sur mobile */
+    top: 80px; /* Commence exactement en bas du header */
+    left: 0;
+    z-index: 1000;
+    margin-bottom: 0; /* Pas de marge pour un alignement parfait */
+    /* Garantir la stabilité sur mobile */
+    transform: none !important;
+    transition: none !important;
+    /* S'étendre jusqu'au footer sur mobile aussi */
+    bottom: 0;
+  }
+  
+  .main-section {
+    margin-left: 0;
+    padding: 15px;
+    max-height: none; /* Suppression de la limite sur mobile */
+  }
+  
+  .dashboard-dgi-container {
+    flex-direction: column;
+    padding-bottom: 0; /* Pas de padding pour un alignement parfait sur mobile */
+  }
+  
+  .ant-row {
+    margin: 0 !important;
+  }
+  
+  .ant-col {
+    padding: 0 10px !important;
+  }
+  
+  .chart-container {
+    min-height: 300px; /* Hauteur réduite sur mobile */
+    padding: 20px;
+  }
+  
+  .ant-statistic {
+    min-height: 100px; /* Hauteur réduite sur mobile */
+    padding: 20px;
+  }
+  
+  /* Footer responsive sur mobile */
+  footer {
+    padding: 12px 0;
+    font-size: 12px;
+    /* Garantir que le footer reste fixe sur mobile */
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+  }
+  
+  footer .support-icon {
+    right: 15px;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-section {
+    padding: 10px;
+  }
+  
+  .main-section h2 {
+    font-size: 24px;
+  }
+  
+  .main-section h3 {
+    font-size: 18px;
+  }
+  
+  .ant-statistic {
+    padding: 15px;
+  }
+  
+  .chart-container {
+    padding: 15px;
+  }
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.main-section > * {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* ==================== FOOTER FIXE ==================== */
+.dashboard-dgi-container footer,
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100vw; /* Pleine largeur de la fenêtre */
+  z-index: 9999; /* Z-index très élevé pour être au-dessus de tout */
+  background: linear-gradient(135deg, #28a745 0%, #ffc107 100%); /* Dégradé vert-jaune comme le header */
+  color: white;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  padding: 15px 0;
+  text-align: center;
+  /* Garantir que le footer ne bouge jamais */
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  /* Alignement parfait comme sur l'image */
+  margin: 0;
+  box-sizing: border-box;
+  /* S'assurer que le footer est parfaitement aligné */
+  height: 80px; /* Hauteur fixe pour le footer */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* Alignement parfait avec la sidebar */
+  margin: 0;
+  padding: 15px 0;
+}
+
+/* Styles spécifiques pour le contenu du footer */
+footer p,
+footer div,
+footer span {
+  margin: 0;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Garantir que le footer reste absolument fixe */
+footer * {
+  /* Empêcher tout mouvement du footer et de ses enfants */
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  position: static !important;
+}
+
+/* Icône de support/chat dans le footer */
+footer .support-icon {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #e91e63;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* ==================== GARANTIR LA STABILITÉ GLOBALE ==================== */
+html, body {
+  /* Empêcher tout mouvement du footer et de la sidebar */
+  overflow-x: hidden;
+  position: relative;
+  /* Garantir la stabilité */
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Garantir qu'il n'y ait aucun espace entre header et sidebar */
+.dashboard-dgi-container {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+.left-panel {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Garantir que le conteneur principal ne bouge pas */
+.dashboard-dgi-container {
+  /* Empêcher tout mouvement */
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  /* Garantir la stabilité */
+  will-change: auto;
+  backface-visibility: hidden;
+}
+
+/* ==================== SCROLLBAR CUSTOMIZATION ==================== */
+.left-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.left-panel::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.left-panel::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.left-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.main-section::-webkit-scrollbar {
+  width: 8px;
+}
+
+.main-section::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.main-section::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.main-section::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

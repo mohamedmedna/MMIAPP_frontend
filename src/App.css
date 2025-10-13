@@ -1,0 +1,163 @@
+/* Fichier App.css - Styles globaux de l'application */
+
+/* Reset et base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Conteneur principal */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Styles spécifiques à l'application */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.banniere-ministere {
+  width: 100%;
+  overflow: hidden;
+  background: #7fa22b11;
+  border-bottom: 2px solid #7fa22b44;
+}
+.banniere-img {
+  width: 100%;
+  display: block;
+  margin: 0 auto;
+  object-fit: cover;
+  max-height: 270px;
+}
+.ministere-titres {
+  text-align: center;
+  margin: 24px 0;
+}
+.titre-fr, .sous-titre-fr {
+  color: #1e6a8e;
+  font-weight: 700;
+}
+.titre-ar {
+  color: #7fa22b;
+  font-weight: 700;
+}
+.carte-espace {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px #0002;
+  padding: 32px 28px;
+  min-width: 280px;
+  text-align: center;
+  text-decoration: none;
+  color: #1e6a8e;
+  transition: box-shadow 0.2s;
+  font-weight: 500;
+  margin: 0 12px;
+}
+.carte-espace:hover {
+  box-shadow: 0 4px 24px #1e6a8e33;
+  color: #7fa22b;
+}
+.footer {
+  text-align: center;
+  padding: 20px 0;
+  background: linear-gradient(135deg, #1e6a8e 0%, #f4d03f 100%);
+  color: white;
+  position: relative;
+  width: 100%;
+  z-index: 100;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 0 20px;
+}
+
+.footer-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-description {
+  color: #ffffff;
+  font-size: 14px;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.footer-links {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.footer-link {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.footer-link:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.footer-copyright {
+  color: #ffffff;
+  font-size: 14px;
+  margin: 0;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+  .footer-links {
+    gap: 15px;
+  }
+  
+  .footer-link {
+    font-size: 13px;
+  }
+  
+  .footer-description {
+    font-size: 13px;
+  }
+}

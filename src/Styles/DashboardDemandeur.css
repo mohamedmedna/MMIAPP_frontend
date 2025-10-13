@@ -1,0 +1,1527 @@
+/* ==================== DASHBOARD DEMANDEUR ==================== */
+/* Structure moderne avec Header, Left Panel, Main Section, Footer */
+
+/* ==================== CONTAINER PRINCIPAL ==================== */
+.dashboard-demandeur-container {
+  display: flex;
+  min-height: 100vh;
+  padding-top: 0;
+  margin: 0;
+  box-sizing: border-box;
+  overflow: visible;
+  
+  /* Stabilité */
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  will-change: auto !important;
+  backface-visibility: visible !important;
+}
+
+/* ==================== LEFT PANEL (SIDEBAR) ==================== */
+.left-panel {
+  width: 250px;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  position: fixed;
+  height: calc(100vh - 80px);
+  top: 80px;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  overflow-y: auto;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  
+  /* Bordure colorée pour distinguer la zone */
+  border-right: 4px solid #1e7e34;
+  
+  /* Stabilité */
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  will-change: auto !important;
+  backface-visibility: visible !important;
+  
+  /* Marges et padding */
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* ==================== MAIN SECTION ==================== */
+.main-section {
+  flex: 1;
+  margin-left: 250px;
+  min-height: calc(100vh - 180px);
+  padding: 20px;
+  background: #f8f9fa;
+  
+  /* Bordure colorée pour distinguer la zone */
+  border-left: 4px solid #17a2b8;
+  
+  /* Stabilité */
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  will-change: auto !important;
+  backface-visibility: visible !important;
+  
+  /* Marges */
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* ==================== SIDEBAR HEADER ==================== */
+.sidebar-header {
+  padding: 20px;
+  text-align: center;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header h3 {
+  color: white;
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.sidebar-header p {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+  font-size: 14px;
+}
+
+/* ==================== SIDEBAR NAVIGATION ==================== */
+.sidebar-nav {
+  padding: 20px 0;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  color: white;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(5px);
+}
+
+.nav-item.active {
+  background: rgba(255, 255, 255, 0.2);
+  border-left: 4px solid #fff;
+  font-weight: 600;
+}
+
+.nav-item i {
+  margin-right: 12px;
+  font-size: 16px;
+}
+
+/* ==================== SIDEBAR FOOTER ==================== */
+.sidebar-footer {
+  padding: 20px;
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.1);
+  margin-top: auto;
+}
+
+.deconnexion-btn {
+  background: rgba(220, 53, 69, 0.8) !important;
+  color: white !important;
+  border-radius: 6px;
+  padding: 10px 16px !important;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.deconnexion-btn:hover {
+  background: rgba(220, 53, 69, 1) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+/* ==================== DASHBOARD HEADER ==================== */
+.dashboard-header {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  /* Bordure colorée pour distinguer la zone */
+  border-left: 4px solid #ffc107;
+}
+
+.dashboard-title {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* ==================== DASHBOARD CONTENT ==================== */
+.dashboard-content {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  
+  /* Bordure colorée pour distinguer la zone */
+  border-left: 4px solid #28a745;
+}
+
+/* ==================== STYLES GÉNÉRAUX ==================== */
+/* Boutons */
+.dashboard-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 2px solid;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9em;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.dashboard-btn-primary {
+  border-color: #17a2b8;
+  background: linear-gradient(135deg, #17a2b8, #138496);
+  color: white;
+  box-shadow: 0 2px 4px rgba(23, 162, 184, 0.3);
+}
+
+.dashboard-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(23, 162, 184, 0.4);
+}
+
+.dashboard-btn-secondary {
+  border-color: #6c757d;
+  background: linear-gradient(135deg, #6c757d, #5a6268);
+  color: white;
+  box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+}
+
+.dashboard-btn-secondary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(108, 117, 125, 0.4);
+}
+
+.dashboard-btn-info {
+  border-color: #17a2b8;
+  background: linear-gradient(135deg, #17a2b8, #138496);
+  color: white;
+  box-shadow: 0 2px 4px rgba(23, 162, 184, 0.3);
+}
+
+.dashboard-btn-info:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(23, 162, 184, 0.4);
+}
+
+.dashboard-btn-success {
+  border-color: #28a745;
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+}
+
+.dashboard-btn-success:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.4);
+}
+
+/* Actions rapides */
+.dashboard-actions {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+/* Statistiques */
+.dashboard-progress-bar {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #28a745;
+}
+
+.progress-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  text-align: center;
+}
+
+.progress-label {
+  font-size: 12px;
+  color: #6c757d;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.progress-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #28a745;
+}
+
+.progress-separator {
+  width: 1px;
+  height: 40px;
+  background: #dee2e6;
+  margin: 0 20px;
+}
+
+/* Tableau des demandes */
+.dashboard-demandes {
+  margin-top: 30px;
+}
+
+.dashboard-demandes h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.demandes-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.demandes-table th {
+  background: #f8f9fa;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6;
+  border-left: 4px solid #28a745;
+}
+
+.demandes-table td {
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+  vertical-align: middle;
+}
+
+.demandes-table tr:hover {
+  background: #f8f9fa;
+}
+
+/* Badges de statut */
+.statut-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  font-weight: 500;
+  text-align: center;
+  min-width: 80px;
+}
+
+/* Section Suivi des Étapes */
+.suivi-etapes-section {
+  margin-top: 30px;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #17a2b8;
+}
+
+.section-title {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.etapes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.etape-item {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  border-left: 4px solid #28a745;
+}
+
+.etape-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.etape-reference {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.etape-statut {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #28a745;
+  color: white;
+}
+
+.etape-progress {
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #28a745, #20c997);
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 12px;
+  color: #6c757d;
+  text-align: center;
+  display: block;
+}
+
+.etape-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.etape-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.step-icon.completed {
+  background: #28a745;
+  color: white;
+}
+
+.step-label {
+  font-size: 11px;
+  color: #6c757d;
+  text-align: center;
+  max-width: 60px;
+}
+
+/* États vides et loading */
+.no-demandes {
+  text-align: center;
+  padding: 40px;
+  color: #6c757d;
+}
+
+.no-demandes-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.no-demandes h3 {
+  margin-bottom: 8px;
+  color: #2c3e50;
+}
+
+/* ==================== FOOTER FIXE ==================== */
+.dashboard-demandeur-container footer,
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100vw;
+  z-index: 9999;
+  
+  /* Bordure colorée pour distinguer la zone */
+  border-top: 4px solid #fd7e14;
+  
+  /* Style du footer */
+  background: linear-gradient(135deg, #fd7e14 0%, #ffc107 100%);
+  color: white;
+  height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+  /* Stabilité */
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  will-change: auto !important;
+  backface-visibility: visible !important;
+  
+  /* Marges et box-sizing */
+  margin: 0;
+  box-sizing: border-box;
+  padding: 15px 0;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 768px) {
+  .left-panel {
+    width: 100%;
+    height: auto;
+    position: relative;
+    top: auto;
+    bottom: auto;
+    left: auto;
+    z-index: auto;
+  }
+  
+  .main-section {
+    margin-left: 0;
+    width: 100%;
+    min-height: auto;
+  }
+  
+  .dashboard-demandeur-container {
+    flex-direction: column;
+  }
+  
+  .dashboard-demandeur-container footer,
+  footer {
+    position: relative;
+    width: 100%;
+    height: auto;
+    min-height: 80px;
+  }
+  
+  .dashboard-actions {
+    flex-direction: column;
+  }
+  
+  .dashboard-progress-bar {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .progress-separator {
+    width: 100%;
+    height: 1px;
+    margin: 10px 0;
+  }
+  
+  .etape-details {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-title {
+    font-size: 24px;
+  }
+  
+  .sidebar-header {
+    padding: 16px;
+  }
+  
+  .nav-item {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+  
+  .etape-item {
+    padding: 16px;
+  }
+  
+  .demandes-table {
+    font-size: 12px;
+  }
+  
+  .demandes-table th,
+  .demandes-table td {
+    padding: 8px;
+  }
+}
+
+/* ==================== ANIMATIONS ET TRANSITIONS ==================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.main-section > * {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* ==================== SCROLLBAR PERSONNALISÉE ==================== */
+.left-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.left-panel::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.left-panel::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.left-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+/* Structure moderne avec Header, Left Panel, Main Section, Footer */
+
+/* ==================== CONTAINER PRINCIPAL ==================== */
+.dashboard-demandeur-container {
+  display: flex;
+  min-height: 100vh;
+  padding-top: 0;
+  margin: 0;
+  box-sizing: border-box;
+  overflow: visible;
+  
+  /* Stabilité */
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  will-change: auto !important;
+  backface-visibility: visible !important;
+}
+
+/* ==================== LEFT PANEL (SIDEBAR) ==================== */
+.left-panel {
+  width: 250px;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  position: fixed;
+  height: calc(100vh - 80px);
+  top: 80px;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  overflow-y: auto;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  
+  /* Bordure colorée pour distinguer la zone */
+  border-right: 4px solid #1e7e34;
+  
+  /* Stabilité */
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  will-change: auto !important;
+  backface-visibility: visible !important;
+  
+  /* Marges et padding */
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* ==================== MAIN SECTION ==================== */
+.main-section {
+  flex: 1;
+  margin-left: 250px;
+  min-height: calc(100vh - 180px);
+  padding: 20px;
+  background: #f8f9fa;
+  
+  /* Bordure colorée pour distinguer la zone */
+  border-left: 4px solid #17a2b8;
+  
+  /* Stabilité */
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  will-change: auto !important;
+  backface-visibility: visible !important;
+  
+  /* Marges */
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* ==================== SIDEBAR HEADER ==================== */
+.sidebar-header {
+  padding: 20px;
+  text-align: center;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header h3 {
+  color: white;
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.sidebar-header p {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+  font-size: 14px;
+}
+
+/* ==================== SIDEBAR NAVIGATION ==================== */
+.sidebar-nav {
+  padding: 20px 0;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  color: white;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(5px);
+}
+
+.nav-item.active {
+  background: rgba(255, 255, 255, 0.2);
+  border-left: 4px solid #fff;
+  font-weight: 600;
+}
+
+.nav-item i {
+  margin-right: 12px;
+  font-size: 16px;
+}
+
+/* ==================== SIDEBAR FOOTER ==================== */
+.sidebar-footer {
+  padding: 20px;
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.1);
+  margin-top: auto;
+}
+
+.deconnexion-btn {
+  background: rgba(220, 53, 69, 0.8) !important;
+  color: white !important;
+  border-radius: 6px;
+  padding: 10px 16px !important;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.deconnexion-btn:hover {
+  background: rgba(220, 53, 69, 1) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+/* ==================== DASHBOARD HEADER ==================== */
+.dashboard-header {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  /* Bordure colorée pour distinguer la zone */
+  border-left: 4px solid #ffc107;
+}
+
+.dashboard-title {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* ==================== DASHBOARD CONTENT ==================== */
+.dashboard-content {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  
+  /* Bordure colorée pour distinguer la zone */
+  border-left: 4px solid #28a745;
+}
+
+/* ==================== STYLES GÉNÉRAUX ==================== */
+/* Boutons */
+.dashboard-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 2px solid;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9em;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.dashboard-btn-primary {
+  border-color: #17a2b8;
+  background: linear-gradient(135deg, #17a2b8, #138496);
+  color: white;
+  box-shadow: 0 2px 4px rgba(23, 162, 184, 0.3);
+}
+
+.dashboard-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(23, 162, 184, 0.4);
+}
+
+.dashboard-btn-secondary {
+  border-color: #6c757d;
+  background: linear-gradient(135deg, #6c757d, #5a6268);
+  color: white;
+  box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+}
+
+.dashboard-btn-secondary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(108, 117, 125, 0.4);
+}
+
+.dashboard-btn-info {
+  border-color: #17a2b8;
+  background: linear-gradient(135deg, #17a2b8, #138496);
+  color: white;
+  box-shadow: 0 2px 4px rgba(23, 162, 184, 0.3);
+}
+
+.dashboard-btn-info:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(23, 162, 184, 0.4);
+}
+
+.dashboard-btn-success {
+  border-color: #28a745;
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+}
+
+.dashboard-btn-success:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.4);
+}
+
+/* Actions rapides */
+.dashboard-actions {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+/* Statistiques */
+.dashboard-progress-bar {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #28a745;
+}
+
+.progress-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  text-align: center;
+}
+
+.progress-label {
+  font-size: 12px;
+  color: #6c757d;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.progress-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #28a745;
+}
+
+.progress-separator {
+  width: 1px;
+  height: 40px;
+  background: #dee2e6;
+  margin: 0 20px;
+}
+
+/* Tableau des demandes */
+.dashboard-demandes {
+  margin-top: 30px;
+}
+
+.dashboard-demandes h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.demandes-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.demandes-table th {
+  background: #f8f9fa;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6;
+  border-left: 4px solid #28a745;
+}
+
+.demandes-table td {
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+  vertical-align: middle;
+}
+
+.demandes-table tr:hover {
+  background: #f8f9fa;
+}
+
+/* Badges de statut */
+.statut-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  font-weight: 500;
+  text-align: center;
+  min-width: 80px;
+}
+
+/* Section Suivi des Étapes */
+.suivi-etapes-section {
+  margin-top: 30px;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #17a2b8;
+}
+
+.section-title {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.etapes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.etape-item {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  border-left: 4px solid #28a745;
+}
+
+.etape-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.etape-reference {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.etape-statut {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #28a745;
+  color: white;
+}
+
+.etape-progress {
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #28a745, #20c997);
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 12px;
+  color: #6c757d;
+  text-align: center;
+  display: block;
+}
+
+.etape-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.etape-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.step-icon.completed {
+  background: #28a745;
+  color: white;
+}
+
+.step-label {
+  font-size: 11px;
+  color: #6c757d;
+  text-align: center;
+  max-width: 60px;
+}
+
+/* États vides et loading */
+.no-demandes {
+  text-align: center;
+  padding: 40px;
+  color: #6c757d;
+}
+
+.no-demandes-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.no-demandes h3 {
+  margin-bottom: 8px;
+  color: #2c3e50;
+}
+
+/* ==================== FOOTER FIXE ==================== */
+.dashboard-demandeur-container footer,
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100vw;
+  z-index: 9999;
+  
+  /* Bordure colorée pour distinguer la zone */
+  border-top: 4px solid #fd7e14;
+  
+  /* Style du footer */
+  background: linear-gradient(135deg, #fd7e14 0%, #ffc107 100%);
+  color: white;
+  height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+  /* Stabilité */
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  will-change: auto !important;
+  backface-visibility: visible !important;
+  
+  /* Marges et box-sizing */
+  margin: 0;
+  box-sizing: border-box;
+  padding: 15px 0;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 768px) {
+  .left-panel {
+    width: 100%;
+    height: auto;
+    position: relative;
+    top: auto;
+    bottom: auto;
+    left: auto;
+    z-index: auto;
+  }
+  
+  .main-section {
+    margin-left: 0;
+    width: 100%;
+    min-height: auto;
+  }
+  
+  .dashboard-demandeur-container {
+    flex-direction: column;
+  }
+  
+  .dashboard-demandeur-container footer,
+  footer {
+    position: relative;
+    width: 100%;
+    height: auto;
+    min-height: 80px;
+  }
+  
+  .dashboard-actions {
+    flex-direction: column;
+  }
+  
+  .dashboard-progress-bar {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .progress-separator {
+    width: 100%;
+    height: 1px;
+    margin: 10px 0;
+  }
+  
+  .etape-details {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-title {
+    font-size: 24px;
+  }
+  
+  .sidebar-header {
+    padding: 16px;
+  }
+  
+  .nav-item {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+  
+  .etape-item {
+    padding: 16px;
+  }
+  
+  .demandes-table {
+    font-size: 12px;
+  }
+  
+  .demandes-table th,
+  .demandes-table td {
+    padding: 8px;
+  }
+  
+  /* Styles responsives pour la section suivi des demandes */
+  .dashboard-section.suivi-demandes-section {
+    padding: 16px;
+  }
+  
+  .section-title {
+    font-size: 18px;
+  }
+  
+  .demande-progression-item {
+    padding: 16px;
+  }
+  
+  .demande-progression-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .demande-etapes {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .etape-item {
+    flex: 0 0 calc(50% - 8px);
+  }
+  
+  .demande-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .btn-voir-details,
+  .btn-telecharger-accuse {
+    justify-content: center;
+  }
+}
+
+/* ==================== SECTION SUIVI DES DEMANDES ==================== */
+.dashboard-section.suivi-demandes-section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  border-left: 4px solid #28a745;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 24px 0;
+  display: flex;
+  align-items: center;
+}
+
+.section-title i {
+  color: #1e6a8e;
+  margin-right: 12px;
+}
+
+/* ==================== INDICATEUR DE CHARGEMENT ==================== */
+.loading-indicator {
+  text-align: center;
+  padding: 40px;
+  color: #6c757d;
+  font-size: 16px;
+}
+
+.loading-indicator i {
+  color: #17a2b8;
+}
+
+/* ==================== ÉTAT SANS DEMANDES ==================== */
+.no-demandes {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6c757d;
+}
+
+.no-demandes i {
+  color: #dee2e6;
+  margin-bottom: 16px;
+}
+
+.no-demandes p {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+}
+
+/* ==================== LISTE DES DEMANDES EN PROGRESSION ==================== */
+.demandes-progression {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.demande-progression-item {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.demande-progression-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  border-color: #28a745;
+}
+
+/* ==================== EN-TÊTE DE LA DEMANDE ==================== */
+.demande-progression-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.demande-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.demande-reference {
+  font-weight: 600;
+  font-size: 16px;
+  color: #2c3e50;
+}
+
+.demande-type {
+  font-size: 14px;
+  color: #6c757d;
+  background: #e9ecef;
+  padding: 2px 8px;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.demande-statut {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ==================== BARRE DE PROGRESSION ==================== */
+.demande-progression-bar {
+  margin-bottom: 20px;
+}
+
+.progression-bar {
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progression-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #28a745, #20c997);
+  border-radius: 4px;
+  transition: width 0.8s ease;
+}
+
+.progression-text {
+  font-size: 12px;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+/* ==================== ÉTAPES DE LA DEMANDE ==================== */
+.demande-etapes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.etape-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.etape-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6c757d;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.etape-icon.completed {
+  background: #28a745;
+  color: white;
+  transform: scale(1.1);
+}
+
+.etape-label {
+  font-size: 11px;
+  color: #6c757d;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* ==================== ACTIONS DE LA DEMANDE ==================== */
+.demande-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn-voir-details,
+.btn-telecharger-accuse {
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-voir-details {
+  background: #17a2b8;
+  color: white;
+  border: none;
+}
+
+.btn-voir-details:hover {
+  background: #138496;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3);
+}
+
+.btn-telecharger-accuse {
+  background: #28a745;
+  color: white;
+  border: none;
+}
+
+.btn-telecharger-accuse:hover {
+  background: #1e7e34;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+/* ==================== BOUTON VOIR PLUS ==================== */
+.voir-plus-demandes {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+}
+
+/* ==================== ANIMATIONS ET TRANSITIONS ==================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.main-section > * {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* ==================== SCROLLBAR PERSONNALISÉE ==================== */
+.left-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.left-panel::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.left-panel::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.left-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}

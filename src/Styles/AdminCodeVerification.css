@@ -1,0 +1,188 @@
+/* Styles pour la page de vérification du code d'accès administrateur */
+
+.admin-code-verification-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
+}
+
+.verification-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.verification-card {
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  max-width: 500px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.verification-card .ant-card-body {
+  padding: 0;
+}
+
+/* Styles pour les champs de saisie */
+.verification-card .ant-form-item {
+  margin-bottom: 20px;
+}
+
+.verification-card .ant-input-password {
+  height: 45px;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  width: 100%;
+  line-height: 1.4;
+}
+
+.verification-card .ant-input-password:focus,
+.verification-card .ant-input-password:hover {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.verification-card .ant-input-prefix {
+  margin-right: 10px;
+  font-size: 1rem;
+  color: #1890ff;
+  display: flex;
+  align-items: center;
+}
+
+/* Styles pour le bouton de soumission */
+.verification-card .ant-btn-primary {
+  height: 45px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(24, 144, 255, 0.3);
+}
+
+.verification-card .ant-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(24, 144, 255, 0.4);
+}
+
+.verification-card .ant-btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Styles pour les messages d'erreur */
+.verification-card .ant-alert {
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.verification-card .ant-alert-error {
+  border-left: 4px solid #ff4d4f;
+}
+
+/* Styles pour le bouton de retour */
+.verification-card .ant-btn-link {
+  color: #666;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.verification-card .ant-btn-link:hover {
+  color: #1890ff;
+}
+
+/* Styles pour le texte d'aide */
+.verification-card .ant-typography {
+  color: #666;
+  line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .verification-container {
+    padding: 20px 15px;
+  }
+  
+  .verification-card {
+    padding: 30px 25px;
+    max-width: 400px;
+  }
+  
+  .verification-card .ant-input-password {
+    height: 42px;
+  }
+  
+  .verification-card .ant-btn-primary {
+    height: 42px;
+  }
+}
+
+@media (max-width: 480px) {
+  .verification-card {
+    padding: 25px 20px;
+    max-width: 350px;
+  }
+  
+  .verification-card .ant-input-password {
+    height: 40px;
+  }
+  
+  .verification-card .ant-btn-primary {
+    height: 40px;
+  }
+}
+
+/* Animation d'entrée */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.verification-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Amélioration de l'accessibilité */
+.verification-card .ant-input-password:focus {
+  outline: none;
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* Style pour l'icône de l'œil */
+.verification-card .ant-input-password .ant-input-suffix {
+  margin-right: 8px;
+}
+
+.verification-card .ant-input-password .ant-input-suffix .anticon {
+  font-size: 1rem;
+  color: #666;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.verification-card .ant-input-password .ant-input-suffix .anticon:hover {
+  color: #1890ff;
+}

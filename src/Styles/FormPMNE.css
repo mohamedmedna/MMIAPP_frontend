@@ -1,0 +1,43 @@
+.form-pnme {
+  background: linear-gradient(120deg, #eafaf1 0%, #e3f2fd 100%);
+  border: 2px solid #1e6a8e;
+  border-radius: 14px;
+  padding: 28px 18px;
+  margin-bottom: 18px;
+}
+
+.form-pnme h3 {
+  color: #1e6a8e;
+  margin-bottom: 16px;
+}
+
+.form-pnme label {
+  color: #1e6a8e;
+  font-weight: 700;
+  margin-top: 12px;
+}
+
+.form-pnme input,
+.form-pnme textarea {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 9px;
+  border-radius: 6px;
+  border: 1px solid #bdbdbd;
+  font-size: 1rem;
+}
+
+.btn-form-pnme {
+  background: linear-gradient(90deg, #1e6a8e 60%, #388e3c 100%);
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 7px;
+  margin-top: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-form-pnme:hover {
+  background: #388e3c;
+}

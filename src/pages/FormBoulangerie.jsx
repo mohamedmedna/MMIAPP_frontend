@@ -1,0 +1,309 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import SuccessPopup from '../components/SuccessPopup';
+import Footer from '../components/Footer';
+import '../Styles/FormBoulangerie.css';
+
+function FormBoulangerie({ user, setNotif, setError }) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [formKey, setFormKey] = useState(Date.now());
+  const [form, setForm] = useState({
+    telephone_proprietaire: '',
+    activite_principale: '',
+    selected_juridique_doc: ''
+  });
+  const [files, setFiles] = useState({
+    // Dossier juridique de la société ou ETS
+    statut_certifie_notaire_file: null,
+    registre_commerce_local_file: null,
+    numero_identification_fiscale_file: null,
+    certificat_enregistrement_cnss_file: null,
+    
+    // Documents spécifiques à la boulangerie
+    demande_ministere_file: null,
+    carte_identite_proprietaire_file: null,
+    coordonnees_file: null,
+    titre_foncier_file: null,
+    etude_faisabilite_file: null,
+    cahier_charges_file: null
+  });
+  const [loading, setLoading] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+
+  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleFileChange = e => setFiles({ ...files, [e.target.name]: e.target.files[0] });
+
+  // Options pour la liste déroulante du dossier juridique
+  const juridiqueOptions = [
+    { value: '', label: t('boulangerie.dossier_juridique') },
+    { value: 'statut_certifie_notaire_file', label: `📄 ${t('boulangerie.statut_certifie_notaire')}` },
+    { value: 'registre_commerce_local_file', label: `🏢 ${t('boulangerie.registre_commerce_local')}` },
+    { value: 'numero_identification_fiscale_file', label: `🆔 ${t('boulangerie.numero_identification_fiscale')}` },
+    { value: 'certificat_enregistrement_cnss_file', label: `📋 ${t('boulangerie.certificat_enregistrement_cnss')}` }
+  ];
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    setError('');
+    setNotif('');
+    setLoading(true);
+
+    // Vérifier les champs texte
+    if (!form.telephone_proprietaire || !form.activite_principale) {
+      setError(t('boulangerie.error_required_text'));
+      setLoading(false);
+      return;
+    }
+
+    // Vérifier que tous les documents juridiques sont uploadés
+    const juridiqueFiles = [
+      'statut_certifie_notaire_file',
+      'registre_commerce_local_file', 
+      'numero_identification_fiscale_file',
+      'certificat_enregistrement_cnss_file'
+    ];
+    
+    for (const fileKey of juridiqueFiles) {
+      if (!files[fileKey]) {
+        setError(t('boulangerie.error_required_file'));
+        setLoading(false);
+        return;
+      }
+    }
+
+    // Vérifier les autres fichiers
+    const otherFiles = [
+      'demande_ministere_file',
+      'carte_identite_proprietaire_file',
+      'coordonnees_file',
+      'titre_foncier_file',
+      'etude_faisabilite_file',
+      'cahier_charges_file'
+    ];
+
+    for (const fileKey of otherFiles) {
+      if (!files[fileKey]) {
+        setError(t('boulangerie.error_required_file'));
+        setLoading(false);
+        return;
+      }
+    }
+
+    const formData = new FormData();
+    Object.entries(form).forEach(([k, v]) => formData.append(k, v));
+    Object.entries(files).forEach(([k, v]) => formData.append(k, v));
+    formData.append('typeDemande', 'boulangerie');
+    formData.append('utilisateur_id', user.id);
+
+    try {
+      const response = await fetch('http://localhost:4000/api/nouvelle-demande', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setNotif('Demande soumise avec succès');
+        setForm({
+          telephone_proprietaire: '',
+          activite_principale: '',
+          selected_juridique_doc: ''
+        });
+        setFiles({
+          // Dossier juridique
+          statut_certifie_notaire_file: null,
+          registre_commerce_local_file: null,
+          numero_identification_fiscale_file: null,
+          certificat_enregistrement_cnss_file: null,
+          
+          // Documents boulangerie
+          demande_ministere_file: null,
+          carte_identite_proprietaire_file: null,
+          coordonnees_file: null,
+          titre_foncier_file: null,
+          etude_faisabilite_file: null,
+          cahier_charges_file: null,
+          quitus_file: null
+        });
+        setFormKey(Date.now());
+        setShowPopup(true);
+      } else {
+        setError(data.error || 'Erreur lors de la soumission');
+      }
+    } catch {
+      setError('Erreur de connexion');
+    }
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    if (showPopup) {
+      const timer = setTimeout(() => setShowPopup(false), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [showPopup]);
+
+  return (
+    <div className="form-boulangerie-container">
+      <button
+        type="button"
+        className="btn-retour-dashboard"
+        onClick={() => navigate('/dashboard')}
+      >
+        <span className="btn-retour-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <path d="M14 18L8 12L14 6" stroke="#1e6a8e" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </span>
+        Retour au Dashboard
+      </button>
+      
+      <form
+        key={formKey}
+        className="nouvelle-demande-form form-boulangerie"
+        onSubmit={handleSubmit}
+        encType="multipart/form-data"
+      >
+        <h3>🥖 Demande d'Autorisation - Boulangerie</h3>
+        
+        {/* Section Informations générales */}
+        <div className="form-section-info">
+          <h4 className="section-title">📋 Informations générales</h4>
+          
+          <div className="form-group">
+            <label>📞 Téléphone du propriétaire</label>
+            <input 
+              type="text" 
+              name="telephone_proprietaire" 
+              value={form.telephone_proprietaire} 
+              onChange={handleChange} 
+              placeholder="Ex: +222 45454545"
+              required 
+            />
+          </div>
+
+          <div className="form-group">
+            <label>🏭 Activité principale</label>
+            <input 
+              type="text" 
+              name="activite_principale" 
+              value={form.activite_principale} 
+              onChange={handleChange} 
+              placeholder="Ex: Exploitation de boulangerie"
+              required 
+            />
+          </div>
+
+        </div>
+        
+        {/* Section Dossier juridique avec liste déroulante */}
+        <div className="form-section-juridique">
+          <h4 className="section-title">📋 {t('boulangerie.dossier_juridique')}</h4>
+          
+          <div className="form-group">
+            <label>📋 {t('boulangerie.dossier_juridique')} :</label>
+            <select 
+              name="selected_juridique_doc" 
+              value={form.selected_juridique_doc} 
+              onChange={handleChange}
+              className="juridique-select"
+              required
+            >
+              {juridiqueOptions.map((option, index) => (
+                <option key={index} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {form.selected_juridique_doc && (
+            <div className="form-group">
+              <label>📄 {t('boulangerie.upload_document')} :</label>
+              <input 
+                type="file" 
+                name={form.selected_juridique_doc} 
+                accept=".pdf,.jpg,.png" 
+                onChange={handleFileChange} 
+                required 
+              />
+              <small className="file-help">Format accepté: PDF, JPG, PNG</small>
+              
+              {/* Afficher les documents déjà uploadés */}
+              <div className="uploaded-files">
+                <h5>{t('boulangerie.documents_uploaded')} :</h5>
+                <ul className="files-list">
+                  {juridiqueOptions.slice(1).map((option, index) => (
+                    <li key={index} className={files[option.value] ? 'uploaded' : 'not-uploaded'}>
+                      {option.label} - {files[option.value] ? '✅ Uploadé' : '❌ Manquant'}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Section Documents spécifiques à la boulangerie */}
+        <div className="form-section-boulangerie">
+          <h4 className="section-title">🥖 Documents spécifiques à la boulangerie</h4>
+          
+          <div className="form-group">
+            <label>📝 Une demande adressée au Ministre chargé de l'Industrie pour l'autorisation</label>
+            <input type="file" name="demande_ministere_file" accept=".pdf" onChange={handleFileChange} required />
+            <small className="file-help">Format accepté: PDF uniquement</small>
+          </div>
+
+          <div className="form-group">
+            <label>🆔 Une copie de la carte d'identité et des numéros de téléphone du propriétaire</label>
+            <input type="file" name="carte_identite_proprietaire_file" accept=".pdf,.jpg,.png" onChange={handleFileChange} required />
+            <small className="file-help">Format accepté: PDF, JPG, PNG</small>
+          </div>
+
+          <div className="form-group">
+            <label>📍 Les coordonnées de l'emplacement de la boulangerie avec pâtisserie, ou de la boulangerie ou de la pâtisserie en construction, selon le System GPS</label>
+            <input type="file" name="coordonnees_file" accept=".pdf,.jpg,.png" onChange={handleFileChange} required />
+            <small className="file-help">Format accepté: PDF, JPG, PNG</small>
+          </div>
+
+          <div className="form-group">
+            <label>🏠 Le titre de propriété foncière ou un contrat de bail d'une durée d'au moins cinq ans</label>
+            <input type="file" name="titre_foncier_file" accept=".pdf" onChange={handleFileChange} required />
+            <small className="file-help">Format accepté: PDF uniquement</small>
+          </div>
+
+          <div className="form-group">
+            <label>📊 L'étude de faisabilité économique du projet (Boulangerie avec Pâtisserie ou Boulangerie ou Pâtisserie)</label>
+            <input type="file" name="etude_faisabilite_file" accept=".pdf" onChange={handleFileChange} required />
+            <small className="file-help">Format accepté: PDF uniquement</small>
+          </div>
+
+          <div className="form-group">
+            <label>📋 Une copie du cahier des charges des Boulangeries-Pâtisserie, signée par l'intéressé</label>
+            <input type="file" name="cahier_charges_file" accept=".pdf" onChange={handleFileChange} required />
+            <small className="file-help">Format accepté: PDF uniquement</small>
+          </div>
+
+
+        </div>
+
+        <button type="submit" className="btn-form-boulangerie" disabled={loading}>
+          {loading ? t('boulangerie.sending') : t('boulangerie.send')}
+        </button>
+      </form>
+      
+      <SuccessPopup 
+        visible={showPopup}
+        onClose={() => setShowPopup(false)}
+        type="boulangerie"
+      />
+      
+      <div className="footer-boulangerie">
+        <Footer />
+      </div>
+    </div>
+  );
+}
+
+export default FormBoulangerie;

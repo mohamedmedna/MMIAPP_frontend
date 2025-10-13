@@ -1,0 +1,260 @@
+/* Styles pour la page Archive */
+.archive-page {
+  background: #f8f9fa;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.archive-page .dashboard-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* occupe l'espace entre Header et Footer */
+}
+
+/* Étendre la zone de contenu pour occuper toute la hauteur visible
+   et faire grandir le tableau d'archive */
+.archive-page .dashboard-main-content {
+  display: flex;
+  flex-direction: column;
+  /* Espace visible: écran - (hauteur estimée Header + Footer) */
+  flex: 1;
+}
+
+.archive-page .dashboard-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.archive-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 20px 0;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.archive-header h1 {
+  color: #2c3e50;
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.back-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.3s;
+}
+
+.back-btn:hover {
+  background: #5a6268;
+}
+
+/* Statistiques */
+.archive-stats {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  text-align: center;
+  flex: 1;
+}
+
+.stat-number {
+  font-size: 32px;
+  font-weight: bold;
+  color: #1890ff;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  color: #666;
+  font-size: 14px;
+}
+
+/* Tableau d'archive */
+.archive-table-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  /* Le conteneur prend toute la hauteur restante et scrolle si besoin */
+  flex: 1;
+  overflow: auto;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.archive-table {
+  width: 100%;
+  min-width: 1200px; /* Largeur minimale pour afficher toutes les colonnes */
+  border-collapse: collapse;
+  table-layout: auto; /* Permet aux colonnes de s'ajuster automatiquement */
+}
+
+.archive-table th {
+  background: #f8f9fa;
+  padding: 15px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6;
+  white-space: nowrap; /* Empêche le retour à la ligne */
+}
+
+.archive-table td {
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+  vertical-align: middle;
+  word-wrap: break-word; /* Permet le retour à la ligne si nécessaire */
+  max-width: 200px; /* Largeur maximale pour éviter les colonnes trop larges */
+}
+
+.archive-table tr:hover {
+  background: #f8f9fa;
+}
+
+/* Badges */
+.reference-badge {
+  background: #1890ff;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.statut-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.autorisation-available {
+  color: #52c41a;
+  font-weight: 600;
+}
+
+.autorisation-unavailable {
+  color: #ff4d4f;
+  font-weight: 600;
+}
+
+/* Bouton de téléchargement */
+.download-btn {
+  background: #52c41a;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.3s;
+}
+
+.download-btn:hover {
+  background: #389e0d;
+}
+
+/* Message vide */
+.no-archives {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.no-archives-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.no-archives h3 {
+  color: #495057;
+  margin-bottom: 10px;
+}
+
+.no-archives p {
+  color: #6c757d;
+  margin: 0;
+}
+
+/* Styles spécifiques pour les colonnes */
+.archive-table .reference-cell {
+  min-width: 150px;
+  max-width: 200px;
+}
+
+.archive-table .type-cell {
+  min-width: 120px;
+  max-width: 150px;
+}
+
+.archive-table .demandeur-cell {
+  min-width: 150px;
+  max-width: 200px;
+}
+
+.archive-table .date-cell {
+  min-width: 100px;
+  max-width: 120px;
+}
+
+.archive-table .statut-cell {
+  min-width: 140px;
+  max-width: 160px;
+}
+
+.archive-table .autorisation-cell {
+  min-width: 100px;
+  max-width: 120px;
+  text-align: center;
+}
+
+.archive-table .actions-cell {
+  min-width: 120px;
+  max-width: 140px;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .archive-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .archive-stats {
+    flex-direction: column;
+  }
+  
+  .archive-table-container {
+    overflow-x: auto;
+  }
+  
+  .archive-table {
+    min-width: 1200px; /* Maintient la largeur minimale même sur mobile */
+  }
+}

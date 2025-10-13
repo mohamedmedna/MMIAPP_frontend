@@ -1,0 +1,140 @@
+.gestion-signatures {
+  padding: 24px;
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+.gestion-signatures .ant-card {
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.gestion-signatures .ant-statistic-title {
+  font-size: 14px;
+  color: #666;
+}
+
+.gestion-signatures .ant-list-item {
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.gestion-signatures .ant-list-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.gestion-signatures .ant-avatar {
+  background: #f0f0f0;
+}
+
+.gestion-signatures .ant-upload {
+  width: 100%;
+}
+
+.gestion-signatures .ant-upload-drag {
+  border: 2px dashed #d9d9d9;
+  border-radius: 8px;
+  background: #fafafa;
+  transition: all 0.3s ease;
+}
+
+.gestion-signatures .ant-upload-drag:hover {
+  border-color: #1890ff;
+  background: #f0f8ff;
+}
+
+.gestion-signatures .ant-modal-content {
+  border-radius: 12px;
+}
+
+.gestion-signatures .ant-form-item-label > label {
+  font-weight: 500;
+  color: #333;
+}
+
+.gestion-signatures .ant-btn-primary {
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+  border: none;
+  border-radius: 8px;
+  height: 40px;
+  font-weight: 500;
+}
+
+.gestion-signatures .ant-btn-primary:hover {
+  background: linear-gradient(135deg, #40a9ff 0%, #1890ff 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
+}
+
+.gestion-signatures .ant-btn-danger {
+  border-radius: 6px;
+}
+
+.gestion-signatures .ant-card-head-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.gestion-signatures .ant-typography h2 {
+  color: #1890ff;
+  margin-bottom: 8px;
+}
+
+.gestion-signatures .ant-divider {
+  margin: 24px 0;
+  border-color: #e8e8e8;
+}
+
+.gestion-signatures .ant-space {
+  gap: 8px;
+}
+
+.gestion-signatures .ant-statistic-content {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.gestion-signatures .ant-list-item-meta-title {
+  margin-bottom: 8px;
+}
+
+.gestion-signatures .ant-list-item-meta-description {
+  line-height: 1.6;
+}
+
+.gestion-signatures .ant-popover-inner {
+  border-radius: 8px;
+}
+
+.gestion-signatures .ant-message {
+  border-radius: 8px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .gestion-signatures {
+    padding: 16px;
+  }
+  
+  .gestion-signatures .ant-row {
+    margin-bottom: 16px;
+  }
+  
+  .gestion-signatures .ant-col {
+    margin-bottom: 16px;
+  }
+  
+  .gestion-signatures .ant-modal {
+    margin: 16px;
+    max-width: calc(100vw - 32px);
+  }
+}
+
+
+
+
