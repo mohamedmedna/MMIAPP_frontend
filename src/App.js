@@ -62,6 +62,8 @@ import HomePage from './pages/HomePage'; // Page avec espaces demandeur et admin
 import NotificationsDemandeur from './pages/NotificationsDemandeur';
 import SuiviDemandes from './pages/SuiviDemandes';
 import Archive from './pages/Archive';
+import ActualiteDetail from './pages/ActualiteDetail';
+import AdminPortail from './pages/AdminPortail';
 
 
 function App() {
@@ -143,7 +145,9 @@ function App() {
       <Routes>
         {/* Public */}
         <Route path="/" element={<PlateformeGestion />} />
-        <Route path="/plateforme" element={<PlateformeGestion />} />
+        <Route path="/plateforme-gestion" element={<PlateformeGestion />} />
+        <Route path="/actualite/:id" element={<ActualiteDetail />} />
+        <Route path="/admin-portail" element={<AdminPortail />} />
         <Route path="/gestion" element={<HomePage />} />
         
 
