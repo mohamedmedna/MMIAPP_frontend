@@ -1,217 +1,313 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import { Plus, Edit, Trash2, FileText, Newspaper, X, Save } from 'lucide-react';
-import '../Styles/AdminPortail.css';
+import React, { useState, useEffect, useMemo } from "react";
+import { Link } from "react-router-dom";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import { Plus, Edit, Trash2, FileText, Newspaper, X, Save } from "lucide-react";
+import "../Styles/AdminPortail.css";
+import DatePicker from "react-datepicker";
+import { registerLocale } from "react-datepicker";
+import fr from "date-fns/locale/fr";
+import "react-datepicker/dist/react-datepicker.css";
+
+registerLocale("fr", fr);
+const toYYYYMMDD = (d) => {
+  if (!d) return null;
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
+
+const toYYYYMMDD_HHMMSS = (d) => {
+  if (!d) return null;
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(
+    d.getHours()
+  )}:${pad(d.getMinutes())}:00`;
+};
+
+const toDateInputValue = (dstr) => {
+  if (!dstr) return "";
+  const d = new Date(dstr);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toISOString().slice(0, 10);
+};
+
+const toLocalDateTimeInput = (dstr) => {
+  if (!dstr) return "";
+  const d = new Date(dstr);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n) => String(n).padStart(2, "0");
+  const yyyy = d.getFullYear();
+  const mm = pad(d.getMonth() + 1);
+  const dd = pad(d.getDate());
+  const hh = pad(d.getHours());
+  const mi = pad(d.getMinutes());
+  return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+};
+
+const toMySQLDateTime = (localValue) => {
+  if (!localValue) return null;
+  return localValue.replace("T", " ") + ":00";
+};
+
+const API_BASE =
+  import.meta?.env?.VITE_API_BASE ||
+  process.env.REACT_APP_API_BASE ||
+  "http://localhost:4000";
 
 function AdminPortail() {
-  const [activeTab, setActiveTab] = useState('actualites');
+  const [activeTab, setActiveTab] = useState("actualites");
+
   const [actualites, setActualites] = useState([]);
   const [documents, setDocuments] = useState([]);
+
+  const [typeDocs, setTypeDocs] = useState([]);
+  const typeLabelById = useMemo(() => {
+    const m = {};
+    typeDocs.forEach((t) => (m[t.id] = t.libelle));
+    return m;
+  }, [typeDocs]);
+
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
 
-  // Formulaire pour actualité
+  // Form actualité
   const [formActualite, setFormActualite] = useState({
-    titre: '',
-    image: '',
-    extrait: '',
-    contenu: '',
-    categorie: '',
-    auteur: ''
+    titre: "",
+    contenu: "",
+    status: "BROUILLON",
+    fichierMediaId: null,
+    datePublication: null,
   });
 
-  // Formulaire pour document
+  // Form document
   const [formDocument, setFormDocument] = useState({
-    titre: '',
-    description: '',
-    type: '',
-    categorie: '',
-    taille: '',
-    fichier: ''
+    titre: "",
+    description: "",
+    status: "BROUILLON",
+    docTypeId: "",
+    fichierMediaId: null,
+    datePublication: null,
   });
 
-  // États pour les fichiers uploadés
   const [imageFile, setImageFile] = useState(null);
   const [documentFile, setDocumentFile] = useState(null);
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    fetchData();
+    fetchLists();
+    fetchTypeDocs();
   }, []);
 
-  const fetchData = async () => {
+  async function fetchLists() {
     try {
-      const [actualitesRes, documentsRes] = await Promise.all([
-        fetch('http://localhost:4000/api/actualites'),
-        fetch('http://localhost:4000/api/documents')
+      const [actuRes, docRes] = await Promise.all([
+        fetch(`${API_BASE}/api/actualites?page=1&pageSize=100`),
+        fetch(`${API_BASE}/api/documents?page=1&pageSize=100`),
       ]);
 
-      if (actualitesRes.ok && documentsRes.ok) {
-        const actualitesData = await actualitesRes.json();
-        const documentsData = await documentsRes.json();
-        setActualites(actualitesData);
-        setDocuments(documentsData);
+      if (actuRes.ok) {
+        const js = await actuRes.json();
+        setActualites(Array.isArray(js.data) ? js.data : []);
       }
-    } catch (error) {
-      console.error('Erreur lors du chargement des données:', error);
-    }
-  };
 
-  const handleAddNew = () => {
+      if (docRes.ok) {
+        const js = await docRes.json();
+        setDocuments(Array.isArray(js.data) ? js.data : []);
+      }
+    } catch (e) {
+      console.error("Erreur lors du chargement des listes:", e);
+    }
+  }
+
+  async function fetchTypeDocs() {
+    try {
+      const r = await fetch(`${API_BASE}/api/type-documents`);
+      if (r.ok) setTypeDocs(await r.json());
+    } catch (e) {
+      console.error("Erreur chargement type-documents:", e);
+    }
+  }
+
+  async function uploadMedia(file) {
+    const fd = new FormData();
+    fd.append("file", file);
+    const r = await fetch(`${API_BASE}/api/media`, {
+      method: "POST",
+      body: fd,
+    });
+    if (!r.ok) throw new Error("Upload media échoué");
+    return r.json();
+  }
+
+  function handleAddNew() {
     setEditMode(false);
     setCurrentItem(null);
     setImageFile(null);
     setDocumentFile(null);
-    if (activeTab === 'actualites') {
+
+    if (activeTab === "actualites") {
       setFormActualite({
-        titre: '',
-        image: '',
-        extrait: '',
-        contenu: '',
-        categorie: '',
-        auteur: ''
+        titre: "",
+        contenu: "",
+        status: "BROUILLON",
+        fichierMediaId: null,
+        datePublication: "",
       });
     } else {
       setFormDocument({
-        titre: '',
-        description: '',
-        type: '',
-        categorie: '',
-        taille: '',
-        fichier: ''
+        titre: "",
+        description: "",
+        status: "BROUILLON",
+        docTypeId: "",
+        fichierMediaId: null,
+        datePublication: "",
       });
     }
-    setShowModal(true);
-  };
 
-  const handleEdit = (item) => {
+    setShowModal(true);
+  }
+
+  function handleEdit(item) {
     setEditMode(true);
     setCurrentItem(item);
-    if (activeTab === 'actualites') {
-      setFormActualite(item);
+    setImageFile(null);
+    setDocumentFile(null);
+
+    if (activeTab === "actualites") {
+      setFormActualite({
+        titre: item.titre || "",
+        contenu: item.contenuHtml || "",
+        status: item.status || "BROUILLON",
+        fichierMediaId: item.fichierMediaId || null,
+        datePublication: item.datePublication
+          ? new Date(item.datePublication)
+          : null,
+      });
     } else {
-      setFormDocument(item);
+      setFormDocument({
+        titre: item.titre || "",
+        description: item.description || "",
+        status: item.status || "BROUILLON",
+        docTypeId: item.docTypeId || "",
+        fichierMediaId: item.fichierMediaId || null,
+        datePublication: item.datePublication
+          ? new Date(item.datePublication)
+          : null,
+      });
     }
+
     setShowModal(true);
-  };
+  }
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
+  async function handleDelete(id) {
+    if (!window.confirm("Êtes-vous sûr de vouloir supprimer cet élément ?"))
       return;
-    }
 
     try {
-      const endpoint = activeTab === 'actualites' ? 'actualites' : 'documents';
-      const response = await fetch(`http://localhost:4000/api/${endpoint}/${id}`, {
-        method: 'DELETE'
+      const endpoint = activeTab === "actualites" ? "actualites" : "documents";
+      const r = await fetch(`${API_BASE}/api/${endpoint}/${id}`, {
+        method: "DELETE",
       });
-
-      if (response.ok) {
-        fetchData();
-        alert('Élément supprimé avec succès');
+      if (r.ok) {
+        await fetchLists();
+        alert("Élément supprimé avec succès");
+      } else {
+        const js = await r.json().catch(() => ({}));
+        alert(js?.error || "Erreur lors de la suppression");
       }
-    } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
-      alert('Erreur lors de la suppression');
+    } catch (e) {
+      console.error(e);
+      alert("Erreur lors de la suppression");
     }
-  };
+  }
 
-  const handleImageUpload = async (file) => {
-    const formData = new FormData();
-    formData.append('image', file);
-
-    try {
-      const response = await fetch('http://localhost:4000/api/upload/image', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        return data.url;
-      }
-    } catch (error) {
-      console.error('Erreur lors de l\'upload:', error);
-      return null;
-    }
-  };
-
-  const handleDocumentUpload = async (file) => {
-    const formData = new FormData();
-    formData.append('document', file);
-
-    try {
-      const response = await fetch('http://localhost:4000/api/upload/document', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        return data;
-      }
-    } catch (error) {
-      console.error('Erreur lors de l\'upload:', error);
-      return null;
-    }
-  };
-
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
     setUploading(true);
 
     try {
-      let data = activeTab === 'actualites' ? { ...formActualite } : { ...formDocument };
+      let payload = {};
+      let endpoint = "";
+      let method = editMode ? "PUT" : "POST";
+      let url = "";
 
-      // Upload de l'image pour les actualités
-      if (activeTab === 'actualites' && imageFile) {
-        const imageUrl = await handleImageUpload(imageFile);
-        if (imageUrl) {
-          data.image = imageUrl;
+      if (activeTab === "actualites") {
+        let fichierMediaId = formActualite.fichierMediaId;
+        if (imageFile) {
+          const media = await uploadMedia(imageFile);
+          fichierMediaId = media.id;
         }
+
+        payload = {
+          titre: formActualite.titre,
+          contenuHtml: formActualite.contenu,
+          status: formActualite.status || "BROUILLON",
+          datePublication: toYYYYMMDD_HHMMSS(formActualite.datePublication),
+          fichierMediaId: fichierMediaId ?? null,
+          // autheurId: null, categorieIds: [], tagIds: []
+        };
+
+        endpoint = "actualites";
+        url = editMode
+          ? `${API_BASE}/api/${endpoint}/${currentItem.id}`
+          : `${API_BASE}/api/${endpoint}`;
+      } else {
+        let fichierMediaId = formDocument.fichierMediaId;
+        if (documentFile) {
+          const media = await uploadMedia(documentFile);
+          fichierMediaId = media.id;
+        }
+
+        if (!formDocument.docTypeId) {
+          alert("Veuillez sélectionner un type de document");
+          setUploading(false);
+          return;
+        }
+
+        payload = {
+          titre: formDocument.titre,
+          description: formDocument.description,
+          status: formDocument.status || "BROUILLON",
+          docTypeId: parseInt(formDocument.docTypeId, 10),
+          fichierMediaId: parseInt(fichierMediaId, 10),
+          datePublication: toYYYYMMDD(formDocument.datePublication),
+          // autheurId: null, tagIds: []
+        };
+
+        endpoint = "documents";
+        url = editMode
+          ? `${API_BASE}/api/${endpoint}/${currentItem.id}`
+          : `${API_BASE}/api/${endpoint}`;
       }
 
-      // Upload du document
-      if (activeTab === 'documents' && documentFile) {
-        const uploadResult = await handleDocumentUpload(documentFile);
-        if (uploadResult) {
-          data.fichier = uploadResult.url;
-          data.taille = uploadResult.size;
-        }
-      }
-
-      const endpoint = activeTab === 'actualites' ? 'actualites' : 'documents';
-      const url = editMode 
-        ? `http://localhost:4000/api/${endpoint}/${currentItem.id}`
-        : `http://localhost:4000/api/${endpoint}`;
-      
-      const method = editMode ? 'PUT' : 'POST';
-
-      const response = await fetch(url, {
+      const r = await fetch(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
 
-      if (response.ok) {
-        fetchData();
+      if (r.ok) {
+        await fetchLists();
         setShowModal(false);
         setImageFile(null);
         setDocumentFile(null);
-        alert(editMode ? 'Élément modifié avec succès' : 'Élément ajouté avec succès');
+        alert(
+          editMode
+            ? "Élément modifié avec succès"
+            : "Élément ajouté avec succès"
+        );
+      } else {
+        const js = await r.json().catch(() => ({}));
+        alert(js?.error || "Erreur lors de la sauvegarde");
       }
-    } catch (error) {
-      console.error('Erreur lors de la sauvegarde:', error);
-      alert('Erreur lors de la sauvegarde');
+    } catch (e) {
+      console.error("Erreur lors de la sauvegarde:", e);
+      alert(e.message || "Erreur lors de la sauvegarde");
     } finally {
       setUploading(false);
     }
-  };
+  }
 
   return (
     <>
@@ -225,16 +321,16 @@ function AdminPortail() {
         </div>
 
         <div className="admin-tabs">
-          <button 
-            className={`tab-btn ${activeTab === 'actualites' ? 'active' : ''}`}
-            onClick={() => setActiveTab('actualites')}
+          <button
+            className={`tab-btn ${activeTab === "actualites" ? "active" : ""}`}
+            onClick={() => setActiveTab("actualites")}
           >
             <Newspaper size={20} />
             Actualités
           </button>
-          <button 
-            className={`tab-btn ${activeTab === 'documents' ? 'active' : ''}`}
-            onClick={() => setActiveTab('documents')}
+          <button
+            className={`tab-btn ${activeTab === "documents" ? "active" : ""}`}
+            onClick={() => setActiveTab("documents")}
           >
             <FileText size={20} />
             Documents Juridiques
@@ -243,42 +339,68 @@ function AdminPortail() {
 
         <div className="admin-content">
           <div className="admin-toolbar">
-            <h2>{activeTab === 'actualites' ? 'Gestion des Actualités' : 'Gestion des Documents'}</h2>
+            <h2>
+              {activeTab === "actualites"
+                ? "Gestion des Actualités"
+                : "Gestion des Documents"}
+            </h2>
             <button className="btn-add" onClick={handleAddNew}>
               <Plus size={20} />
               Ajouter
             </button>
           </div>
 
-          {activeTab === 'actualites' ? (
+          {activeTab === "actualites" ? (
             <div className="admin-table">
               <table>
                 <thead>
                   <tr>
                     <th>Titre</th>
-                    <th>Catégorie</th>
-                    <th>Auteur</th>
-                    <th>Date</th>
+                    <th>Statut</th>
+                    <th>Date de publication</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {actualites.map((actualite) => (
-                    <tr key={actualite.id}>
-                      <td>{actualite.titre}</td>
-                      <td><span className="badge">{actualite.categorie}</span></td>
-                      <td>{actualite.auteur}</td>
-                      <td>{new Date(actualite.date).toLocaleDateString('fr-FR')}</td>
+                  {actualites.map((a) => (
+                    <tr key={a.id}>
+                      <td>{a.titre}</td>
+                      <td>
+                        <span className="badge">{a.status}</span>
+                      </td>
+                      <td>
+                        {a.datePublication
+                          ? new Date(a.datePublication).toLocaleDateString(
+                              "fr-FR"
+                            )
+                          : "-"}
+                      </td>
                       <td className="actions">
-                        <button className="btn-edit" onClick={() => handleEdit(actualite)}>
+                        <button
+                          className="btn-edit"
+                          onClick={() => handleEdit(a)}
+                        >
                           <Edit size={16} />
                         </button>
-                        <button className="btn-delete" onClick={() => handleDelete(actualite.id)}>
+                        <button
+                          className="btn-delete"
+                          onClick={() => handleDelete(a.id)}
+                        >
                           <Trash2 size={16} />
                         </button>
                       </td>
                     </tr>
                   ))}
+                  {actualites.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={4}
+                        style={{ textAlign: "center", opacity: 0.7 }}
+                      >
+                        Aucune actualité
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -289,111 +411,162 @@ function AdminPortail() {
                   <tr>
                     <th>Titre</th>
                     <th>Type</th>
-                    <th>Catégorie</th>
-                    <th>Date</th>
-                    <th>Taille</th>
+                    <th>Statut</th>
+                    <th>Date de publication</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {documents.map((doc) => (
-                    <tr key={doc.id}>
-                      <td>{doc.titre}</td>
-                      <td><span className="badge">{doc.type}</span></td>
-                      <td>{doc.categorie}</td>
-                      <td>{new Date(doc.date).toLocaleDateString('fr-FR')}</td>
-                      <td>{doc.taille}</td>
+                  {documents.map((d) => (
+                    <tr key={d.id}>
+                      <td>{d.titre}</td>
+                      <td>
+                        <span className="badge">
+                          {typeLabelById[d.docTypeId] || d.docTypeId}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="badge">{d.status}</span>
+                      </td>
+                      <td>
+                        {d.datePublication
+                          ? new Date(d.datePublication).toLocaleDateString(
+                              "fr-FR"
+                            )
+                          : "-"}
+                      </td>
                       <td className="actions">
-                        <button className="btn-edit" onClick={() => handleEdit(doc)}>
+                        <button
+                          className="btn-edit"
+                          onClick={() => handleEdit(d)}
+                        >
                           <Edit size={16} />
                         </button>
-                        <button className="btn-delete" onClick={() => handleDelete(doc.id)}>
+                        <button
+                          className="btn-delete"
+                          onClick={() => handleDelete(d.id)}
+                        >
                           <Trash2 size={16} />
                         </button>
                       </td>
                     </tr>
                   ))}
+                  {documents.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        style={{ textAlign: "center", opacity: 0.7 }}
+                      >
+                        Aucun document
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
           )}
         </div>
 
-        {/* Modal pour ajouter/modifier */}
+        {/* Modal */}
         {showModal && (
           <div className="modal-overlay" onClick={() => setShowModal(false)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
-                <h3>{editMode ? 'Modifier' : 'Ajouter'} {activeTab === 'actualites' ? 'une actualité' : 'un document'}</h3>
-                <button className="btn-close" onClick={() => setShowModal(false)}>
+                <h3>
+                  {editMode ? "Modifier" : "Ajouter"}{" "}
+                  {activeTab === "actualites" ? "une actualité" : "un document"}
+                </h3>
+                <button
+                  className="btn-close"
+                  onClick={() => setShowModal(false)}
+                >
                   <X size={24} />
                 </button>
               </div>
 
               <form onSubmit={handleSubmit} className="modal-form">
-                {activeTab === 'actualites' ? (
+                {activeTab === "actualites" ? (
                   <>
                     <div className="form-group">
                       <label>Titre *</label>
                       <input
                         type="text"
                         value={formActualite.titre}
-                        onChange={(e) => setFormActualite({...formActualite, titre: e.target.value})}
+                        onChange={(e) =>
+                          setFormActualite({
+                            ...formActualite,
+                            titre: e.target.value,
+                          })
+                        }
                         required
                       />
                     </div>
+
                     <div className="form-group">
-                      <label>Image *</label>
+                      <label>Image (couverture)</label>
                       <input
                         type="file"
                         accept="image/*"
-                        onChange={(e) => setImageFile(e.target.files[0])}
+                        onChange={(e) =>
+                          setImageFile(e.target.files?.[0] || null)
+                        }
                         className="file-input"
                       />
                       {imageFile && (
                         <p className="file-name">📷 {imageFile.name}</p>
                       )}
-                      {formActualite.image && !imageFile && (
-                        <p className="current-file">Image actuelle: {formActualite.image}</p>
-                      )}
                     </div>
-                    <div className="form-group">
-                      <label>Extrait *</label>
-                      <textarea
-                        value={formActualite.extrait}
-                        onChange={(e) => setFormActualite({...formActualite, extrait: e.target.value})}
-                        rows="3"
-                        required
-                      />
-                    </div>
+
                     <div className="form-group">
                       <label>Contenu (HTML) *</label>
                       <textarea
+                        rows={8}
                         value={formActualite.contenu}
-                        onChange={(e) => setFormActualite({...formActualite, contenu: e.target.value})}
-                        rows="8"
+                        onChange={(e) =>
+                          setFormActualite({
+                            ...formActualite,
+                            contenu: e.target.value,
+                          })
+                        }
                         required
                       />
                     </div>
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label>Catégorie *</label>
-                        <input
-                          type="text"
-                          value={formActualite.categorie}
-                          onChange={(e) => setFormActualite({...formActualite, categorie: e.target.value})}
-                          required
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label>Auteur *</label>
-                        <input
-                          type="text"
-                          value={formActualite.auteur}
-                          onChange={(e) => setFormActualite({...formActualite, auteur: e.target.value})}
-                          required
-                        />
-                      </div>
+                    <div className="form-group">
+                      <label>Date de publication</label>
+                      <DatePicker
+                        selected={formActualite.datePublication}
+                        onChange={(d) =>
+                          setFormActualite({
+                            ...formActualite,
+                            datePublication: d,
+                          })
+                        }
+                        showTimeSelect
+                        timeFormat="HH:mm"
+                        timeIntervals={5}
+                        dateFormat="dd/MM/yyyy HH:mm"
+                        locale="fr"
+                        placeholderText="jj/mm/aaaa hh:mm"
+                        isClearable
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Statut *</label>
+                      <select
+                        value={formActualite.status}
+                        onChange={(e) =>
+                          setFormActualite({
+                            ...formActualite,
+                            status: e.target.value,
+                          })
+                        }
+                        required
+                      >
+                        <option value="BROUILLON">BROUILLON</option>
+                        <option value="PUBLIE">PUBLIE</option>
+                        <option value="ARCHIVE">ARCHIVE</option>
+                      </select>
                     </div>
                   </>
                 ) : (
@@ -403,70 +576,128 @@ function AdminPortail() {
                       <input
                         type="text"
                         value={formDocument.titre}
-                        onChange={(e) => setFormDocument({...formDocument, titre: e.target.value})}
+                        onChange={(e) =>
+                          setFormDocument({
+                            ...formDocument,
+                            titre: e.target.value,
+                          })
+                        }
                         required
                       />
                     </div>
+
                     <div className="form-group">
                       <label>Description *</label>
                       <textarea
+                        rows={4}
                         value={formDocument.description}
-                        onChange={(e) => setFormDocument({...formDocument, description: e.target.value})}
-                        rows="3"
+                        onChange={(e) =>
+                          setFormDocument({
+                            ...formDocument,
+                            description: e.target.value,
+                          })
+                        }
                         required
                       />
                     </div>
+
                     <div className="form-row">
                       <div className="form-group">
                         <label>Type *</label>
                         <select
-                          value={formDocument.type}
-                          onChange={(e) => setFormDocument({...formDocument, type: e.target.value})}
+                          value={formDocument.docTypeId}
+                          onChange={(e) =>
+                            setFormDocument({
+                              ...formDocument,
+                              docTypeId: e.target.value,
+                            })
+                          }
                           required
                         >
                           <option value="">Sélectionner</option>
-                          <option value="Loi">Loi</option>
-                          <option value="Décret">Décret</option>
-                          <option value="Arrêté">Arrêté</option>
-                          <option value="Règlement">Règlement</option>
-                          <option value="Guide">Guide</option>
+                          {typeDocs.map((t) => (
+                            <option key={t.id} value={t.id}>
+                              {t.libelle}
+                            </option>
+                          ))}
                         </select>
                       </div>
-                      <div className="form-group">
-                        <label>Catégorie *</label>
-                        <input
-                          type="text"
-                          value={formDocument.categorie}
-                          onChange={(e) => setFormDocument({...formDocument, categorie: e.target.value})}
-                          required
-                        />
-                      </div>
                     </div>
+
                     <div className="form-group">
-                      <label>Fichier PDF *</label>
+                      <label>Fichier (PDF ou autre) *</label>
                       <input
                         type="file"
-                        accept=".pdf"
-                        onChange={(e) => setDocumentFile(e.target.files[0])}
+                        accept="application/pdf,application/*,image/*"
+                        onChange={(e) =>
+                          setDocumentFile(e.target.files?.[0] || null)
+                        }
                         className="file-input"
                       />
                       {documentFile && (
-                        <p className="file-name">📄 {documentFile.name} ({(documentFile.size / (1024 * 1024)).toFixed(2)} MB)</p>
+                        <p className="file-name">
+                          📄 {documentFile.name} (
+                          {(documentFile.size / (1024 * 1024)).toFixed(2)} MB)
+                        </p>
                       )}
-                      {formDocument.fichier && !documentFile && (
-                        <p className="current-file">Fichier actuel: {formDocument.fichier}</p>
-                      )}
+                    </div>
+                    <div className="form-group">
+                      <label>Date de publication</label>
+                      <label>Date de publication</label>
+                      <DatePicker
+                        selected={formDocument.datePublication}
+                        onChange={(d) =>
+                          setFormDocument({
+                            ...formDocument,
+                            datePublication: d,
+                          })
+                        }
+                        dateFormat="dd/MM/yyyy"
+                        locale="fr"
+                        placeholderText="jj/mm/aaaa"
+                        isClearable
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Statut *</label>
+                      <select
+                        value={formDocument.status}
+                        onChange={(e) =>
+                          setFormDocument({
+                            ...formDocument,
+                            status: e.target.value,
+                          })
+                        }
+                        required
+                      >
+                        <option value="BROUILLON">BROUILLON</option>
+                        <option value="PUBLIE">PUBLIE</option>
+                        <option value="ARCHIVE">ARCHIVE</option>
+                      </select>
                     </div>
                   </>
                 )}
 
                 <div className="modal-actions">
-                  <button type="button" className="btn-cancel" onClick={() => setShowModal(false)}>
+                  <button
+                    type="button"
+                    className="btn-cancel"
+                    onClick={() => setShowModal(false)}
+                  >
                     Annuler
                   </button>
-                  <button type="submit" className="btn-save" disabled={uploading}>
+                  <button
+                    type="submit"
+                    className="btn-save"
+                    disabled={uploading}
+                  >
                     <Save size={20} />
-                    {uploading ? 'Upload en cours...' : (editMode ? 'Modifier' : 'Ajouter')}
+                    {uploading
+                      ? "Enregistrement..."
+                      : editMode
+                      ? "Modifier"
+                      : "Ajouter"}
                   </button>
                 </div>
               </form>
