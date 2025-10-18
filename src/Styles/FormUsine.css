@@ -19,7 +19,8 @@
 
 /* Sections du formulaire */
 .form-section-juridique,
-.form-section-usine {
+.form-section-usine,
+.form-section-localisation {
   margin-bottom: 30px;
   padding: 20px;
   border: 2px solid #e9ecef;
@@ -33,6 +34,11 @@
 
 .form-section-usine {
   border-left: 4px solid #17a2b8;
+}
+
+.form-section-localisation {
+  border-left: 4px solid #ff9800;
+  background: #fff8f0;
 }
 
 .section-title {
@@ -224,6 +230,71 @@
 .form-group input[type="file"]:hover {
   background: #e3f2fd;
   transform: scale(1.02);
+}
+
+/* Styles pour la section de localisation */
+.localisation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.btn-guide-location {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-guide-location:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+}
+
+.btn-guide-location:active {
+  transform: translateY(0);
+}
+
+.coordinates-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.field-help {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.85rem;
+  color: #6c757d;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .coordinates-inputs {
+    grid-template-columns: 1fr;
+  }
+  
+  .localisation-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .btn-guide-location {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 /* Styles pour les messages d'erreur et de succès */

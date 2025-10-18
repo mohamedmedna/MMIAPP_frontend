@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import MapComponent from "./MapComponent";
 import banniereMinistere from "../assets/banniere-ministere.jpg";
 import { FileText, Download, Calendar, Tag } from "lucide-react";
 import "../Styles/PlateformeGestion.css";
@@ -555,6 +556,17 @@ function PlateformeGestion() {
             )}
           </div>
         </section>
+
+
+        {/* Section map */}
+
+        <section className="map-section" aria-labelledby="map-title">
+          <MapComponent />
+        </section>
+
+        {/* Section Map */}
+
+
 
         {/* Lien vers l'administration */}
         <section className="admin-access section">

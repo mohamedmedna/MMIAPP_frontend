@@ -1,0 +1,132 @@
+/* ==================== STYLES COMMUNS POUR LA LOCALISATION GPS ==================== */
+
+/* Section de localisation */
+.form-section-localisation {
+  margin-top: 20px;
+  padding: 20px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  background: #fff8f0;
+  border-left: 4px solid #ff9800;
+}
+
+.localisation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.localisation-header .section-title {
+  color: #1e6a8e;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-guide-location {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.btn-guide-location:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+  background: linear-gradient(135deg, #f57c00 0%, #e65100 100%);
+}
+
+.btn-guide-location:active {
+  transform: translateY(0);
+}
+
+.coordinates-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.coordinates-inputs .form-group {
+  margin-bottom: 0;
+}
+
+.coordinates-inputs .form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #495057;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.coordinates-inputs .form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ced4da;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.coordinates-inputs .form-group input:focus {
+  outline: none;
+  border-color: #ff9800;
+  box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
+}
+
+.coordinates-inputs .form-group input::placeholder {
+  color: #adb5bd;
+  font-style: italic;
+}
+
+.field-help {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.85rem;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .coordinates-inputs {
+    grid-template-columns: 1fr;
+  }
+  
+  .localisation-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .btn-guide-location {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .localisation-header .section-title {
+    font-size: 1rem;
+  }
+  
+  .btn-guide-location {
+    font-size: 0.85rem;
+    padding: 8px 16px;
+  }
+}

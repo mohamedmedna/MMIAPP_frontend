@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Styles/FormUsine.css';
+import '../Styles/LocationStyles.css';
 import { useTranslation } from 'react-i18next';
+import LocationGuideModal from '../components/LocationGuideModal';
 
 function FormUsine({ user, setNotif, setError }) {
   const { t } = useTranslation();
@@ -9,7 +11,9 @@ function FormUsine({ user, setNotif, setError }) {
   const [formKey, setFormKey] = useState(Date.now());
   const [form, setForm] = useState({
     telephone_proprietaire: '',
-    selected_juridique_doc: ''
+    selected_juridique_doc: '',
+    longitude: '',
+    latitude: ''
   });
   const [files, setFiles] = useState({
     // Dossier juridique de la société
@@ -29,6 +33,7 @@ function FormUsine({ user, setNotif, setError }) {
   });
   const [loading, setLoading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [showLocationGuide, setShowLocationGuide] = useState(false);
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
   const handleFileChange = e => setFiles({ ...files, [e.target.name]: e.target.files[0] });
@@ -49,7 +54,7 @@ function FormUsine({ user, setNotif, setError }) {
     setLoading(true);
 
     // Vérifier les champs texte
-    if (!form.telephone_proprietaire) {
+    if (!form.telephone_proprietaire || !form.longitude || !form.latitude) {
       setError(t('usine.error_required_text'));
       setLoading(false);
       return;
@@ -105,7 +110,9 @@ function FormUsine({ user, setNotif, setError }) {
       if (response.ok && data.success) {
         setNotif(t('usine.success'));
         setForm({
-          telephone_proprietaire: ''
+          telephone_proprietaire: '',
+          longitude: '',
+          latitude: ''
         });
         setFiles({
           statut_juridique_file: null, registre_commerce_file: null, nif_file: null, cnss_file: null,
@@ -253,6 +260,47 @@ function FormUsine({ user, setNotif, setError }) {
             />
           </div>
 
+          {/* Section Localisation GPS */}
+          <div className="form-section-localisation">
+            <div className="localisation-header">
+              <h4 className="section-title">📍 Coordonnées GPS de l'établissement</h4>
+              <button 
+                type="button" 
+                className="btn-guide-location"
+                onClick={() => setShowLocationGuide(true)}
+              >
+                ❓ Comment obtenir mes coordonnées ?
+              </button>
+            </div>
+            
+            <div className="coordinates-inputs">
+              <div className="form-group">
+                <label>🌐 Longitude</label>
+                <input 
+                  type="text" 
+                  name="longitude" 
+                  value={form.longitude} 
+                  onChange={handleChange} 
+                  placeholder="Ex: -15.9582"
+                  required 
+                />
+                <small className="field-help">Format: nombre décimal (ex: -15.9582)</small>
+              </div>
+
+              <div className="form-group">
+                <label>🌐 Latitude</label>
+                <input 
+                  type="text" 
+                  name="latitude" 
+                  value={form.latitude} 
+                  onChange={handleChange} 
+                  placeholder="Ex: 18.0735"
+                  required 
+                />
+                <small className="field-help">Format: nombre décimal (ex: 18.0735)</small>
+              </div>
+            </div>
+          </div>
 
         </div>
 
@@ -269,6 +317,11 @@ function FormUsine({ user, setNotif, setError }) {
           </div>
         </div>
       )}
+      
+      <LocationGuideModal 
+        isOpen={showLocationGuide} 
+        onClose={() => setShowLocationGuide(false)} 
+      />
     </div>
   );
 }

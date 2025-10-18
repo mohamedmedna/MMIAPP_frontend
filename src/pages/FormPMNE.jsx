@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import LocationGuideModal from '../components/LocationGuideModal';
 import '../Styles/FormPMNE.css';
+import '../Styles/LocationStyles.css';
 
 function FormPMNE({ user, setNotif, setError }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [formKey, setFormKey] = useState(Date.now());
   const [form, setForm] = useState({
-    telephone_proprietaire: ''
+    telephone_proprietaire: '',
+    longitude: '',
+    latitude: ''
   });
   const [files, setFiles] = useState({
     raison_sociale_file: null,
@@ -19,6 +23,7 @@ function FormPMNE({ user, setNotif, setError }) {
   });
   const [loading, setLoading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [showLocationGuide, setShowLocationGuide] = useState(false);
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
   const handleFileChange = e => setFiles({ ...files, [e.target.name]: e.target.files[0] });
@@ -60,7 +65,9 @@ function FormPMNE({ user, setNotif, setError }) {
       if (response.ok && data.success) {
         setNotif(t('pnme.success'));
         setForm({
-          telephone_proprietaire: ''
+          telephone_proprietaire: '',
+          longitude: '',
+          latitude: ''
         });
         setFiles({ raison_sociale_file: null, rc_file: null, nif_file: null, statuts_file: null, adresse_file: null });
         setFormKey(Date.now());
@@ -119,6 +126,48 @@ function FormPMNE({ user, setNotif, setError }) {
         <label>{t('pnme.telephone_proprietaire')}</label>
         <input name="telephone_proprietaire" value={form.telephone_proprietaire} onChange={handleChange} required />
 
+        {/* Section Localisation GPS */}
+        <div className="form-section-localisation">
+          <div className="localisation-header">
+            <h4 className="section-title">📍 Coordonnées GPS de l'établissement</h4>
+            <button 
+              type="button" 
+              className="btn-guide-location"
+              onClick={() => setShowLocationGuide(true)}
+            >
+              ❓ Comment obtenir mes coordonnées ?
+            </button>
+          </div>
+          
+          <div className="coordinates-inputs">
+            <div className="form-group">
+              <label>🌐 Longitude</label>
+              <input 
+                type="text" 
+                name="longitude" 
+                value={form.longitude} 
+                onChange={handleChange} 
+                placeholder="Ex: -15.9582"
+                required 
+              />
+              <small className="field-help">Format: nombre décimal (ex: -15.9582)</small>
+            </div>
+
+            <div className="form-group">
+              <label>🌐 Latitude</label>
+              <input 
+                type="text" 
+                name="latitude" 
+                value={form.latitude} 
+                onChange={handleChange} 
+                placeholder="Ex: 18.0735"
+                required 
+              />
+              <small className="field-help">Format: nombre décimal (ex: 18.0735)</small>
+            </div>
+          </div>
+        </div>
+
         <button type="submit" className="btn-form-pnme" disabled={loading}>
           {loading ? t('pnme.sending') : t('pnme.send')}
         </button>
@@ -132,6 +181,11 @@ function FormPMNE({ user, setNotif, setError }) {
           </div>
         </div>
       )}
+      
+      <LocationGuideModal 
+        isOpen={showLocationGuide} 
+        onClose={() => setShowLocationGuide(false)} 
+      />
     </div>
   );
 }
