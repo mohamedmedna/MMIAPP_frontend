@@ -145,6 +145,10 @@
     "error_invalid_code": "Invalid access code",
     "error_verification": "Error during code verification",
     "roles": {
+      "portail": {
+        "title": "Portal Management",
+        "desc": "Manage news and legal documents"
+      },
       "superadmin": {
         "title": "SuperAdmin",
         "desc": "Access reserved for superuser"
@@ -655,6 +659,136 @@
       "enterRemindMessage": "Type and message required."
     }
   },
+  "actualiteDetail": {
+    "loading": "Loading news...",
+    "notFound": "News not found",
+    "backToNews": "Back to news",
+    "back": "Back",
+    "print": "Print"
+  },
+  "plateformeGestion": {
+    "hero": {
+      "title": "Industry Portal"
+    },
+    "actualites": {
+      "title": "📰 News",
+      "subtitle": "Stay informed about the latest news from the industrial sector",
+      "resultsPerPage": "Results / page:",
+      "page": "Page",
+      "loading": "Loading news...",
+      "noData": "❌ No news available",
+      "readMore": "Read more →"
+    },
+    "documents": {
+      "title": "📄 Legal Documents",
+      "subtitle": "Access legislative and regulatory texts",
+      "typeFilter": "Type:",
+      "allTypes": "All",
+      "resultsPerPage": "Results / page:",
+      "page": "Page",
+      "noData": "❌ No documents available",
+      "download": "Download",
+      "unavailable": "File unavailable"
+    }
+  },
+  "adminPortail": {
+    "title": "Portal Administration",
+    "backToDashboard": "Back to SuperAdmin Dashboard",
+    "tabs": {
+      "actualites": "News",
+      "documents": "Legal Documents",
+      "images": "Images"
+    },
+    "actualites": {
+      "title": "News Management",
+      "addNew": "Add",
+      "columns": {
+        "titre": "Title",
+        "statut": "Status",
+        "datePublication": "Publication date",
+        "actions": "Actions"
+      },
+      "noData": "No news",
+      "form": {
+        "addTitle": "Add news",
+        "editTitle": "Edit news",
+        "titre": "Title",
+        "titreRequired": "Title *",
+        "image": "Image (cover)",
+        "contenu": "Content (HTML)",
+        "contenuRequired": "Content (HTML) *",
+        "datePublication": "Publication date",
+        "datePlaceholder": "mm/dd/yyyy hh:mm",
+        "statut": "Status",
+        "statutRequired": "Status *",
+        "statusBrouillon": "DRAFT",
+        "statusPublie": "PUBLISHED",
+        "statusArchive": "ARCHIVED",
+        "imageName": "📷"
+      }
+    },
+    "documents": {
+      "title": "Documents Management",
+      "columns": {
+        "titre": "Title",
+        "type": "Type",
+        "statut": "Status",
+        "datePublication": "Publication date",
+        "actions": "Actions"
+      },
+      "noData": "No documents",
+      "form": {
+        "addTitle": "Add document",
+        "editTitle": "Edit document",
+        "titre": "Title",
+        "titreRequired": "Title *",
+        "description": "Description",
+        "descriptionRequired": "Description *",
+        "type": "Type",
+        "typeRequired": "Type *",
+        "typeSelect": "Select",
+        "fichier": "File (PDF or other)",
+        "fichierRequired": "File (PDF or other) *",
+        "datePublication": "Publication date",
+        "datePlaceholder": "mm/dd/yyyy",
+        "statut": "Status",
+        "statutRequired": "Status *",
+        "fileName": "📄",
+        "fileSizeMB": "MB"
+      }
+    },
+    "images": {
+      "title": "Images Management",
+      "noData": "No images",
+      "form": {
+        "addTitle": "Add image",
+        "image": "Image",
+        "imageRequired": "Image *",
+        "imageName": "📷",
+        "fileSize": "KB"
+      }
+    },
+    "actions": {
+      "add": "Add",
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "close": "Close"
+    },
+    "messages": {
+      "confirmDelete": "Are you sure you want to delete this item?",
+      "deleteSuccess": "Item deleted successfully",
+      "deleteError": "Error during deletion",
+      "saveSuccess": "Item added successfully",
+      "editSuccess": "Item modified successfully",
+      "saveError": "Error during save",
+      "selectDocType": "Please select a document type",
+      "selectImage": "Please select an image",
+      "imageAddSuccess": "Image added successfully"
+    }
+  },
   "dashboardDDPI": {
     "title": "DDPI Dashboard",
     "sidebar": {
@@ -1050,7 +1184,21 @@
     "status": "Status",
     "actions": "Actions",
     "deactivate": "Deactivate",
+    "activate": "Activate",
+    "resendEmail": "Resend Email",
     "delete": "Delete",
+    "portalManagement": {
+      "title": "Industry Portal Management",
+      "description": "Manage news, legal documents and images of the public portal",
+      "subtext": "Complete administration of content visible on the industry portal",
+      "button": "Access Portal Management"
+    },
+    "accessCode": {
+      "title": "Administration Access Code Management",
+      "description": "Manage the access code required to enter the administration area",
+      "subtext": "The code must contain 8 characters with uppercase, lowercase, number and special character",
+      "button": "Manage Access Code"
+    },
     "roles": {
       "SuperAdmin": "SuperAdmin",
       "Secrétariat Central": "Central Secretariat",

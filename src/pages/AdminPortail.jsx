@@ -2,14 +2,19 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { Plus, Edit, Trash2, FileText, Newspaper, X, Save } from "lucide-react";
+import { Plus, Edit, Trash2, FileText, Newspaper, X, Save, Image as ImageIcon } from "lucide-react";
 import "../Styles/AdminPortail.css";
 import DatePicker from "react-datepicker";
 import { registerLocale } from "react-datepicker";
 import fr from "date-fns/locale/fr";
+import en from "date-fns/locale/en-US";
+import ar from "date-fns/locale/ar-SA";
 import "react-datepicker/dist/react-datepicker.css";
+import { useTranslation } from "react-i18next";
 
 registerLocale("fr", fr);
+registerLocale("en", en);
+registerLocale("ar", ar);
 const toYYYYMMDD = (d) => {
   if (!d) return null;
   const pad = (n) => String(n).padStart(2, "0");
@@ -55,10 +60,12 @@ const API_BASE =
   "http://localhost:4000";
 
 function AdminPortail() {
+  const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState("actualites");
 
   const [actualites, setActualites] = useState([]);
   const [documents, setDocuments] = useState([]);
+  const [images, setImages] = useState([]);
 
   const [typeDocs, setTypeDocs] = useState([]);
   const typeLabelById = useMemo(() => {
@@ -93,6 +100,9 @@ function AdminPortail() {
   const [imageFile, setImageFile] = useState(null);
   const [documentFile, setDocumentFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  
+  // Form image upload
+  const [uploadImageFile, setUploadImageFile] = useState(null);
 
   useEffect(() => {
     fetchLists();
@@ -101,9 +111,10 @@ function AdminPortail() {
 
   async function fetchLists() {
     try {
-      const [actuRes, docRes] = await Promise.all([
+      const [actuRes, docRes, mediaRes] = await Promise.all([
         fetch(`${API_BASE}/api/actualites?page=1&pageSize=100`),
         fetch(`${API_BASE}/api/documents?page=1&pageSize=100`),
+        fetch(`${API_BASE}/api/media?page=1&pageSize=100`),
       ]);
 
       if (actuRes.ok) {
@@ -114,6 +125,11 @@ function AdminPortail() {
       if (docRes.ok) {
         const js = await docRes.json();
         setDocuments(Array.isArray(js.data) ? js.data : []);
+      }
+
+      if (mediaRes.ok) {
+        const js = await mediaRes.json();
+        setImages(Array.isArray(js.data) ? js.data : []);
       }
     } catch (e) {
       console.error("Erreur lors du chargement des listes:", e);
@@ -145,6 +161,7 @@ function AdminPortail() {
     setCurrentItem(null);
     setImageFile(null);
     setDocumentFile(null);
+    setUploadImageFile(null);
 
     if (activeTab === "actualites") {
       setFormActualite({
@@ -154,7 +171,7 @@ function AdminPortail() {
         fichierMediaId: null,
         datePublication: "",
       });
-    } else {
+    } else if (activeTab === "documents") {
       setFormDocument({
         titre: "",
         description: "",
@@ -201,24 +218,28 @@ function AdminPortail() {
   }
 
   async function handleDelete(id) {
-    if (!window.confirm("Êtes-vous sûr de vouloir supprimer cet élément ?"))
+    if (!window.confirm(t('adminPortail.messages.confirmDelete')))
       return;
 
     try {
-      const endpoint = activeTab === "actualites" ? "actualites" : "documents";
+      let endpoint = "";
+      if (activeTab === "actualites") endpoint = "actualites";
+      else if (activeTab === "documents") endpoint = "documents";
+      else if (activeTab === "images") endpoint = "media";
+      
       const r = await fetch(`${API_BASE}/api/${endpoint}/${id}`, {
         method: "DELETE",
       });
       if (r.ok) {
         await fetchLists();
-        alert("Élément supprimé avec succès");
+        alert(t('adminPortail.messages.deleteSuccess'));
       } else {
         const js = await r.json().catch(() => ({}));
-        alert(js?.error || "Erreur lors de la suppression");
+        alert(js?.error || t('adminPortail.messages.deleteError'));
       }
     } catch (e) {
       console.error(e);
-      alert("Erreur lors de la suppression");
+      alert(t('adminPortail.messages.deleteError'));
     }
   }
 
@@ -227,6 +248,23 @@ function AdminPortail() {
     setUploading(true);
 
     try {
+      // Cas spécial: Upload d'image seule
+      if (activeTab === "images") {
+        if (!uploadImageFile) {
+          alert(t('adminPortail.messages.selectImage'));
+          setUploading(false);
+          return;
+        }
+        
+        const media = await uploadMedia(uploadImageFile);
+        await fetchLists();
+        setShowModal(false);
+        setUploadImageFile(null);
+        alert(t('adminPortail.messages.imageAddSuccess'));
+        setUploading(false);
+        return;
+      }
+
       let payload = {};
       let endpoint = "";
       let method = editMode ? "PUT" : "POST";
@@ -260,7 +298,7 @@ function AdminPortail() {
         }
 
         if (!formDocument.docTypeId) {
-          alert("Veuillez sélectionner un type de document");
+          alert(t('adminPortail.messages.selectDocType'));
           setUploading(false);
           return;
         }
@@ -294,16 +332,16 @@ function AdminPortail() {
         setDocumentFile(null);
         alert(
           editMode
-            ? "Élément modifié avec succès"
-            : "Élément ajouté avec succès"
+            ? t('adminPortail.messages.editSuccess')
+            : t('adminPortail.messages.saveSuccess')
         );
       } else {
         const js = await r.json().catch(() => ({}));
-        alert(js?.error || "Erreur lors de la sauvegarde");
+        alert(js?.error || t('adminPortail.messages.saveError'));
       }
     } catch (e) {
       console.error("Erreur lors de la sauvegarde:", e);
-      alert(e.message || "Erreur lors de la sauvegarde");
+      alert(e.message || t('adminPortail.messages.saveError'));
     } finally {
       setUploading(false);
     }
@@ -314,9 +352,10 @@ function AdminPortail() {
       <Header />
       <div className="admin-portail-container">
         <div className="admin-header">
-          <h1>Administration du Portail</h1>
-          <Link to="/plateforme-gestion" className="back-to-portal">
-            Retour au portail
+          <h1>{t('adminPortail.title')}</h1>
+          <Link to="/superadmin-dashboard" className="back-to-dashboard">
+            <i className="fa-solid fa-arrow-left"></i>
+            {t('adminPortail.backToDashboard')}
           </Link>
         </div>
 
@@ -326,14 +365,21 @@ function AdminPortail() {
             onClick={() => setActiveTab("actualites")}
           >
             <Newspaper size={20} />
-            Actualités
+            {t('adminPortail.tabs.actualites')}
           </button>
           <button
             className={`tab-btn ${activeTab === "documents" ? "active" : ""}`}
             onClick={() => setActiveTab("documents")}
           >
             <FileText size={20} />
-            Documents Juridiques
+            {t('adminPortail.tabs.documents')}
+          </button>
+          <button
+            className={`tab-btn ${activeTab === "images" ? "active" : ""}`}
+            onClick={() => setActiveTab("images")}
+          >
+            <ImageIcon size={20} />
+            {t('adminPortail.tabs.images')}
           </button>
         </div>
 
@@ -341,12 +387,14 @@ function AdminPortail() {
           <div className="admin-toolbar">
             <h2>
               {activeTab === "actualites"
-                ? "Gestion des Actualités"
-                : "Gestion des Documents"}
+                ? t('adminPortail.actualites.title')
+                : activeTab === "documents"
+                ? t('adminPortail.documents.title')
+                : t('adminPortail.images.title')}
             </h2>
             <button className="btn-add" onClick={handleAddNew}>
               <Plus size={20} />
-              Ajouter
+              {t('adminPortail.actions.add')}
             </button>
           </div>
 
@@ -355,10 +403,10 @@ function AdminPortail() {
               <table>
                 <thead>
                   <tr>
-                    <th>Titre</th>
-                    <th>Statut</th>
-                    <th>Date de publication</th>
-                    <th>Actions</th>
+                    <th>{t('adminPortail.actualites.columns.titre')}</th>
+                    <th>{t('adminPortail.actualites.columns.statut')}</th>
+                    <th>{t('adminPortail.actualites.columns.datePublication')}</th>
+                    <th>{t('adminPortail.actualites.columns.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -397,23 +445,23 @@ function AdminPortail() {
                         colSpan={4}
                         style={{ textAlign: "center", opacity: 0.7 }}
                       >
-                        Aucune actualité
+                        {t('adminPortail.actualites.noData')}
                       </td>
                     </tr>
                   )}
                 </tbody>
               </table>
             </div>
-          ) : (
+          ) : activeTab === "documents" ? (
             <div className="admin-table">
               <table>
                 <thead>
                   <tr>
-                    <th>Titre</th>
-                    <th>Type</th>
-                    <th>Statut</th>
-                    <th>Date de publication</th>
-                    <th>Actions</th>
+                    <th>{t('adminPortail.documents.columns.titre')}</th>
+                    <th>{t('adminPortail.documents.columns.type')}</th>
+                    <th>{t('adminPortail.documents.columns.statut')}</th>
+                    <th>{t('adminPortail.documents.columns.datePublication')}</th>
+                    <th>{t('adminPortail.documents.columns.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -457,12 +505,58 @@ function AdminPortail() {
                         colSpan={5}
                         style={{ textAlign: "center", opacity: 0.7 }}
                       >
-                        Aucun document
+                        {t('adminPortail.documents.noData')}
                       </td>
                     </tr>
                   )}
                 </tbody>
               </table>
+            </div>
+          ) : (
+            <div className="images-grid-container">
+              <div className="images-grid">
+                {images.map((img) => (
+                  <div key={img.id} className="image-card">
+                    <div className="image-preview">
+                      {img.mimeType?.startsWith("image/") ? (
+                        <img 
+                          src={`${API_BASE}${img.url}`} 
+                          alt={img.filename}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextElementSibling.style.display = 'flex';
+                          }}
+                        />
+                      ) : null}
+                      <div className="no-preview" style={{ display: img.mimeType?.startsWith("image/") ? 'none' : 'flex' }}>
+                        <FileText size={32} />
+                      </div>
+                    </div>
+                    <div className="image-info">
+                      <p className="image-filename" title={img.filename}>
+                        {img.filename}
+                      </p>
+                      <p className="image-meta">
+                        {img.mimeType} • {img.tailleOctets ? (img.tailleOctets / 1024).toFixed(1) + ' KB' : '-'}
+                      </p>
+                    </div>
+                    <div className="image-actions">
+                      <button
+                        className="btn-delete"
+                        onClick={() => handleDelete(img.id)}
+                        title="Supprimer"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {images.length === 0 && (
+                  <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '2rem', opacity: 0.7 }}>
+                    {t('adminPortail.images.noData')}
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -473,8 +567,11 @@ function AdminPortail() {
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
                 <h3>
-                  {editMode ? "Modifier" : "Ajouter"}{" "}
-                  {activeTab === "actualites" ? "une actualité" : "un document"}
+                  {activeTab === "actualites" 
+                    ? (editMode ? t('adminPortail.actualites.form.editTitle') : t('adminPortail.actualites.form.addTitle'))
+                    : activeTab === "documents" 
+                    ? (editMode ? t('adminPortail.documents.form.editTitle') : t('adminPortail.documents.form.addTitle'))
+                    : t('adminPortail.images.form.addTitle')}
                 </h3>
                 <button
                   className="btn-close"
@@ -485,10 +582,33 @@ function AdminPortail() {
               </div>
 
               <form onSubmit={handleSubmit} className="modal-form">
-                {activeTab === "actualites" ? (
+                {activeTab === "images" ? (
                   <>
                     <div className="form-group">
-                      <label>Titre *</label>
+                      <label>{t('adminPortail.images.form.imageRequired')}</label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) =>
+                          setUploadImageFile(e.target.files?.[0] || null)
+                        }
+                        className="file-input"
+                        required
+                      />
+                      {uploadImageFile && (
+                        <div className="file-preview">
+                          <p className="file-name">{t('adminPortail.images.form.imageName')} {uploadImageFile.name}</p>
+                          <p className="file-size">
+                            {(uploadImageFile.size / 1024).toFixed(2)} {t('adminPortail.images.form.fileSize')}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                ) : activeTab === "actualites" ? (
+                  <>
+                    <div className="form-group">
+                      <label>{t('adminPortail.actualites.form.titreRequired')}</label>
                       <input
                         type="text"
                         value={formActualite.titre}
@@ -503,7 +623,7 @@ function AdminPortail() {
                     </div>
 
                     <div className="form-group">
-                      <label>Image (couverture)</label>
+                      <label>{t('adminPortail.actualites.form.image')}</label>
                       <input
                         type="file"
                         accept="image/*"
@@ -513,12 +633,12 @@ function AdminPortail() {
                         className="file-input"
                       />
                       {imageFile && (
-                        <p className="file-name">📷 {imageFile.name}</p>
+                        <p className="file-name">{t('adminPortail.actualites.form.imageName')} {imageFile.name}</p>
                       )}
                     </div>
 
                     <div className="form-group">
-                      <label>Contenu (HTML) *</label>
+                      <label>{t('adminPortail.actualites.form.contenuRequired')}</label>
                       <textarea
                         rows={8}
                         value={formActualite.contenu}
@@ -532,7 +652,7 @@ function AdminPortail() {
                       />
                     </div>
                     <div className="form-group">
-                      <label>Date de publication</label>
+                      <label>{t('adminPortail.actualites.form.datePublication')}</label>
                       <DatePicker
                         selected={formActualite.datePublication}
                         onChange={(d) =>
@@ -545,14 +665,14 @@ function AdminPortail() {
                         timeFormat="HH:mm"
                         timeIntervals={5}
                         dateFormat="dd/MM/yyyy HH:mm"
-                        locale="fr"
-                        placeholderText="jj/mm/aaaa hh:mm"
+                        locale={i18n.language}
+                        placeholderText={t('adminPortail.actualites.form.datePlaceholder')}
                         isClearable
                       />
                     </div>
 
                     <div className="form-group">
-                      <label>Statut *</label>
+                      <label>{t('adminPortail.actualites.form.statutRequired')}</label>
                       <select
                         value={formActualite.status}
                         onChange={(e) =>
@@ -563,16 +683,16 @@ function AdminPortail() {
                         }
                         required
                       >
-                        <option value="BROUILLON">BROUILLON</option>
-                        <option value="PUBLIE">PUBLIE</option>
-                        <option value="ARCHIVE">ARCHIVE</option>
+                        <option value="BROUILLON">{t('adminPortail.actualites.form.statusBrouillon')}</option>
+                        <option value="PUBLIE">{t('adminPortail.actualites.form.statusPublie')}</option>
+                        <option value="ARCHIVE">{t('adminPortail.actualites.form.statusArchive')}</option>
                       </select>
                     </div>
                   </>
                 ) : (
                   <>
                     <div className="form-group">
-                      <label>Titre *</label>
+                      <label>{t('adminPortail.documents.form.titreRequired')}</label>
                       <input
                         type="text"
                         value={formDocument.titre}
@@ -587,7 +707,7 @@ function AdminPortail() {
                     </div>
 
                     <div className="form-group">
-                      <label>Description *</label>
+                      <label>{t('adminPortail.documents.form.descriptionRequired')}</label>
                       <textarea
                         rows={4}
                         value={formDocument.description}
@@ -603,7 +723,7 @@ function AdminPortail() {
 
                     <div className="form-row">
                       <div className="form-group">
-                        <label>Type *</label>
+                        <label>{t('adminPortail.documents.form.typeRequired')}</label>
                         <select
                           value={formDocument.docTypeId}
                           onChange={(e) =>
@@ -614,10 +734,10 @@ function AdminPortail() {
                           }
                           required
                         >
-                          <option value="">Sélectionner</option>
-                          {typeDocs.map((t) => (
-                            <option key={t.id} value={t.id}>
-                              {t.libelle}
+                          <option value="">{t('adminPortail.documents.form.typeSelect')}</option>
+                          {typeDocs.map((type) => (
+                            <option key={type.id} value={type.id}>
+                              {type.libelle}
                             </option>
                           ))}
                         </select>
@@ -625,7 +745,7 @@ function AdminPortail() {
                     </div>
 
                     <div className="form-group">
-                      <label>Fichier (PDF ou autre) *</label>
+                      <label>{t('adminPortail.documents.form.fichierRequired')}</label>
                       <input
                         type="file"
                         accept="application/pdf,application/*,image/*"
@@ -636,14 +756,13 @@ function AdminPortail() {
                       />
                       {documentFile && (
                         <p className="file-name">
-                          📄 {documentFile.name} (
-                          {(documentFile.size / (1024 * 1024)).toFixed(2)} MB)
+                          {t('adminPortail.documents.form.fileName')} {documentFile.name} (
+                          {(documentFile.size / (1024 * 1024)).toFixed(2)} {t('adminPortail.documents.form.fileSizeMB')})
                         </p>
                       )}
                     </div>
                     <div className="form-group">
-                      <label>Date de publication</label>
-                      <label>Date de publication</label>
+                      <label>{t('adminPortail.documents.form.datePublication')}</label>
                       <DatePicker
                         selected={formDocument.datePublication}
                         onChange={(d) =>
@@ -653,14 +772,14 @@ function AdminPortail() {
                           })
                         }
                         dateFormat="dd/MM/yyyy"
-                        locale="fr"
-                        placeholderText="jj/mm/aaaa"
+                        locale={i18n.language}
+                        placeholderText={t('adminPortail.documents.form.datePlaceholder')}
                         isClearable
                       />
                     </div>
 
                     <div className="form-group">
-                      <label>Statut *</label>
+                      <label>{t('adminPortail.documents.form.statutRequired')}</label>
                       <select
                         value={formDocument.status}
                         onChange={(e) =>
@@ -671,9 +790,9 @@ function AdminPortail() {
                         }
                         required
                       >
-                        <option value="BROUILLON">BROUILLON</option>
-                        <option value="PUBLIE">PUBLIE</option>
-                        <option value="ARCHIVE">ARCHIVE</option>
+                        <option value="BROUILLON">{t('adminPortail.actualites.form.statusBrouillon')}</option>
+                        <option value="PUBLIE">{t('adminPortail.actualites.form.statusPublie')}</option>
+                        <option value="ARCHIVE">{t('adminPortail.actualites.form.statusArchive')}</option>
                       </select>
                     </div>
                   </>
@@ -685,7 +804,7 @@ function AdminPortail() {
                     className="btn-cancel"
                     onClick={() => setShowModal(false)}
                   >
-                    Annuler
+                    {t('adminPortail.actions.cancel')}
                   </button>
                   <button
                     type="submit"
@@ -694,10 +813,10 @@ function AdminPortail() {
                   >
                     <Save size={20} />
                     {uploading
-                      ? "Enregistrement..."
+                      ? t('adminPortail.actions.saving')
                       : editMode
-                      ? "Modifier"
-                      : "Ajouter"}
+                      ? t('adminPortail.actions.edit')
+                      : t('adminPortail.actions.add')}
                   </button>
                 </div>
               </form>

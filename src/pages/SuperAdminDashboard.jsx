@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../Styles/SuperAdminDashboard.css';
+import { useTranslation } from 'react-i18next';
 
 function SuperAdminDashboard() {
+  const { t } = useTranslation();
   const [users, setUsers] = useState([]);
   const [stats, setStats] = useState({ total: 0, actifs: 0, roles: {} });
   const [showForm, setShowForm] = useState(false);
@@ -148,19 +150,19 @@ function SuperAdminDashboard() {
       <Header />
       <div className="super-admin-dashboard">
         <div className="dashboard-title-row">
-          <h1 className="dashboard-title">Administration - SuperAdmin</h1>
+          <h1 className="dashboard-title">{t('superAdminDashboard.title')}</h1>
           <button className="logout-button" onClick={handleLogout}>
-            Déconnexion
+            {t('superAdminDashboard.logout')}
           </button>
         </div>
         <div className="dashboard-stats">
           <div className="stat-card stat-total">
             <div className="stat-number">{stats.total}</div>
-            <div className="stat-label">Utilisateurs</div>
+            <div className="stat-label">{t('superAdminDashboard.users')}</div>
           </div>
           <div className="stat-card stat-approuvees">
             <div className="stat-number">{stats.actifs}</div>
-            <div className="stat-label">Actifs</div>
+            <div className="stat-label">{t('superAdminDashboard.active')}</div>
           </div>
           {/* Affiche les rôles dynamiquement */}
           {stats.roles && Object.entries(stats.roles).map(([role, count]) => (
@@ -172,18 +174,39 @@ function SuperAdminDashboard() {
         </div>
         <div className="admin-actions">
           <button className="auth-button" onClick={() => setShowForm(!showForm)}>
-            {showForm ? 'Annuler' : 'Créer un utilisateur'}
+            {showForm ? t('superAdminDashboard.cancel') : t('superAdminDashboard.createUser')}
           </button>
+        </div>
+
+        {/* Section de gestion du portail */}
+        <div className="access-code-section">
+          <h2 className="section-title">{t('superAdminDashboard.portalManagement.title')}</h2>
+          <div className="access-code-content">
+            <div className="access-code-info">
+              <p><strong>{t('superAdminDashboard.portalManagement.description')}</strong></p>
+              <p className="access-code-requirements">
+                {t('superAdminDashboard.portalManagement.subtext')}
+              </p>
+            </div>
+            
+            <button 
+              className="access-code-btn"
+              onClick={() => window.location.href = '/admin-portail'}
+            >
+              <i className="fa-solid fa-newspaper"></i>
+              {t('superAdminDashboard.portalManagement.button')}
+            </button>
+          </div>
         </div>
 
         {/* Section de gestion du code d'accès */}
         <div className="access-code-section">
-          <h2 className="section-title">Gestion du Code d'Accès Administration</h2>
+          <h2 className="section-title">{t('superAdminDashboard.accessCode.title')}</h2>
           <div className="access-code-content">
             <div className="access-code-info">
-              <p><strong>Gérez le code d'accès requis pour entrer dans l'espace administration</strong></p>
+              <p><strong>{t('superAdminDashboard.accessCode.description')}</strong></p>
               <p className="access-code-requirements">
-                Le code doit contenir 8 caractères avec majuscule, minuscule, chiffre et caractère spécial
+                {t('superAdminDashboard.accessCode.subtext')}
               </p>
             </div>
             
@@ -192,7 +215,7 @@ function SuperAdminDashboard() {
               onClick={() => window.location.href = '/admin-access-code'}
             >
               <i className="fa-solid fa-key"></i>
-              Gérer le Code d'Accès
+              {t('superAdminDashboard.accessCode.button')}
             </button>
           </div>
         </div>
@@ -200,9 +223,9 @@ function SuperAdminDashboard() {
         {showForm && (
           <div className="form-container">
             <form className="auth-form" onSubmit={handleSubmit}>
-              <div className="auth-title">Nouvel Utilisateur</div>
+              <div className="auth-title">{t('superAdminDashboard.newUser')}</div>
               <div className="form-group">
-                <label className="auth-label">Nom</label>
+                <label className="auth-label">{t('superAdminDashboard.nom')}</label>
                 <input 
                   className="auth-input" 
                   name="nom" 
@@ -212,7 +235,7 @@ function SuperAdminDashboard() {
                 />
               </div>
               <div className="form-group">
-                <label className="auth-label">Prénom</label>
+                <label className="auth-label">{t('superAdminDashboard.prenom')}</label>
                 <input 
                   className="auth-input" 
                   name="prenom" 
@@ -222,7 +245,7 @@ function SuperAdminDashboard() {
                 />
               </div>
               <div className="form-group">
-                <label className="auth-label">Email</label>
+                <label className="auth-label">{t('superAdminDashboard.email')}</label>
                 <input 
                   className="auth-input" 
                   name="email" 
@@ -233,7 +256,7 @@ function SuperAdminDashboard() {
                 />
               </div>
               <div className="form-group">
-                <label className="auth-label">Rôle</label>
+                <label className="auth-label">{t('superAdminDashboard.role')}</label>
                 <select 
                   className="auth-input" 
                   name="role" 
@@ -241,21 +264,21 @@ function SuperAdminDashboard() {
                   onChange={handleChange} 
                   required
                 >
-                  <option value="">Sélectionnez un rôle</option>
-                  <option value="Secrétariat Central">Secrétariat Central</option>
-                  <option value="Secrétariat Général">Secrétariat Général</option>
-                  <option value="Chef de Service">Chef de Service</option>
-                  <option value="DDPI">DDPI</option>
-                  <option value="DGI">DGI</option>
-                  <option value="Commission">Commission</option>
-                  <option value="Comité">Comité</option>
-                  <option value="MMI">MMI (Ministère)</option>
-                  <option value="PNME">PNME</option>
-                  <option value="SuperAdmin">SuperAdmin</option>
+                  <option value="">{t('superAdminDashboard.selectRole')}</option>
+                  <option value="Secrétariat Central">{t('superAdminDashboard.roles.Secrétariat Central')}</option>
+                  <option value="Secrétariat Général">{t('superAdminDashboard.roles.Secrétariat Général')}</option>
+                  <option value="Chef de Service">{t('superAdminDashboard.roles.Chef de Service')}</option>
+                  <option value="DDPI">{t('superAdminDashboard.roles.DDPI')}</option>
+                  <option value="DGI">{t('superAdminDashboard.roles.DGI')}</option>
+                  <option value="Commission">{t('superAdminDashboard.roles.Commission')}</option>
+                  <option value="Comité">{t('superAdminDashboard.roles.Comité')}</option>
+                  <option value="MMI">{t('superAdminDashboard.roles.MMI')}</option>
+                  <option value="PNME">{t('superAdminDashboard.roles.PNME')}</option>
+                  <option value="SuperAdmin">{t('superAdminDashboard.roles.SuperAdmin')}</option>
                 </select>
               </div>
               <div className="form-group">
-                <label className="auth-label">Mot de passe initial</label>
+                <label className="auth-label">{t('superAdminDashboard.password')}</label>
                 <input 
                   className="auth-input" 
                   name="password" 
@@ -266,7 +289,7 @@ function SuperAdminDashboard() {
                 />
               </div>
               <button type="submit" className="auth-button">
-                Créer et Envoyer Email
+                {t('superAdminDashboard.createAndSend')}
               </button>
             </form>
           </div>
@@ -276,16 +299,16 @@ function SuperAdminDashboard() {
         {notif && <div className="form-success global-notif">{notif}</div>}
         {error && <div className="form-error global-notif">{error}</div>}
 
-        <h2>Liste des utilisateurs</h2>
+        <h2>{t('superAdminDashboard.userList')}</h2>
         <table className="admin-users-table">
           <thead>
             <tr>
-              <th>Nom</th>
-              <th>Prénom</th>
-              <th>Email</th>
-              <th>Rôle</th>
-              <th>Statut</th>
-              <th>Actions</th>
+              <th>{t('superAdminDashboard.nom')}</th>
+              <th>{t('superAdminDashboard.prenom')}</th>
+              <th>{t('superAdminDashboard.email')}</th>
+              <th>{t('superAdminDashboard.role')}</th>
+              <th>{t('superAdminDashboard.status')}</th>
+              <th>{t('superAdminDashboard.actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -310,20 +333,20 @@ function SuperAdminDashboard() {
                       className="admin-user-action action-resend"
                       onClick={() => handleResendActivation(u.id, `${u.nom} ${u.prenom}`)}
                     >
-                      Renvoyer Email
+                      {t('superAdminDashboard.resendEmail')}
                     </button>
                   ) : (
                     <button 
                       className={`admin-user-action ${u.statut === 'ACTIF' ? 'action-deactivate' : 'action-activate'}`}
                       onClick={() => handleToggleUserStatus(u.id, `${u.nom} ${u.prenom}`, u.statut)}
                     >
-                      {u.statut === 'ACTIF' ? 'Désactiver' : 'Activer'}
+                      {u.statut === 'ACTIF' ? t('superAdminDashboard.deactivate') : t('superAdminDashboard.activate')}
                     </button>
                   )}
                   <button 
                     className="admin-user-action action-delete"
                     onClick={() => {
-                      if (window.confirm(`Supprimer ${u.nom} ${u.prenom} ?`)) {
+                      if (window.confirm(`${t('superAdminDashboard.delete')} ${u.nom} ${u.prenom} ?`)) {
                         fetch(`http://localhost:4000/api/admin/users/${u.id}`, {
                           method: 'DELETE',
                           headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
@@ -332,7 +355,7 @@ function SuperAdminDashboard() {
                         .then(data => {
                           if (data.success) {
                             setUsers(users.filter(user => user.id !== u.id));
-                            setNotif('Utilisateur supprimé !');
+                            setNotif(t('superAdminDashboard.userDeleted') || 'Utilisateur supprimé !');
                           } else {
                             setError(data.error || 'Erreur lors de la suppression');
                           }
@@ -340,7 +363,7 @@ function SuperAdminDashboard() {
                       }
                     }}
                   >
-                    Supprimer
+                    {t('superAdminDashboard.delete')}
                   </button>
                 </td>
               </tr>

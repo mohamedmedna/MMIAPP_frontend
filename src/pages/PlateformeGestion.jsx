@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import banniereMinistere from "../assets/banniere-ministere.jpg";
 import { FileText, Download, Calendar, Tag } from "lucide-react";
 import "../Styles/PlateformeGestion.css";
+import { useTranslation } from "react-i18next";
 
 // -------- Helpers / Config --------
 const API_BASE =
@@ -91,6 +92,7 @@ function Pager({ page, pageSize, total, onPage }) {
 }
 
 function PlateformeGestion() {
+  const { t } = useTranslation();
   const newsSectionRef = useRef(null);
   const docsSectionRef = useRef(null);
 
@@ -315,15 +317,15 @@ function PlateformeGestion() {
             <div className="section-header">
               <div>
                 <h2 className="section-title" id="news-title">
-                  📰 Actualités
+                  {t('plateformeGestion.actualites.title')}
                 </h2>
                 <p className="section-subtitle">
-                  Restez informé des dernières nouvelles du secteur industriel
+                  {t('plateformeGestion.actualites.subtitle')}
                 </p>
               </div>
               <div className="section-controls">
                 <label className="filter-label">
-                  Résultats / page:&nbsp;
+                  {t('plateformeGestion.actualites.resultsPerPage')}&nbsp;
                   <select
                     value={actuPageSize}
                     onChange={(e) => {
@@ -337,7 +339,7 @@ function PlateformeGestion() {
                   </select>
                 </label>
                 <span className="count-indicator">
-                  Page {actuPage} —{" "}
+                  {t('plateformeGestion.actualites.page')} {actuPage} —{" "}
                   {Math.min(actuPage * actuPageSize, actuTotal)}/{actuTotal}
                 </span>
               </div>
@@ -346,11 +348,11 @@ function PlateformeGestion() {
             {initialLoading && actualites.length === 0 ? (
               <div className="loading-spinner">
                 <div className="spinner"></div>
-                <p>Chargement des actualités...</p>
+                <p>{t('plateformeGestion.actualites.loading')}</p>
               </div>
             ) : actualites.length === 0 ? (
               <div className="no-data">
-                <p>❌ Aucune actualité disponible</p>
+                <p>{t('plateformeGestion.actualites.noData')}</p>
                 {errorActu ? (
                   <small style={{ opacity: 0.7 }}>({errorActu})</small>
                 ) : null}
@@ -397,7 +399,7 @@ function PlateformeGestion() {
                           to={`/actualite/${actualite.id}`}
                           className="news-link"
                         >
-                          Lire la suite →
+                          {t('plateformeGestion.actualites.readMore')}
                         </Link>
                       </div>
                     </article>
@@ -425,31 +427,31 @@ function PlateformeGestion() {
             <div className="section-header">
               <div>
                 <h2 className="section-title" id="documents-title">
-                  📄 Documents Juridiques
+                  {t('plateformeGestion.documents.title')}
                 </h2>
                 <p className="section-subtitle">
-                  Accédez aux textes législatifs et réglementaires
+                  {t('plateformeGestion.documents.subtitle')}
                 </p>
               </div>
 
               <div className="section-controls">
                 <label className="filter-label">
-                  Type:&nbsp;
+                  {t('plateformeGestion.documents.typeFilter')}&nbsp;
                   <select
                     value={docTypeFilter}
                     onChange={(e) => setDocTypeFilter(e.target.value)}
                   >
-                    <option value="">Tous</option>
-                    {typeDocs.map((t) => (
-                      <option key={t.id} value={t.id}>
-                        {t.libelle}
+                    <option value="">{t('plateformeGestion.documents.allTypes')}</option>
+                    {typeDocs.map((type) => (
+                      <option key={type.id} value={type.id}>
+                        {type.libelle}
                       </option>
                     ))}
                   </select>
                 </label>
 
                 <label className="filter-label">
-                  Résultats / page:&nbsp;
+                  {t('plateformeGestion.documents.resultsPerPage')}&nbsp;
                   <select
                     value={docPageSize}
                     onChange={(e) => {
@@ -464,7 +466,7 @@ function PlateformeGestion() {
                 </label>
 
                 <span className="count-indicator">
-                  Page {docPage} — {Math.min(docPage * docPageSize, docTotal)}/
+                  {t('plateformeGestion.documents.page')} {docPage} — {Math.min(docPage * docPageSize, docTotal)}/
                   {docTotal}
                 </span>
               </div>
@@ -472,7 +474,7 @@ function PlateformeGestion() {
 
             {documents.length === 0 && !pagingDoc && !errorDoc ? (
               <div className="no-data">
-                <p>❌ Aucun document disponible</p>
+                <p>{t('plateformeGestion.documents.noData')}</p>
               </div>
             ) : (
               <>
@@ -523,15 +525,15 @@ function PlateformeGestion() {
                             className="document-download-btn"
                             download
                           >
-                            Télécharger
+                            {t('plateformeGestion.documents.download')}
                           </a>
                         ) : (
                           <button
                             className="document-download-btn"
                             disabled
-                            title="Fichier indisponible"
+                            title={t('plateformeGestion.documents.unavailable')}
                           >
-                            Télécharger
+                            {t('plateformeGestion.documents.download')}
                           </button>
                         )}
                       </div>
@@ -553,19 +555,6 @@ function PlateformeGestion() {
                 ) : null}
               </>
             )}
-          </div>
-        </section>
-
-        {/* Lien vers l'administration */}
-        <section className="admin-access section">
-          <div className="container">
-            <div className="admin-card">
-              <h3>Espace Administrateur</h3>
-              <p>Gérez les actualités et les documents juridiques</p>
-              <Link to="/admin-portail" className="admin-link-btn">
-                Accéder à l'administration
-              </Link>
-            </div>
           </div>
         </section>
 

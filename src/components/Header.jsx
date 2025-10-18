@@ -11,13 +11,13 @@ const Navbar = () => {
     <header className="navbar">
       <div className="navbar-container">
         {/* Logo */}
-        <Link to="/" className="logo-link">
+        <Link to="/gestion" className="logo-link">
           <img src={logo} alt="Logo Ministère de l'Industrie" className="logo" />
         </Link>
 
                 {/* Navigation Links */}
         <nav className="nav-links">
-          <Link to="/plateforme" className="nav-link">
+          <Link to="/" className="nav-link">
             {t('header.portail_industrie')}
           </Link>
           <Link to="/gestion" className="nav-link">
