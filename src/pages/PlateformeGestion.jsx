@@ -559,6 +559,13 @@ function PlateformeGestion() {
           </div>
         </section>
 
+        {/* Section map */}
+
+        <section className="map-section" aria-labelledby="map-title">
+                  <MapComponent />
+        </section>
+
+        {/* Section Map */}
 
         <Footer />
       </div>
