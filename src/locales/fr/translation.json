@@ -426,6 +426,10 @@
     "error_invalid_code": "Code d'accès invalide",
     "error_verification": "Erreur lors de la vérification du code",
     "roles": {
+      "portail": {
+        "title": "Gestion du Portail",
+        "desc": "Gérez les actualités et les documents juridiques"
+      },
       "superadmin": {
         "title": "SuperAdmin",
         "desc": "Accès réservé au superutilisateur"
@@ -993,7 +997,21 @@
     "status": "Statut",
     "actions": "Actions",
     "deactivate": "Désactiver",
+    "activate": "Activer",
+    "resendEmail": "Renvoyer Email",
     "delete": "Supprimer",
+    "portalManagement": {
+      "title": "Gestion du Portail de l'Industrie",
+      "description": "Gérez les actualités, les documents juridiques et les images du portail public",
+      "subtext": "Administration complète du contenu visible sur le portail de l'industrie",
+      "button": "Accéder à la Gestion du Portail"
+    },
+    "accessCode": {
+      "title": "Gestion du Code d'Accès Administration",
+      "description": "Gérez le code d'accès requis pour entrer dans l'espace administration",
+      "subtext": "Le code doit contenir 8 caractères avec majuscule, minuscule, chiffre et caractère spécial",
+      "button": "Gérer le Code d'Accès"
+    },
     "roles": {
       "SuperAdmin": "SuperAdmin",
       "Secrétariat Central": "Secrétariat Central",
@@ -1442,6 +1460,136 @@
     "success": {
       "uploadSuccess": "Signature uploadée avec succès !",
       "deleteSuccess": "Signature supprimée avec succès !"
+    }
+  },
+  "actualiteDetail": {
+    "loading": "Chargement de l'actualité...",
+    "notFound": "Actualité non trouvée",
+    "backToNews": "Retour aux actualités",
+    "back": "Retour",
+    "print": "Imprimer"
+  },
+  "plateformeGestion": {
+    "hero": {
+      "title": "Portail de l'Industrie"
+    },
+    "actualites": {
+      "title": "📰 Actualités",
+      "subtitle": "Restez informé des dernières nouvelles du secteur industriel",
+      "resultsPerPage": "Résultats / page:",
+      "page": "Page",
+      "loading": "Chargement des actualités...",
+      "noData": "❌ Aucune actualité disponible",
+      "readMore": "Lire la suite →"
+    },
+    "documents": {
+      "title": "📄 Documents Juridiques",
+      "subtitle": "Accédez aux textes législatifs et réglementaires",
+      "typeFilter": "Type:",
+      "allTypes": "Tous",
+      "resultsPerPage": "Résultats / page:",
+      "page": "Page",
+      "noData": "❌ Aucun document disponible",
+      "download": "Télécharger",
+      "unavailable": "Fichier indisponible"
+    }
+  },
+  "adminPortail": {
+    "title": "Administration du Portail",
+    "backToDashboard": "Retour au Dashboard SuperAdmin",
+    "tabs": {
+      "actualites": "Actualités",
+      "documents": "Documents Juridiques",
+      "images": "Images"
+    },
+    "actualites": {
+      "title": "Gestion des Actualités",
+      "addNew": "Ajouter",
+      "columns": {
+        "titre": "Titre",
+        "statut": "Statut",
+        "datePublication": "Date de publication",
+        "actions": "Actions"
+      },
+      "noData": "Aucune actualité",
+      "form": {
+        "addTitle": "Ajouter une actualité",
+        "editTitle": "Modifier une actualité",
+        "titre": "Titre",
+        "titreRequired": "Titre *",
+        "image": "Image (couverture)",
+        "contenu": "Contenu (HTML)",
+        "contenuRequired": "Contenu (HTML) *",
+        "datePublication": "Date de publication",
+        "datePlaceholder": "jj/mm/aaaa hh:mm",
+        "statut": "Statut",
+        "statutRequired": "Statut *",
+        "statusBrouillon": "BROUILLON",
+        "statusPublie": "PUBLIE",
+        "statusArchive": "ARCHIVE",
+        "imageName": "📷"
+      }
+    },
+    "documents": {
+      "title": "Gestion des Documents",
+      "columns": {
+        "titre": "Titre",
+        "type": "Type",
+        "statut": "Statut",
+        "datePublication": "Date de publication",
+        "actions": "Actions"
+      },
+      "noData": "Aucun document",
+      "form": {
+        "addTitle": "Ajouter un document",
+        "editTitle": "Modifier un document",
+        "titre": "Titre",
+        "titreRequired": "Titre *",
+        "description": "Description",
+        "descriptionRequired": "Description *",
+        "type": "Type",
+        "typeRequired": "Type *",
+        "typeSelect": "Sélectionner",
+        "fichier": "Fichier (PDF ou autre)",
+        "fichierRequired": "Fichier (PDF ou autre) *",
+        "datePublication": "Date de publication",
+        "datePlaceholder": "jj/mm/aaaa",
+        "statut": "Statut",
+        "statutRequired": "Statut *",
+        "fileName": "📄",
+        "fileSizeMB": "MB"
+      }
+    },
+    "images": {
+      "title": "Gestion des Images",
+      "noData": "Aucune image",
+      "form": {
+        "addTitle": "Ajouter une image",
+        "image": "Image",
+        "imageRequired": "Image *",
+        "imageName": "📷",
+        "fileSize": "KB"
+      }
+    },
+    "actions": {
+      "add": "Ajouter",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "saving": "Enregistrement...",
+      "close": "Fermer"
+    },
+    "messages": {
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet élément ?",
+      "deleteSuccess": "Élément supprimé avec succès",
+      "deleteError": "Erreur lors de la suppression",
+      "saveSuccess": "Élément ajouté avec succès",
+      "editSuccess": "Élément modifié avec succès",
+      "saveError": "Erreur lors de la sauvegarde",
+      "selectDocType": "Veuillez sélectionner un type de document",
+      "selectImage": "Veuillez sélectionner une image",
+      "imageAddSuccess": "Image ajoutée avec succès"
     }
   },
   "dashboardDDPI": {

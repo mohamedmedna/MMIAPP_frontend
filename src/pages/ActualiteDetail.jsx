@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Calendar, User, ArrowLeft } from "lucide-react";
 import "../Styles/ActualiteDetail.css";
+import { useTranslation } from "react-i18next";
 
 const API_BASE =
   import.meta?.env?.VITE_API_BASE ||
@@ -16,11 +17,11 @@ const absolutize = (u) => {
   return `${API_BASE}${u.startsWith("/") ? "" : "/"}${u}`;
 };
 
-const displayDateFR = (dstr) => {
+const displayDate = (dstr, locale) => {
   if (!dstr) return "-";
   const d = new Date(dstr);
   if (Number.isNaN(d.getTime())) return "-";
-  return new Intl.DateTimeFormat("fr-FR", {
+  return new Intl.DateTimeFormat(locale, {
     day: "2-digit",
     month: "long",
     year: "numeric",
@@ -28,6 +29,7 @@ const displayDateFR = (dstr) => {
 };
 
 function ActualiteDetail() {
+  const { t, i18n } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [actualite, setActualite] = useState(null);
@@ -92,7 +94,7 @@ function ActualiteDetail() {
         <div className="actualite-detail-container">
           <div className="loading-spinner">
             <div className="spinner"></div>
-            <p>Chargement de l'actualité...</p>
+            <p>{t('actualiteDetail.loading')}</p>
           </div>
         </div>
         <Footer />
@@ -106,10 +108,10 @@ function ActualiteDetail() {
         <Header />
         <div className="actualite-detail-container">
           <div className="error-message">
-            <h2>Actualité non trouvée</h2>
+            <h2>{t('actualiteDetail.notFound')}</h2>
             <Link to="/plateforme-gestion" className="back-link">
               <ArrowLeft size={20} />
-              Retour aux actualités
+              {t('actualiteDetail.backToNews')}
             </Link>
           </div>
         </div>
@@ -118,6 +120,8 @@ function ActualiteDetail() {
     );
   }
 
+  const locale = i18n.language === 'ar' ? 'ar-SA' : i18n.language === 'en' ? 'en-US' : 'fr-FR';
+
   return (
     <>
       <Header />
@@ -125,7 +129,7 @@ function ActualiteDetail() {
         <div className="actualite-detail-content">
           <Link to="/plateforme-gestion" className="back-link">
             <ArrowLeft size={20} />
-            Retour aux actualités
+            {t('actualiteDetail.backToNews')}
           </Link>
 
           <article className="actualite-article">
@@ -140,7 +144,7 @@ function ActualiteDetail() {
               <div className="actualite-meta">
                 <div className="meta-item">
                   <Calendar size={18} />
-                  <span>{displayDateFR(actualite.date)}</span>
+                  <span>{displayDate(actualite.date, locale)}</span>
                 </div>
                 {actualite.auteur ? (
                   <div className="meta-item">
@@ -169,10 +173,10 @@ function ActualiteDetail() {
 
           <div className="actualite-actions">
             <button onClick={() => navigate(-1)} className="btn-secondary">
-              Retour
+              {t('actualiteDetail.back')}
             </button>
             <button onClick={() => window.print()} className="btn-primary">
-              Imprimer
+              {t('actualiteDetail.print')}
             </button>
           </div>
         </div>

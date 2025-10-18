@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Button, Card, Typography, Space, Divider, message } from 'antd';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Typography } from 'antd';
 import '../Styles/AdminSpace.css';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
-import BanniereMinistereCoupee from '../components/BanniereMinistereCoupee';
-import '../Styles/AdminSpace.css';
 import { useTranslation } from 'react-i18next';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title } = Typography;
 
 const adminRoles = [
   {
@@ -95,15 +92,6 @@ const adminRoles = [
 
 function AdminSpace() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
-
-  useEffect(() => {
-    // Vérifier si l'utilisateur est connecté et son rôle
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    
-    setIsSuperAdmin(user.role_id === 1);
-  }, []);
 
   return (
     <>
