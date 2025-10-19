@@ -671,7 +671,7 @@
       "enterRemindMessage": "Type et message requis."
     }
   },
-  
+
   "dashboardCommission": {
     "title": "Tableau de Bord Commission/Comité",
     "sidebar": {
@@ -1495,102 +1495,174 @@
     }
   },
   "adminPortail": {
-    "title": "Administration du Portail",
-    "backToDashboard": "Retour au Dashboard SuperAdmin",
+    "header": {
+      "title": "Administration du Portail",
+      "backToPortal": "Retour au portail"
+    },
     "tabs": {
-      "actualites": "Actualités",
-      "documents": "Documents Juridiques",
-      "images": "Images"
+      "news": "Actualités",
+      "documents": "Documents Juridiques"
     },
-    "actualites": {
-      "title": "Gestion des Actualités",
-      "addNew": "Ajouter",
-      "columns": {
-        "titre": "Titre",
-        "statut": "Statut",
-        "datePublication": "Date de publication",
-        "actions": "Actions"
-      },
-      "noData": "Aucune actualité",
-      "form": {
-        "addTitle": "Ajouter une actualité",
-        "editTitle": "Modifier une actualité",
-        "titre": "Titre",
-        "titreRequired": "Titre *",
-        "image": "Image (couverture)",
-        "contenu": "Contenu (HTML)",
-        "contenuRequired": "Contenu (HTML) *",
-        "datePublication": "Date de publication",
-        "datePlaceholder": "jj/mm/aaaa hh:mm",
-        "statut": "Statut",
-        "statutRequired": "Statut *",
-        "statusBrouillon": "BROUILLON",
-        "statusPublie": "PUBLIE",
-        "statusArchive": "ARCHIVE",
-        "imageName": "📷"
+    "toolbar": {
+      "newsTitle": "Gestion des Actualités",
+      "docsTitle": "Gestion des Documents"
+    },
+    "table": {
+      "headers": {
+        "title": "Titre",
+        "status": "Statut",
+        "publishDate": "Date de publication",
+        "actions": "Actions",
+        "type": "Type"
       }
     },
-    "documents": {
-      "title": "Gestion des Documents",
-      "columns": {
-        "titre": "Titre",
-        "type": "Type",
-        "statut": "Statut",
-        "datePublication": "Date de publication",
-        "actions": "Actions"
-      },
-      "noData": "Aucun document",
-      "form": {
-        "addTitle": "Ajouter un document",
-        "editTitle": "Modifier un document",
-        "titre": "Titre",
-        "titreRequired": "Titre *",
-        "description": "Description",
-        "descriptionRequired": "Description *",
-        "type": "Type",
-        "typeRequired": "Type *",
-        "typeSelect": "Sélectionner",
-        "fichier": "Fichier (PDF ou autre)",
-        "fichierRequired": "Fichier (PDF ou autre) *",
-        "datePublication": "Date de publication",
-        "datePlaceholder": "jj/mm/aaaa",
-        "statut": "Statut",
-        "statutRequired": "Statut *",
-        "fileName": "📄",
-        "fileSizeMB": "MB"
+    "empty": {
+      "news": "Aucune actualité",
+      "documents": "Aucun document"
+    },
+    "modal": {
+      "title": {
+        "addNews": "Ajouter une actualité",
+        "editNews": "Modifier une actualité",
+        "addDocument": "Ajouter un document",
+        "editDocument": "Modifier un document"
       }
     },
-    "images": {
-      "title": "Gestion des Images",
-      "noData": "Aucune image",
-      "form": {
-        "addTitle": "Ajouter une image",
-        "image": "Image",
-        "imageRequired": "Image *",
-        "imageName": "📷",
-        "fileSize": "KB"
-      }
+    "fields": {
+      "coverImage": "Image (couverture)",
+      "publicationDate": "Date de publication",
+      "status": "Statut",
+      "translationsLegend": "Traductions",
+      "locale": "Langue",
+      "title": "Titre",
+      "contentHtml": "Contenu (HTML)",
+      "type": "Type",
+      "file": "Fichier (PDF ou autre)",
+      "description": "Description",
+      "selectPlaceholder": "Sélectionner"
     },
-    "actions": {
+    "placeholders": {
+      "datetime": "jj/mm/aaaa hh:mm",
+      "date": "jj/mm/aaaa"
+    },
+    "status": {
+      "BROUILLON": "Brouillon",
+      "PUBLIE": "Publié",
+      "ARCHIVE": "Archivé"
+    },
+    "buttons": {
       "add": "Ajouter",
       "edit": "Modifier",
-      "delete": "Supprimer",
-      "cancel": "Annuler",
-      "save": "Enregistrer",
       "saving": "Enregistrement...",
-      "close": "Fermer"
+      "cancel": "Annuler"
     },
     "messages": {
       "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet élément ?",
       "deleteSuccess": "Élément supprimé avec succès",
       "deleteError": "Erreur lors de la suppression",
-      "saveSuccess": "Élément ajouté avec succès",
-      "editSuccess": "Élément modifié avec succès",
-      "saveError": "Erreur lors de la sauvegarde",
+      "createNewsMissingFR": "Titre FR requis dans l’onglet Traductions pour créer l’actualité.",
+      "createDocMissingFR": "Titre FR requis dans l’onglet Traductions pour créer le document.",
       "selectDocType": "Veuillez sélectionner un type de document",
-      "selectImage": "Veuillez sélectionner une image",
-      "imageAddSuccess": "Image ajoutée avec succès"
+      "saveErrorGeneric": "Erreur lors de la sauvegarde",
+      "savedAddSuccess": "Élément ajouté avec succès",
+      "savedEditSuccess": "Élément modifié avec succès"
     }
+  },
+  "title": "Administration du Portail",
+  "backToDashboard": "Retour au Dashboard SuperAdmin",
+  "tabs": {
+    "actualites": "Actualités",
+    "documents": "Documents Juridiques",
+    "images": "Images"
+  },
+  "actualites": {
+    "title": "Gestion des Actualités",
+    "addNew": "Ajouter",
+    "columns": {
+      "titre": "Titre",
+      "statut": "Statut",
+      "datePublication": "Date de publication",
+      "actions": "Actions"
+    },
+    "noData": "Aucune actualité",
+    "form": {
+      "addTitle": "Ajouter une actualité",
+      "editTitle": "Modifier une actualité",
+      "titre": "Titre",
+      "titreRequired": "Titre *",
+      "image": "Image (couverture)",
+      "contenu": "Contenu (HTML)",
+      "contenuRequired": "Contenu (HTML) *",
+      "datePublication": "Date de publication",
+      "datePlaceholder": "jj/mm/aaaa hh:mm",
+      "statut": "Statut",
+      "statutRequired": "Statut *",
+      "statusBrouillon": "BROUILLON",
+      "statusPublie": "PUBLIE",
+      "statusArchive": "ARCHIVE",
+      "imageName": "📷"
+    }
+  },
+  "documents": {
+    "title": "Gestion des Documents",
+    "columns": {
+      "titre": "Titre",
+      "type": "Type",
+      "statut": "Statut",
+      "datePublication": "Date de publication",
+      "actions": "Actions"
+    },
+    "noData": "Aucun document",
+    "form": {
+      "addTitle": "Ajouter un document",
+      "editTitle": "Modifier un document",
+      "titre": "Titre",
+      "titreRequired": "Titre *",
+      "description": "Description",
+      "descriptionRequired": "Description *",
+      "type": "Type",
+      "typeRequired": "Type *",
+      "typeSelect": "Sélectionner",
+      "fichier": "Fichier (PDF ou autre)",
+      "fichierRequired": "Fichier (PDF ou autre) *",
+      "datePublication": "Date de publication",
+      "datePlaceholder": "jj/mm/aaaa",
+      "statut": "Statut",
+      "statutRequired": "Statut *",
+      "fileName": "📄",
+      "fileSizeMB": "MB"
+    }
+  },
+  "images": {
+    "title": "Gestion des Images",
+    "noData": "Aucune image",
+    "form": {
+      "addTitle": "Ajouter une image",
+      "image": "Image",
+      "imageRequired": "Image *",
+      "imageName": "📷",
+      "fileSize": "KB"
+    }
+  },
+  "actions": {
+    "add": "Ajouter",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "close": "Fermer"
+  },
+  "messages": {
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet élément ?",
+    "deleteSuccess": "Élément supprimé avec succès",
+    "deleteError": "Erreur lors de la suppression",
+    "saveSuccess": "Élément ajouté avec succès",
+    "editSuccess": "Élément modifié avec succès",
+    "saveError": "Erreur lors de la sauvegarde",
+    "selectDocType": "Veuillez sélectionner un type de document",
+    "selectImage": "Veuillez sélectionner une image",
+    "imageAddSuccess": "Image ajoutée avec succès"
   },
   "dashboardDDPI": {
     "title": "Dashboard DDPI",
@@ -1697,4 +1769,4 @@
       "development": "Page des paramètres en cours de développement..."
     }
   }
-} 
+}

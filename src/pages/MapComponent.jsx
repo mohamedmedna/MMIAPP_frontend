@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { MapPin, X } from "lucide-react";
 
+//const API_BASE =
+//import.meta?.env?.VITE_API_BASE ||
+//process.env.REACT_APP_API_BASE ||
+//"http://localhost:4000";
+
 const API_BASE =
-  import.meta?.env?.VITE_API_BASE ||
   process.env.REACT_APP_API_BASE ||
+  window.__API_BASE__ ||
   "http://localhost:4000";
 
 function MapComponent() {
@@ -19,12 +24,14 @@ function MapComponent() {
     // Charger le CSS de Leaflet
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css";
+    link.href =
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css";
     document.head.appendChild(link);
 
     // Charger le JS de Leaflet
     const script = document.createElement("script");
-    script.src = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";
+    script.src =
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";
     script.onload = () => {
       setL(window.L);
     };
@@ -39,24 +46,31 @@ function MapComponent() {
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        console.log("🔍 Tentative de chargement des localisations depuis:", `${API_BASE}/api/localisations`);
+        console.log(
+          "🔍 Tentative de chargement des localisations depuis:",
+          `${API_BASE}/api/localisations`
+        );
         const response = await fetch(`${API_BASE}/api/localisations`);
         console.log("📡 Réponse reçue:", response.status, response.statusText);
-        
+
         if (!response.ok) {
           throw new Error(`Erreur ${response.status}: ${response.statusText}`);
         }
-        
+
         const data = await response.json();
         console.log("📦 Données brutes reçues:", data);
         console.log("📊 Nombre de localisations:", data.length);
-        
+
         const formattedLocations = data
-          .filter(item => item.latitude && item.longitude)
-          .map(item => ({
+          .filter((item) => item.latitude && item.longitude)
+          .map((item) => ({
             id: item.id,
-            nom: item.nom || `${item.type?.toUpperCase() || 'Demande'} - ${item.reference || ''}`,
-            description: item.description || `Type: ${item.type || 'N/A'}`,
+            nom:
+              item.nom ||
+              `${item.type?.toUpperCase() || "Demande"} - ${
+                item.reference || ""
+              }`,
+            description: item.description || `Type: ${item.type || "N/A"}`,
             latitude: parseFloat(item.latitude),
             longitude: parseFloat(item.longitude),
             type: item.type,
@@ -64,9 +78,9 @@ function MapComponent() {
             statut: item.statut,
             telephone: item.telephone,
             email: item.email,
-            adresse: item.adresse
+            adresse: item.adresse,
           }));
-        
+
         console.log("✅ Localisations formatées:", formattedLocations);
         console.log("📍 Nombre après filtrage:", formattedLocations.length);
         setLocations(formattedLocations);
@@ -85,7 +99,7 @@ function MapComponent() {
     console.log("  - mapRef.current:", mapRef.current);
     console.log("  - locations.length:", locations.length);
     console.log("  - L (Leaflet):", L);
-    
+
     if (!mapRef.current) {
       console.warn("⚠️ mapRef.current n'est pas défini");
       return;
@@ -99,7 +113,9 @@ function MapComponent() {
       return;
     }
 
-    console.log("✅ Toutes les conditions sont remplies, initialisation de la carte...");
+    console.log(
+      "✅ Toutes les conditions sont remplies, initialisation de la carte..."
+    );
 
     // Nettoyer l'ancienne instance si elle existe
     if (mapInstanceRef.current) {
@@ -114,7 +130,7 @@ function MapComponent() {
 
     // Nettoyer le contenu du conteneur
     if (mapRef.current) {
-      mapRef.current.innerHTML = '';
+      mapRef.current.innerHTML = "";
       mapRef.current._leaflet_id = null;
     }
 
@@ -122,11 +138,11 @@ function MapComponent() {
       const map = L.map(mapRef.current, {
         center: [18.0735, -15.9582],
         zoom: 6,
-        scrollWheelZoom: false,        // DÉSACTIVER le zoom avec la molette de la souris
-        doubleClickZoom: true,         // Zoom avec double-clic
-        touchZoom: false,              // DÉSACTIVER le zoom tactile (deux doigts)
-        dragging: true,                // Permettre de déplacer la carte
-        zoomControl: true              // Afficher les boutons +/- de zoom
+        scrollWheelZoom: false, // DÉSACTIVER le zoom avec la molette de la souris
+        doubleClickZoom: true, // Zoom avec double-clic
+        touchZoom: false, // DÉSACTIVER le zoom tactile (deux doigts)
+        dragging: true, // Permettre de déplacer la carte
+        zoomControl: true, // Afficher les boutons +/- de zoom
       });
       console.log("✅ Carte créée avec succès");
 
@@ -148,59 +164,86 @@ function MapComponent() {
               
               <div style="margin-bottom: 8px;">
                 <strong style="color: #666; font-size: 0.85rem; text-transform: uppercase;">Description</strong>
-                <p style="margin: 4px 0 0 0; color: #333;">${loc.description || "N/A"}</p>
+                <p style="margin: 4px 0 0 0; color: #333;">${
+                  loc.description || "N/A"
+                }</p>
               </div>
               
               <div style="margin-bottom: 8px;">
                 <strong style="color: #666; font-size: 0.85rem; text-transform: uppercase;">Coordonnées GPS</strong>
-                <p style="margin: 4px 0 0 0; color: #333;">${loc.latitude}, ${loc.longitude}</p>
+                <p style="margin: 4px 0 0 0; color: #333;">${loc.latitude}, ${
+            loc.longitude
+          }</p>
               </div>
               
-              ${loc.type ? `
+              ${
+                loc.type
+                  ? `
                 <div style="margin-bottom: 8px;">
                   <strong style="color: #666; font-size: 0.85rem; text-transform: uppercase;">Type</strong>
                   <p style="margin: 4px 0 0 0; color: #333;">${loc.type}</p>
                 </div>
-              ` : ''}
+              `
+                  : ""
+              }
               
-              ${loc.statut ? `
+              ${
+                loc.statut
+                  ? `
                 <div style="margin-bottom: 8px;">
                   <strong style="color: #666; font-size: 0.85rem; text-transform: uppercase;">Statut</strong>
                   <p style="margin: 4px 0 0 0; color: #333;">${loc.statut}</p>
                 </div>
-              ` : ''}
+              `
+                  : ""
+              }
               
-              ${loc.telephone ? `
+              ${
+                loc.telephone
+                  ? `
                 <div style="margin-bottom: 8px;">
                   <strong style="color: #666; font-size: 0.85rem; text-transform: uppercase;">Téléphone</strong>
                   <p style="margin: 4px 0 0 0;">
                     <a href="tel:${loc.telephone}" style="color: #667eea; text-decoration: none;">${loc.telephone}</a>
                   </p>
                 </div>
-              ` : ''}
+              `
+                  : ""
+              }
               
-              ${loc.email ? `
+              ${
+                loc.email
+                  ? `
                 <div style="margin-bottom: 8px;">
                   <strong style="color: #666; font-size: 0.85rem; text-transform: uppercase;">Email</strong>
                   <p style="margin: 4px 0 0 0;">
                     <a href="mailto:${loc.email}" style="color: #667eea; text-decoration: none;">${loc.email}</a>
                   </p>
                 </div>
-              ` : ''}
+              `
+                  : ""
+              }
               
-              ${loc.adresse ? `
+              ${
+                loc.adresse
+                  ? `
                 <div style="margin-bottom: 0;">
                   <strong style="color: #666; font-size: 0.85rem; text-transform: uppercase;">Adresse</strong>
                   <p style="margin: 4px 0 0 0; color: #333;">${loc.adresse}</p>
                 </div>
-              ` : ''}
+              `
+                  : ""
+              }
             </div>
           `;
-          
-          const marker = L.marker([parseFloat(loc.latitude), parseFloat(loc.longitude)])
+
+          const marker = L.marker([
+            parseFloat(loc.latitude),
+            parseFloat(loc.longitude),
+          ])
             .bindPopup(popupContent, {
               maxWidth: 350,
-              className: 'custom-popup'
+              className: "custom-popup",
             })
             .addTo(map);
 
@@ -348,10 +391,10 @@ function MapComponent() {
       ) : (
         <div className="map-display-area">
           <div id="map" ref={mapRef}></div>
-          
+
           <div className="locations-counter">
             <MapPin size={18} />
-            {locations.length} localisation{locations.length > 1 ? 's' : ''}
+            {locations.length} localisation{locations.length > 1 ? "s" : ""}
           </div>
         </div>
       )}

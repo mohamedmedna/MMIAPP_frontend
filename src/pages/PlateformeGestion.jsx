@@ -8,11 +8,32 @@ import { FileText, Download, Calendar, Tag } from "lucide-react";
 import "../Styles/PlateformeGestion.css";
 import { useTranslation } from "react-i18next";
 
-// -------- Helpers / Config --------
+//const API_BASE =
+//import.meta?.env?.VITE_API_BASE ||
+//process.env.REACT_APP_API_BASE ||
+//"http://localhost:4000";
+
 const API_BASE =
-  import.meta?.env?.VITE_API_BASE ||
   process.env.REACT_APP_API_BASE ||
+  window.__API_BASE__ ||
   "http://localhost:4000";
+
+const LOCALE_MAP = { fr: "fr-FR", en: "en-GB", ar: "ar-MA" };
+
+const formatDate = (d, locale) => {
+  if (!d) return "-";
+  const date = new Date(d);
+  if (Number.isNaN(date.getTime())) return "-";
+  const s = new Intl.DateTimeFormat(locale, {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    numberingSystem: "latn",
+    calendar: "gregory",
+  }).format(date);
+
+  return s.replace(/[\u200e\u200f\u061c]/g, "");
+};
 
 const toText = (html) => {
   const div = document.createElement("div");
@@ -38,7 +59,6 @@ const absolutize = (u) => {
   return `${API_BASE}${u.startsWith("/") ? "" : "/"}${u}`;
 };
 
-// Simple pagination component
 function Pager({ page, pageSize, total, onPage }) {
   const pages = Math.max(1, Math.ceil(total / pageSize));
   if (pages <= 1) return null;
@@ -93,11 +113,11 @@ function Pager({ page, pageSize, total, onPage }) {
 }
 
 function PlateformeGestion() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
   const newsSectionRef = useRef(null);
   const docsSectionRef = useRef(null);
 
-  // Lists
   const [actualites, setActualites] = useState([]);
   const [documents, setDocuments] = useState([]);
 
@@ -127,15 +147,46 @@ function PlateformeGestion() {
   const actuAbortRef = useRef(null);
   const docAbortRef = useRef(null);
 
+  const [lang, setLang] = useState(() => {
+    try {
+      return (
+        localStorage.getItem("lang") ||
+        i18n.language ||
+        navigator.language ||
+        "fr"
+      ).slice(0, 2);
+    } catch {
+      return (i18n.language || "fr").slice(0, 2);
+    }
+  });
+
+  // react to i18n and other tabs
+  useEffect(() => {
+    const onChange = (lng) => setLang((lng || "fr").slice(0, 2));
+    i18n.on("languageChanged", onChange);
+    const onStorage = (e) => {
+      if (e.key === "lang") setLang((e.newValue || "fr").slice(0, 2));
+    };
+    window.addEventListener("storage", onStorage);
+    return () => {
+      i18n.off("languageChanged", onChange);
+      window.removeEventListener("storage", onStorage);
+    };
+  }, [i18n]);
+
+  const currentLocale = LOCALE_MAP[lang] || "fr-FR";
+
+  // types with lang
   useEffect(() => {
     (async () => {
       try {
-        const r = await fetch(`${API_BASE}/api/type-documents`);
+        const r = await fetch(`${API_BASE}/api/type-documents?lang=${lang}`);
         if (r.ok) setTypeDocs(await r.json());
       } catch {}
     })();
-  }, []);
+  }, [lang]);
 
+  // actualités with lang
   useEffect(() => {
     if (actuAbortRef.current) actuAbortRef.current.abort();
     const controller = new AbortController();
@@ -149,7 +200,7 @@ function PlateformeGestion() {
     (async () => {
       try {
         const res = await fetch(
-          `${API_BASE}/api/actualites?status=PUBLIE&page=${actuPage}&pageSize=${actuPageSize}`,
+          `${API_BASE}/api/actualites?status=PUBLIE&lang=${lang}&page=${actuPage}&pageSize=${actuPageSize}`,
           { signal: controller.signal }
         );
         if (!res.ok) throw new Error("API actualités non disponible");
@@ -187,9 +238,7 @@ function PlateformeGestion() {
 
         setActualites(adapted);
       } catch (e) {
-        if (e.name !== "AbortError") {
-          setErrorActu(e.message || "Erreur");
-        }
+        if (e.name !== "AbortError") setErrorActu(e.message || "Erreur");
       } finally {
         setInitialLoading(false);
         setPagingActu(false);
@@ -197,8 +246,9 @@ function PlateformeGestion() {
     })();
 
     return () => controller.abort();
-  }, [actuPage, actuPageSize]);
+  }, [actuPage, actuPageSize, lang, initialLoading, actualites.length]);
 
+  // documents with lang + filter
   useEffect(() => {
     if (docAbortRef.current) docAbortRef.current.abort();
     const controller = new AbortController();
@@ -213,6 +263,7 @@ function PlateformeGestion() {
           status: "PUBLIE",
           page: String(docPage),
           pageSize: String(docPageSize),
+          lang,
         });
         if (docTypeFilter) qs.set("typeId", docTypeFilter);
 
@@ -224,7 +275,6 @@ function PlateformeGestion() {
         const items = Array.isArray(json.data) ? json.data : [];
         setDocTotal(json.total ?? items.length);
 
-        // Preload media
         const ids = [
           ...new Set(items.map((d) => d.fichierMediaId).filter(Boolean)),
         ];
@@ -256,16 +306,14 @@ function PlateformeGestion() {
 
         setDocuments(adapted);
       } catch (e) {
-        if (e.name !== "AbortError") {
-          setErrorDoc(e.message || "Erreur");
-        }
+        if (e.name !== "AbortError") setErrorDoc(e.message || "Erreur");
       } finally {
         setPagingDoc(false);
       }
     })();
 
     return () => controller.abort();
-  }, [docPage, docPageSize, docTypeFilter, typeMap]);
+  }, [docPage, docPageSize, docTypeFilter, typeMap, lang]);
 
   useEffect(() => {
     setDocPage(1);
@@ -290,7 +338,7 @@ function PlateformeGestion() {
     <>
       <Header />
       <div className="plateforme-gestion-container">
-        {/* Section Hero */}
+        {/* Hero */}
         <section
           className="hero section"
           role="banner"
@@ -308,7 +356,7 @@ function PlateformeGestion() {
           </div>
         </section>
 
-        {/* Section Actualités */}
+        {/* Actualités */}
         <section
           className="news section"
           aria-labelledby="news-title"
@@ -318,15 +366,15 @@ function PlateformeGestion() {
             <div className="section-header">
               <div>
                 <h2 className="section-title" id="news-title">
-                  {t('plateformeGestion.actualites.title')}
+                  {t("plateformeGestion.actualites.title")}
                 </h2>
                 <p className="section-subtitle">
-                  {t('plateformeGestion.actualites.subtitle')}
+                  {t("plateformeGestion.actualites.subtitle")}
                 </p>
               </div>
               <div className="section-controls">
                 <label className="filter-label">
-                  {t('plateformeGestion.actualites.resultsPerPage')}&nbsp;
+                  {t("plateformeGestion.actualites.resultsPerPage")}&nbsp;
                   <select
                     value={actuPageSize}
                     onChange={(e) => {
@@ -340,7 +388,7 @@ function PlateformeGestion() {
                   </select>
                 </label>
                 <span className="count-indicator">
-                  {t('plateformeGestion.actualites.page')} {actuPage} —{" "}
+                  {t("plateformeGestion.actualites.page")} {actuPage} —{" "}
                   {Math.min(actuPage * actuPageSize, actuTotal)}/{actuTotal}
                 </span>
               </div>
@@ -349,11 +397,11 @@ function PlateformeGestion() {
             {initialLoading && actualites.length === 0 ? (
               <div className="loading-spinner">
                 <div className="spinner"></div>
-                <p>{t('plateformeGestion.actualites.loading')}</p>
+                <p>{t("plateformeGestion.actualites.loading")}</p>
               </div>
             ) : actualites.length === 0 ? (
               <div className="no-data">
-                <p>{t('plateformeGestion.actualites.noData')}</p>
+                <p>❌ {t("plateformeGestion.actualites.noData")}</p>
                 {errorActu ? (
                   <small style={{ opacity: 0.7 }}>({errorActu})</small>
                 ) : null}
@@ -388,10 +436,8 @@ function PlateformeGestion() {
                       <div className="news-content">
                         <div className="news-meta">
                           <Calendar size={16} />
-                          <span>
-                            {new Date(actualite.date).toLocaleDateString(
-                              "fr-FR"
-                            )}
+                          <span dir={lang === "ar" ? "ltr" : undefined}>
+                            {formatDate(actualite.date, currentLocale)}
                           </span>
                         </div>
                         <h3 className="news-title">{actualite.titre}</h3>
@@ -400,7 +446,7 @@ function PlateformeGestion() {
                           to={`/actualite/${actualite.id}`}
                           className="news-link"
                         >
-                          {t('plateformeGestion.actualites.readMore')}
+                          {t("plateformeGestion.actualites.readMore")}{" "}
                         </Link>
                       </div>
                     </article>
@@ -418,7 +464,7 @@ function PlateformeGestion() {
           </div>
         </section>
 
-        {/* Section Documents Juridiques */}
+        {/* Documents */}
         <section
           className="documents section"
           aria-labelledby="documents-title"
@@ -428,31 +474,33 @@ function PlateformeGestion() {
             <div className="section-header">
               <div>
                 <h2 className="section-title" id="documents-title">
-                  {t('plateformeGestion.documents.title')}
+                  {t("plateformeGestion.documents.title")}
                 </h2>
                 <p className="section-subtitle">
-                  {t('plateformeGestion.documents.subtitle')}
+                  {t("plateformeGestion.documents.subtitle")}
                 </p>
               </div>
 
               <div className="section-controls">
                 <label className="filter-label">
-                  {t('plateformeGestion.documents.typeFilter')}&nbsp;
+                  {t("plateformeGestion.documents.typeFilter")}&nbsp;
                   <select
                     value={docTypeFilter}
                     onChange={(e) => setDocTypeFilter(e.target.value)}
                   >
-                    <option value="">{t('plateformeGestion.documents.allTypes')}</option>
-                    {typeDocs.map((type) => (
-                      <option key={type.id} value={type.id}>
-                        {type.libelle}
+                    <option value="">
+                      {t("plateformeGestion.documents.allTypes")}
+                    </option>
+                    {typeDocs.map((tDoc) => (
+                      <option key={tDoc.id} value={tDoc.id}>
+                        {tDoc.libelle}
                       </option>
                     ))}
                   </select>
                 </label>
 
                 <label className="filter-label">
-                  {t('plateformeGestion.documents.resultsPerPage')}&nbsp;
+                  {t("plateformeGestion.documents.resultsPerPage")}&nbsp;
                   <select
                     value={docPageSize}
                     onChange={(e) => {
@@ -467,15 +515,15 @@ function PlateformeGestion() {
                 </label>
 
                 <span className="count-indicator">
-                  {t('plateformeGestion.documents.page')} {docPage} — {Math.min(docPage * docPageSize, docTotal)}/
-                  {docTotal}
+                  {t("plateformeGestion.documents.page")} {docPage} —{" "}
+                  {Math.min(docPage * docPageSize, docTotal)}/{docTotal}
                 </span>
               </div>
             </div>
 
             {documents.length === 0 && !pagingDoc && !errorDoc ? (
               <div className="no-data">
-                <p>{t('plateformeGestion.documents.noData')}</p>
+                <p>{t("plateformeGestion.documents.noData")}</p>
               </div>
             ) : (
               <>
@@ -500,8 +548,8 @@ function PlateformeGestion() {
                         <div className="document-meta">
                           <div className="meta-item">
                             <Calendar size={14} />
-                            <span>
-                              {new Date(doc.date).toLocaleDateString("fr-FR")}
+                            <span dir={lang === "ar" ? "ltr" : undefined}>
+                              {formatDate(doc.date, currentLocale)}
                             </span>
                           </div>
                           {doc.categorie ? (
@@ -526,15 +574,17 @@ function PlateformeGestion() {
                             className="document-download-btn"
                             download
                           >
-                            {t('plateformeGestion.documents.download')}
+                            <Download size={16} />
+                            {t("plateformeGestion.documents.download")}
                           </a>
                         ) : (
                           <button
                             className="document-download-btn"
                             disabled
-                            title={t('plateformeGestion.documents.unavailable')}
+                            title="Fichier indisponible"
                           >
-                            {t('plateformeGestion.documents.download')}
+                            <Download size={16} />
+                            {t("plateformeGestion.documents.download")}
                           </button>
                         )}
                       </div>
@@ -548,7 +598,6 @@ function PlateformeGestion() {
                   total={docTotal}
                   onPage={goDocPage}
                 />
-
                 {errorDoc ? (
                   <div className="no-data" style={{ marginTop: 8 }}>
                     <small style={{ opacity: 0.7 }}>({errorDoc})</small>
@@ -560,12 +609,9 @@ function PlateformeGestion() {
         </section>
 
         {/* Section map */}
-
         <section className="map-section" aria-labelledby="map-title">
-                  <MapComponent />
+          <MapComponent />
         </section>
-
-        {/* Section Map */}
 
         <Footer />
       </div>

@@ -692,102 +692,174 @@
     }
   },
   "adminPortail": {
-    "title": "Portal Administration",
-    "backToDashboard": "Back to SuperAdmin Dashboard",
+    "header": {
+      "title": "Portal Administration",
+      "backToPortal": "Back to portal"
+    },
     "tabs": {
-      "actualites": "News",
-      "documents": "Legal Documents",
-      "images": "Images"
+      "news": "News",
+      "documents": "Legal Documents"
     },
-    "actualites": {
-      "title": "News Management",
-      "addNew": "Add",
-      "columns": {
-        "titre": "Title",
-        "statut": "Status",
-        "datePublication": "Publication date",
-        "actions": "Actions"
-      },
-      "noData": "No news",
-      "form": {
-        "addTitle": "Add news",
-        "editTitle": "Edit news",
-        "titre": "Title",
-        "titreRequired": "Title *",
-        "image": "Image (cover)",
-        "contenu": "Content (HTML)",
-        "contenuRequired": "Content (HTML) *",
-        "datePublication": "Publication date",
-        "datePlaceholder": "mm/dd/yyyy hh:mm",
-        "statut": "Status",
-        "statutRequired": "Status *",
-        "statusBrouillon": "DRAFT",
-        "statusPublie": "PUBLISHED",
-        "statusArchive": "ARCHIVED",
-        "imageName": "📷"
+    "toolbar": {
+      "newsTitle": "News Management",
+      "docsTitle": "Document Management"
+    },
+    "table": {
+      "headers": {
+        "title": "Title",
+        "status": "Status",
+        "publishDate": "Publication date",
+        "actions": "Actions",
+        "type": "Type"
       }
     },
-    "documents": {
-      "title": "Documents Management",
-      "columns": {
-        "titre": "Title",
-        "type": "Type",
-        "statut": "Status",
-        "datePublication": "Publication date",
-        "actions": "Actions"
-      },
-      "noData": "No documents",
-      "form": {
-        "addTitle": "Add document",
-        "editTitle": "Edit document",
-        "titre": "Title",
-        "titreRequired": "Title *",
-        "description": "Description",
-        "descriptionRequired": "Description *",
-        "type": "Type",
-        "typeRequired": "Type *",
-        "typeSelect": "Select",
-        "fichier": "File (PDF or other)",
-        "fichierRequired": "File (PDF or other) *",
-        "datePublication": "Publication date",
-        "datePlaceholder": "mm/dd/yyyy",
-        "statut": "Status",
-        "statutRequired": "Status *",
-        "fileName": "📄",
-        "fileSizeMB": "MB"
+    "empty": {
+      "news": "No news available",
+      "documents": "No documents available"
+    },
+    "modal": {
+      "title": {
+        "addNews": "Add a news item",
+        "editNews": "Edit a news item",
+        "addDocument": "Add a document",
+        "editDocument": "Edit a document"
       }
     },
-    "images": {
-      "title": "Images Management",
-      "noData": "No images",
-      "form": {
-        "addTitle": "Add image",
-        "image": "Image",
-        "imageRequired": "Image *",
-        "imageName": "📷",
-        "fileSize": "KB"
-      }
+    "fields": {
+      "coverImage": "Cover image",
+      "publicationDate": "Publication date",
+      "status": "Status",
+      "translationsLegend": "Translations",
+      "locale": "Language",
+      "title": "Title",
+      "contentHtml": "Content (HTML)",
+      "type": "Type",
+      "file": "File (PDF or other)",
+      "description": "Description",
+      "selectPlaceholder": "Select"
     },
-    "actions": {
+    "placeholders": {
+      "datetime": "dd/mm/yyyy hh:mm",
+      "date": "dd/mm/yyyy"
+    },
+    "status": {
+      "BROUILLON": "Draft",
+      "PUBLIE": "Published",
+      "ARCHIVE": "Archived"
+    },
+    "buttons": {
       "add": "Add",
       "edit": "Edit",
-      "delete": "Delete",
-      "cancel": "Cancel",
-      "save": "Save",
       "saving": "Saving...",
-      "close": "Close"
+      "cancel": "Cancel"
     },
     "messages": {
       "confirmDelete": "Are you sure you want to delete this item?",
       "deleteSuccess": "Item deleted successfully",
-      "deleteError": "Error during deletion",
-      "saveSuccess": "Item added successfully",
-      "editSuccess": "Item modified successfully",
-      "saveError": "Error during save",
+      "deleteError": "Error while deleting",
+      "createNewsMissingFR": "French title is required in the Translations tab to create the news item.",
+      "createDocMissingFR": "French title is required in the Translations tab to create the document.",
       "selectDocType": "Please select a document type",
-      "selectImage": "Please select an image",
-      "imageAddSuccess": "Image added successfully"
+      "saveErrorGeneric": "Error while saving",
+      "savedAddSuccess": "Item added successfully",
+      "savedEditSuccess": "Item updated successfully"
     }
+  },
+  "title": "Portal Administration",
+  "backToDashboard": "Back to SuperAdmin Dashboard",
+  "tabs": {
+    "actualites": "News",
+    "documents": "Legal Documents",
+    "images": "Images"
+  },
+  "actualites": {
+    "title": "News Management",
+    "addNew": "Add",
+    "columns": {
+      "titre": "Title",
+      "statut": "Status",
+      "datePublication": "Publication date",
+      "actions": "Actions"
+    },
+    "noData": "No news",
+    "form": {
+      "addTitle": "Add news",
+      "editTitle": "Edit news",
+      "titre": "Title",
+      "titreRequired": "Title *",
+      "image": "Image (cover)",
+      "contenu": "Content (HTML)",
+      "contenuRequired": "Content (HTML) *",
+      "datePublication": "Publication date",
+      "datePlaceholder": "mm/dd/yyyy hh:mm",
+      "statut": "Status",
+      "statutRequired": "Status *",
+      "statusBrouillon": "DRAFT",
+      "statusPublie": "PUBLISHED",
+      "statusArchive": "ARCHIVED",
+      "imageName": "📷"
+    }
+  },
+  "documents": {
+    "title": "Documents Management",
+    "columns": {
+      "titre": "Title",
+      "type": "Type",
+      "statut": "Status",
+      "datePublication": "Publication date",
+      "actions": "Actions"
+    },
+    "noData": "No documents",
+    "form": {
+      "addTitle": "Add document",
+      "editTitle": "Edit document",
+      "titre": "Title",
+      "titreRequired": "Title *",
+      "description": "Description",
+      "descriptionRequired": "Description *",
+      "type": "Type",
+      "typeRequired": "Type *",
+      "typeSelect": "Select",
+      "fichier": "File (PDF or other)",
+      "fichierRequired": "File (PDF or other) *",
+      "datePublication": "Publication date",
+      "datePlaceholder": "mm/dd/yyyy",
+      "statut": "Status",
+      "statutRequired": "Status *",
+      "fileName": "📄",
+      "fileSizeMB": "MB"
+    }
+  },
+  "images": {
+    "title": "Images Management",
+    "noData": "No images",
+    "form": {
+      "addTitle": "Add image",
+      "image": "Image",
+      "imageRequired": "Image *",
+      "imageName": "📷",
+      "fileSize": "KB"
+    }
+  },
+  "actions": {
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "close": "Close"
+  },
+  "messages": {
+    "confirmDelete": "Are you sure you want to delete this item?",
+    "deleteSuccess": "Item deleted successfully",
+    "deleteError": "Error during deletion",
+    "saveSuccess": "Item added successfully",
+    "editSuccess": "Item modified successfully",
+    "saveError": "Error during save",
+    "selectDocType": "Please select a document type",
+    "selectImage": "Please select an image",
+    "imageAddSuccess": "Image added successfully"
   },
   "dashboardDDPI": {
     "title": "DDPI Dashboard",
@@ -1753,4 +1825,4 @@
       "development": "Settings page under development..."
     }
   }
-} 
+}

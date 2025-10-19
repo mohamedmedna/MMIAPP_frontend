@@ -6,10 +6,17 @@ import { Calendar, User, ArrowLeft } from "lucide-react";
 import "../Styles/ActualiteDetail.css";
 import { useTranslation } from "react-i18next";
 
+//const API_BASE =
+//import.meta?.env?.VITE_API_BASE ||
+//process.env.REACT_APP_API_BASE ||
+//"http://localhost:4000";
+
 const API_BASE =
-  import.meta?.env?.VITE_API_BASE ||
   process.env.REACT_APP_API_BASE ||
+  window.__API_BASE__ ||
   "http://localhost:4000";
+
+const LOCALE_MAP = { fr: "fr-FR", en: "en-US", ar: "ar-SA" };
 
 const absolutize = (u) => {
   if (!u) return null;
@@ -17,7 +24,7 @@ const absolutize = (u) => {
   return `${API_BASE}${u.startsWith("/") ? "" : "/"}${u}`;
 };
 
-const displayDate = (dstr, locale) => {
+const fmtDate = (dstr, locale) => {
   if (!dstr) return "-";
   const d = new Date(dstr);
   if (Number.isNaN(d.getTime())) return "-";
@@ -32,8 +39,12 @@ function ActualiteDetail() {
   const { t, i18n } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [actualite, setActualite] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const lang = (i18n.language || "fr").slice(0, 2);
+  const locale = LOCALE_MAP[lang] || "fr-FR";
 
   useEffect(() => {
     let aborted = false;
@@ -41,10 +52,10 @@ function ActualiteDetail() {
     async function fetchActualite() {
       setLoading(true);
       try {
-        // 1) fetch the actualité row
-        const r = await fetch(`${API_BASE}/api/actualites/${id}`);
+        let r = await fetch(`${API_BASE}/api/actualites/${id}?lang=${lang}`);
+        if (!r.ok) r = await fetch(`${API_BASE}/api/actualites/${id}`);
         if (!r.ok) {
-          setActualite(null);
+          if (!aborted) setActualite(null);
           return;
         }
         const row = await r.json();
@@ -67,9 +78,9 @@ function ActualiteDetail() {
             id: row.id,
             titre: row.titre,
             image: imageUrl,
-            categorie: "",
+            categorie: row.categorie || "",
             date: row.datePublication,
-            auteur: "",
+            auteur: row.auteur || "",
             contenu: row.contenuHtml || "",
           });
         }
@@ -85,7 +96,7 @@ function ActualiteDetail() {
     return () => {
       aborted = true;
     };
-  }, [id]);
+  }, [id, lang]);
 
   if (loading) {
     return (
@@ -94,7 +105,7 @@ function ActualiteDetail() {
         <div className="actualite-detail-container">
           <div className="loading-spinner">
             <div className="spinner"></div>
-            <p>{t('actualiteDetail.loading')}</p>
+            <p>{t("actualiteDetail.loading")}</p>
           </div>
         </div>
         <Footer />
@@ -108,10 +119,10 @@ function ActualiteDetail() {
         <Header />
         <div className="actualite-detail-container">
           <div className="error-message">
-            <h2>{t('actualiteDetail.notFound')}</h2>
+            <h2>{t("actualiteDetail.notFound")}</h2>
             <Link to="/plateforme-gestion" className="back-link">
               <ArrowLeft size={20} />
-              {t('actualiteDetail.backToNews')}
+              {t("actualiteDetail.backToNews")}
             </Link>
           </div>
         </div>
@@ -120,16 +131,17 @@ function ActualiteDetail() {
     );
   }
 
-  const locale = i18n.language === 'ar' ? 'ar-SA' : i18n.language === 'en' ? 'en-US' : 'fr-FR';
-
   return (
     <>
       <Header />
-      <div className="actualite-detail-container">
+      <div
+        className="actualite-detail-container"
+        dir={lang === "ar" ? "rtl" : "ltr"}
+      >
         <div className="actualite-detail-content">
           <Link to="/plateforme-gestion" className="back-link">
             <ArrowLeft size={20} />
-            {t('actualiteDetail.backToNews')}
+            {t("actualiteDetail.backToNews")}
           </Link>
 
           <article className="actualite-article">
@@ -144,7 +156,7 @@ function ActualiteDetail() {
               <div className="actualite-meta">
                 <div className="meta-item">
                   <Calendar size={18} />
-                  <span>{displayDate(actualite.date, locale)}</span>
+                  <span>{fmtDate(actualite.date, locale)}</span>
                 </div>
                 {actualite.auteur ? (
                   <div className="meta-item">
@@ -167,16 +179,17 @@ function ActualiteDetail() {
 
             <div
               className="actualite-content"
+              // The content is trusted HTML coming from your CMS/API
               dangerouslySetInnerHTML={{ __html: actualite.contenu }}
             />
           </article>
 
           <div className="actualite-actions">
             <button onClick={() => navigate(-1)} className="btn-secondary">
-              {t('actualiteDetail.back')}
+              {t("actualiteDetail.back")}
             </button>
             <button onClick={() => window.print()} className="btn-primary">
-              {t('actualiteDetail.print')}
+              {t("actualiteDetail.print")}
             </button>
           </div>
         </div>
