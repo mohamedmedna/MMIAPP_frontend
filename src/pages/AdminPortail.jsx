@@ -18,9 +18,14 @@ registerLocale("fr", fr);
 //"http://localhost:4000";
 
 const API_BASE =
+  window.__APP_CONFIG__?.API_BASE ||
   process.env.REACT_APP_API_BASE ||
-  window.__API_BASE__ ||
   "http://localhost:4000";
+
+// const API_BASE =
+//   process.env.REACT_APP_API_BASE ||
+//   window.__API_BASE__ ||
+//   "http://localhost:4000";
 
 // Helpers
 const toYYYYMMDD = (d) => {

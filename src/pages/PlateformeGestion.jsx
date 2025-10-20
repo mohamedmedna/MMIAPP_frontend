@@ -13,9 +13,13 @@ import { useTranslation } from "react-i18next";
 //process.env.REACT_APP_API_BASE ||
 //"http://localhost:4000";
 
+// const API_BASE =
+//   process.env.REACT_APP_API_BASE ||
+//   window.__API_BASE__ ||
+//   "http://localhost:4000";
 const API_BASE =
+  window.__APP_CONFIG__?.API_BASE ||
   process.env.REACT_APP_API_BASE ||
-  window.__API_BASE__ ||
   "http://localhost:4000";
 
 const LOCALE_MAP = { fr: "fr-FR", en: "en-GB", ar: "ar-MA" };
