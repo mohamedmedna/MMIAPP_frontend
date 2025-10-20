@@ -24,6 +24,8 @@ const STATUT_COLORS = {
   TRANSMISE_AU_DGI: 'purple',
   REJETEE: 'red'
 };
+const baseUrl = window.__APP_CONFIG__.API_BASE;
+
 
 function SecretaireSidebar({ onGotoDashboard, onGotoAccuses, onGotoTransmissions, onLogout, notifCount = 0 }) {
   return (
@@ -68,7 +70,7 @@ export default function SecrAccuses() {
     setLoading(true);
     setError('');
     const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
-    const url = 'http://localhost:4000/api/demandes/accuses-reception';
+    const url = `${baseUrl}/api/demandes/accuses-reception`;
     try {
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) throw new Error(await res.text());
@@ -102,7 +104,7 @@ export default function SecrAccuses() {
     setHistLoading(true);
     const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
     try {
-      const res = await fetch(`http://localhost:4000/api/demandes/${demandeId}/historique`, {
+      const res = await fetch(`${baseUrl}/api/demandes/${demandeId}/historique`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -120,7 +122,7 @@ export default function SecrAccuses() {
     try {
       message.loading({ content: 'Téléchargement en cours...', key: 'download' });
       
-      const response = await fetch(`http://localhost:4000/api/demandes/${demandeId}/telecharger-accuse-secretaire`, {
+      const response = await fetch(`${baseUrl}/api/demandes/${demandeId}/telecharger-accuse-secretaire`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -151,7 +153,7 @@ export default function SecrAccuses() {
     const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
     try {
       message.loading({ content: 'Transmission SG...', key: 'transmission' });
-      const res = await fetch(`http://localhost:4000/api/demandes/${demandeId}/transmettre-sg`, {
+      const res = await fetch(`${baseUrl}/api/demandes/${demandeId}/transmettre-sg`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       });

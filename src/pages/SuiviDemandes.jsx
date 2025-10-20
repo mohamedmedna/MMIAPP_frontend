@@ -32,6 +32,8 @@ import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;
 const { Step } = Steps;
+const baseUrl = window.__APP_CONFIG__.API_BASE;
+
 
 export default function SuiviDemandes({ user, logout }) {
   const { t } = useTranslation();
@@ -48,7 +50,7 @@ export default function SuiviDemandes({ user, logout }) {
     if (!showLoading) setRefreshing(true);
     
     try {
-      const response = await fetch(`http://localhost:4000/api/mes-demandes?user_id=${user.id}`, {
+      const response = await fetch(`${baseUrl}/api/mes-demandes?user_id=${user.id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -165,7 +167,7 @@ export default function SuiviDemandes({ user, logout }) {
 
   const handleDownloadAccuse = async (reference) => {
     try {
-      const response = await fetch(`http://localhost:4000/api/download-accuse/${reference}`, {
+      const response = await fetch(`${baseUrl}/api/download-accuse/${reference}`, {
         method: 'GET'
       });
       
@@ -187,7 +189,7 @@ export default function SuiviDemandes({ user, logout }) {
 
   const handleDownloadAutorisation = async (reference) => {
     try {
-      const response = await fetch(`http://localhost:4000/api/download-autorisation/${reference}`, {
+      const response = await fetch(`${baseUrl}/api/download-autorisation/${reference}`, {
         method: 'GET'
       });
       

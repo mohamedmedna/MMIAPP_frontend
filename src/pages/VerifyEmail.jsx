@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const VerifyEmail = () => {
+  const baseUrl = window.__APP_CONFIG__.API_BASE;
   const [status, setStatus] = useState('verifying'); // 'verifying', 'success', 'error'
   const [message, setMessage] = useState('');
   const { token } = useParams();
@@ -17,7 +18,7 @@ const VerifyEmail = () => {
         }
 
         // Appel à votre backend Node.js sur le port 4000
-        const response = await fetch(`http://localhost:4000/api/activation/${token}`, {
+        const response = await fetch(`${baseUrl}/api/activation/${token}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

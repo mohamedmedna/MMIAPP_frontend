@@ -22,6 +22,8 @@ function SuperAdminDashboard() {
     window.location.href = '/superadmin-login';
   };
 
+  const baseUrl = window.__APP_CONFIG__.API_BASE;
+
   // Fonction pour obtenir le label du rôle
   const getRoleLabel = (roleId) => {
     const roleMap = {
@@ -48,7 +50,7 @@ function SuperAdminDashboard() {
     }
     
     try {
-      const response = await fetch(`http://localhost:4000/api/admin/users/${userId}/toggle-status`, {
+      const response = await fetch(`${baseUrl}/api/admin/users/${userId}/toggle-status`, {
         method: 'PATCH',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('adminToken')}`
@@ -78,7 +80,7 @@ function SuperAdminDashboard() {
     }
     
     try {
-      const response = await fetch(`http://localhost:4000/api/admin/users/${userId}/resend-activation`, {
+      const response = await fetch(`${baseUrl}/api/admin/users/${userId}/resend-activation`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('adminToken')}`
@@ -103,7 +105,7 @@ function SuperAdminDashboard() {
 
   // Charger la liste des utilisateurs et statistiques
   useEffect(() => {
-    fetch('http://localhost:4000/api/admin/users', {
+    fetch(`${baseUrl}/api/admin/users`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
     })
       .then(res => res.json())
@@ -122,7 +124,7 @@ function SuperAdminDashboard() {
     setError('');
     setNotif('');
     try {
-      const response = await fetch('http://localhost:4000/api/admin/create-user', {
+      const response = await fetch(`${baseUrl}/api/admin/create-user`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -347,7 +349,7 @@ function SuperAdminDashboard() {
                     className="admin-user-action action-delete"
                     onClick={() => {
                       if (window.confirm(`${t('superAdminDashboard.delete')} ${u.nom} ${u.prenom} ?`)) {
-                        fetch(`http://localhost:4000/api/admin/users/${u.id}`, {
+                        fetch(`${baseUrl}/api/admin/users/${u.id}`, {
                           method: 'DELETE',
                           headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` }
                         })

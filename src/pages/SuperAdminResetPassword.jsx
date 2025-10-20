@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 function SuperAdminResetPassword() {
+  const baseUrl = window.__APP_CONFIG__.API_BASE;
   const { t } = useTranslation();
   const { token } = useParams();
   const [password, setPassword] = useState('');
@@ -14,7 +15,7 @@ function SuperAdminResetPassword() {
     setNotif('');
     setError('');
     try {
-      const response = await fetch(`http://localhost:4000/api/admin-reset-password/${token}`, {
+      const response = await fetch(`${baseUrl}/api/admin-reset-password/${token}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nouveau_mot_de_passe: password }),

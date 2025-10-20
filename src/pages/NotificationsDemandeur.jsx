@@ -27,6 +27,8 @@ export default function NotificationsDemandeur({ user, logout }) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const navigate = useNavigate();
+  const baseUrl = window.__APP_CONFIG__.API_BASE;
+
 
   // Fonction pour charger les notifications
   const loadNotifications = async (showLoading = true) => {
@@ -34,7 +36,7 @@ export default function NotificationsDemandeur({ user, logout }) {
     if (!showLoading) setRefreshing(true);
     
     try {
-      const response = await fetch(`http://localhost:4000/api/notifications?user_id=${user.id}`, {
+      const response = await fetch(`${baseUrl}/api/notifications?user_id=${user.id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
