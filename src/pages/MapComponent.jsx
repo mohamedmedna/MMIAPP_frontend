@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { MapPin, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const API_BASE = window.__APP_CONFIG__?.API_BASE;
 
@@ -10,6 +11,7 @@ function MapComponent() {
   const mapRef = React.useRef(null);
   const mapInstanceRef = React.useRef(null);
   const [L, setL] = useState(null);
+  const { t, i18n } = useTranslation();
 
   // Charger Leaflet
   useEffect(() => {
@@ -151,7 +153,8 @@ function MapComponent() {
           const popupContent = `
             <div style="padding: 12px; min-width: 250px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
               <h3 style="margin: 0 0 10px 0; color: #667eea; font-size: 1.1rem; border-bottom: 2px solid #667eea; padding-bottom: 8px;">
-                📍 ${loc.nom || "Localisation"}
+                📍 ${(loc?.nom && String(loc.nom).trim()) || t("map.loc")}
+
               </h3>
               
               <div style="margin-bottom: 8px;">

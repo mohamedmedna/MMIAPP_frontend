@@ -14,7 +14,24 @@ registerLocale("fr", fr);
 
 const API_BASE = window.__APP_CONFIG__?.API_BASE;
 
+const LOCALE_MAP = { fr: "fr-FR", en: "en-GB", ar: "ar-MA" };
+
 // Helpers
+
+const formatDateLatn = (d, locale = "fr-FR") => {
+  if (!d) return "-";
+  const date = new Date(d);
+  if (Number.isNaN(date.getTime())) return "-";
+  const s = new Intl.DateTimeFormat(locale, {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    numberingSystem: "latn",
+    calendar: "gregory",
+  }).format(date);
+  return s.replace(/[\u200e\u200f\u061c]/g, "");
+};
+
 const toYYYYMMDD = (d) => {
   if (!d) return null;
   const pad = (n) => String(n).padStart(2, "0");
@@ -44,7 +61,12 @@ function AdminPortail() {
   const { t, i18n } = useTranslation();
   const [lang, setLang] = useState(getInitialLang(i18n));
 
-  // keep lang in sync with i18next + other tabs
+  useEffect(() => {
+    const isRTL = lang === "ar";
+    document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
+    document.documentElement.setAttribute("lang", lang);
+  }, [lang]);
+
   useEffect(() => {
     const onChange = (lng) => setLang((lng || "fr").slice(0, 2));
     i18n.on("languageChanged", onChange);
@@ -57,6 +79,9 @@ function AdminPortail() {
       window.removeEventListener("storage", onStorage);
     };
   }, [i18n]);
+
+  const currentLocale = LOCALE_MAP[lang] || "fr-FR";
+  const isRTL = lang === "ar";
 
   // one empty translation “shape”
   const EMPTY_T = { titre: "", contenuHtml: "" };
@@ -99,14 +124,12 @@ function AdminPortail() {
   const [editMode, setEditMode] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
 
-  // Base form: keep only non-translatable fields for ACTUALITÉS
   const [formActualite, setFormActualite] = useState({
     status: "BROUILLON",
     fichierMediaId: null,
     datePublication: null,
   });
 
-  // Documents form (base, but we seed from FR translation on create)
   const [formDocument, setFormDocument] = useState({
     status: "BROUILLON",
     docTypeId: "",
@@ -114,12 +137,13 @@ function AdminPortail() {
     datePublication: null,
   });
 
-  // Translation sub-form (visible inputs)
   const [trLocale, setTrLocale] = useState("fr");
   const [trTitre, setTrTitre] = useState("");
   const [trContenuHtml, setTrContenuHtml] = useState("");
   const [trDocTitre, setTrDocTitre] = useState("");
   const [trDocDescription, setTrDocDescription] = useState("");
+
+  const trIsRTL = trLocale === "ar";
 
   const [imageFile, setImageFile] = useState(null);
   const [documentFile, setDocumentFile] = useState(null);
@@ -129,7 +153,6 @@ function AdminPortail() {
   useEffect(() => {
     fetchLists();
     fetchTypeDocs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lang]);
 
   async function fetchLists() {
@@ -201,6 +224,7 @@ function AdminPortail() {
 
   useEffect(() => {
     applyTrFromCache(trLocale);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trLocale]);
 
   function handleAddNew() {
@@ -519,7 +543,10 @@ function AdminPortail() {
   return (
     <>
       <Header />
-      <div className="admin-portail-container">
+      <div
+        className={`admin-portail-container ${isRTL ? "rtl" : ""}`}
+        dir={isRTL ? "rtl" : "ltr"}
+      >
         <div className="admin-header">
           <h1>{t("adminPortail.header.title")}</h1>
           <Link to="/plateforme-gestion" className="back-to-portal">
@@ -577,13 +604,12 @@ function AdminPortail() {
                           {t(`adminPortail.status.${a.status}`)}
                         </span>
                       </td>
-                      <td>
-                        {a.datePublication
-                          ? new Date(a.datePublication).toLocaleDateString(
-                              "fr-FR"
-                            )
-                          : "-"}
+                      <td className="num">
+                        <span dir="ltr">
+                          {formatDateLatn(a.datePublication, currentLocale)}
+                        </span>
                       </td>
+
                       <td className="actions">
                         <button
                           className="btn-edit"
@@ -639,13 +665,12 @@ function AdminPortail() {
                           {t(`adminPortail.status.${d.status}`)}
                         </span>
                       </td>
-                      <td>
-                        {d.datePublication
-                          ? new Date(d.datePublication).toLocaleDateString(
-                              "fr-FR"
-                            )
-                          : "-"}
+                      <td className="num">
+                        <span dir="ltr">
+                          {formatDateLatn(d.datePublication, currentLocale)}
+                        </span>
                       </td>
+
                       <td className="actions">
                         <button
                           className="btn-edit"
@@ -737,6 +762,7 @@ function AdminPortail() {
                           "adminPortail.placeholders.datetime"
                         )}
                         isClearable
+                        calendarStartDay={1}
                       />
                     </div>
 
@@ -787,6 +813,7 @@ function AdminPortail() {
                         <input
                           type="text"
                           value={trTitre}
+                          dir={trIsRTL ? "rtl" : "ltr"}
                           onChange={(e) => {
                             const v = e.target.value;
                             setTrTitre(v);
@@ -800,6 +827,7 @@ function AdminPortail() {
                         <textarea
                           rows={6}
                           value={trContenuHtml}
+                          dir={trIsRTL ? "rtl" : "ltr"}
                           onChange={(e) => {
                             setTrContenuHtml(e.target.value);
                             updateCacheFor(trLocale, {
@@ -850,7 +878,10 @@ function AdminPortail() {
                       {documentFile && (
                         <p className="file-name">
                           📄 {documentFile.name} (
-                          {(documentFile.size / (1024 * 1024)).toFixed(2)} MB)
+                          <span dir="ltr">
+                            {(documentFile.size / (1024 * 1024)).toFixed(2)}
+                          </span>{" "}
+                          MB)
                         </p>
                       )}
                     </div>
@@ -868,6 +899,7 @@ function AdminPortail() {
                         locale="fr"
                         placeholderText={t("adminPortail.placeholders.date")}
                         isClearable
+                        calendarStartDay={1}
                       />
                     </div>
                     <div className="form-group">
@@ -918,6 +950,7 @@ function AdminPortail() {
                         <input
                           type="text"
                           value={trDocTitre}
+                          dir={trIsRTL ? "rtl" : "ltr"}
                           onChange={(e) => {
                             const v = e.target.value;
                             setTrDocTitre(v);
@@ -932,6 +965,7 @@ function AdminPortail() {
                         <textarea
                           rows={4}
                           value={trDocDescription}
+                          dir={trIsRTL ? "rtl" : "ltr"}
                           onChange={(e) => {
                             const v = e.target.value;
                             setTrDocDescription(v);

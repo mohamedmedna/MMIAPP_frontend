@@ -29,7 +29,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 1.2rem;
-  background: linear-gradient(135deg, #006400 0%, #228B22 100%);
+  background: linear-gradient(135deg, #006400 0%, #228b22 100%);
   color: white;
   text-decoration: none;
   font-weight: 600;
@@ -77,7 +77,7 @@
 }
 
 .tab-btn.active {
-  background: linear-gradient(135deg, #006400 0%, #228B22 100%);
+  background: linear-gradient(135deg, #006400 0%, #228b22 100%);
   color: white;
   box-shadow: 0 4px 12px rgba(0, 100, 0, 0.3);
 }
@@ -110,7 +110,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: linear-gradient(135deg, #006400 0%, #228B22 100%);
+  background: linear-gradient(135deg, #006400 0%, #228b22 100%);
   color: white;
   border: none;
   padding: 0.8rem 1.5rem;
@@ -136,7 +136,7 @@
 }
 
 .admin-table thead {
-  background: linear-gradient(135deg, #006400 0%, #228B22 100%);
+  background: linear-gradient(135deg, #006400 0%, #228b22 100%);
   color: white;
 }
 
@@ -363,7 +363,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: linear-gradient(135deg, #006400 0%, #228B22 100%);
+  background: linear-gradient(135deg, #006400 0%, #228b22 100%);
   color: white;
   box-shadow: 0 4px 12px rgba(0, 100, 0, 0.3);
 }
@@ -473,7 +473,7 @@
   font-size: 0.85rem;
   color: #7f8c8d;
 }
-  
+
 /* Responsive */
 @media (max-width: 768px) {
   .admin-portail-container {
@@ -530,4 +530,30 @@
   .btn-save {
     width: 100%;
   }
+}
+.admin-portail-container.rtl {
+  direction: rtl;
+  text-align: right;
+}
+.admin-portail-container.rtl .admin-tabs .tab-btn svg,
+.admin-portail-container.rtl .btn-add svg,
+.admin-portail-container.rtl .actions button svg {
+  transform: scaleX(-1);
+}
+
+.admin-portail-container[dir="rtl"] table th,
+.admin-portail-container[dir="rtl"] table td {
+  text-align: right;
+}
+
+.admin-portail-container[dir="rtl"] table th.num,
+.admin-portail-container[dir="rtl"] table td.num,
+.admin-portail-container[dir="rtl"] table th.actions,
+.admin-portail-container[dir="rtl"] table td.actions {
+  text-align: left;
+}
+
+.admin-portail-container[dir="ltr"] table th,
+.admin-portail-container[dir="ltr"] table td {
+  text-align: left;
 }

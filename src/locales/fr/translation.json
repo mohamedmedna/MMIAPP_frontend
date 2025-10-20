@@ -1768,5 +1768,10 @@
     "settings": {
       "development": "Page des paramètres en cours de développement..."
     }
+  },
+
+  "map": {
+    "title": "Cartographie des demandes d’autorisation",
+    "loc": "Localisation"
   }
 }

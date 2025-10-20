@@ -92,6 +92,7 @@ function LoginForm({ setUser }) {
             </button>
           </form>
           {error && <div className="login-error">{error}</div>}
+
           <p className="login-link">
             <Link to="/forgot-password" className="login-link">
               {t("loginform.forgot_password")}
@@ -101,7 +102,8 @@ function LoginForm({ setUser }) {
               {t("loginform.create_account")}
             </Link>
           </p>
-          <Link to="/" className="login-back-home">
+
+          <Link to="/mmiapp" className="login-back-home">
             ← {t("loginform.back_home")}
           </Link>
         </div>

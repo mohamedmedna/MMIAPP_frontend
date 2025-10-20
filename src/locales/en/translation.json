@@ -1824,5 +1824,10 @@
     "settings": {
       "development": "Settings page under development..."
     }
+  },
+
+  "map": {
+    "title": "Authorization Requests Mapping",
+    "loc": "Location"
   }
 }

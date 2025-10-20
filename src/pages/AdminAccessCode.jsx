@@ -3,7 +3,6 @@ import {
   Form,
   Input,
   Button,
-  Alert,
   Card,
   Typography,
   Space,
@@ -16,6 +15,7 @@ import {
   EyeTwoTone,
   KeyOutlined,
 } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useTranslation } from "react-i18next";
@@ -26,13 +26,21 @@ const { Title, Text, Paragraph } = Typography;
 
 export default function AdminAccessCode() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [form] = Form.useForm();
+
   const [loading, setLoading] = useState(false);
   const [currentCode, setCurrentCode] = useState("");
   const [showCurrentCode, setShowCurrentCode] = useState(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
 
   const API_BASE = window.__APP_CONFIG__?.API_BASE;
+
+  const goBack = () => {
+    // Go back if there is history, otherwise go to a safe route
+    if (window.history.length > 1) navigate(-1);
+    else navigate("/admin-portail");
+  };
 
   useEffect(() => {
     // Vérifier si l'utilisateur est superadmin
@@ -41,6 +49,7 @@ export default function AdminAccessCode() {
 
     // Charger le code d'accès actuel
     loadCurrentAccessCode();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadCurrentAccessCode = async () => {
@@ -151,7 +160,6 @@ export default function AdminAccessCode() {
         t("adminAccessCode.error_required", "Le code d'accès est requis")
       );
     }
-
     if (value.length !== 8) {
       return Promise.reject(
         t(
@@ -160,8 +168,6 @@ export default function AdminAccessCode() {
         )
       );
     }
-
-    // Vérifier qu'il contient au moins une lettre majuscule, une minuscule, un chiffre et un caractère spécial
     const hasUpperCase = /[A-Z]/.test(value);
     const hasLowerCase = /[a-z]/.test(value);
     const hasNumber = /[0-9]/.test(value);
@@ -175,7 +181,6 @@ export default function AdminAccessCode() {
         )
       );
     }
-
     return Promise.resolve();
   };
 
@@ -205,7 +210,7 @@ export default function AdminAccessCode() {
               )}
             </Paragraph>
             <div style={{ textAlign: "center", marginTop: "20px" }}>
-              <Button type="primary" onClick={() => window.history.back()}>
+              <Button type="primary" onClick={goBack}>
                 {t("adminAccessCode.back", "Retour")}
               </Button>
             </div>
@@ -229,6 +234,7 @@ export default function AdminAccessCode() {
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
       </div>
+
       <div className="admin-access-container">
         <div className="admin-access-content">
           <Title
@@ -245,16 +251,10 @@ export default function AdminAccessCode() {
             )}
           </Title>
 
-          {/* Bouton de retour vers le dashboard */}
+          {/* Bouton retour */}
           <div className="back-to-dashboard-section">
-            <Button
-              type="default"
-              size="large"
-              icon={<i className="fa-solid fa-arrow-left"></i>}
-              onClick={() => (window.location.href = "/superadmin-dashboard")}
-              className="back-to-dashboard-btn"
-            >
-              {t("adminAccessCode.back_to_dashboard", "Retour au Dashboard")}
+            <Button type="primary" onClick={goBack}>
+              {t("adminAccessCode.back", "Retour")}
             </Button>
           </div>
 
@@ -380,6 +380,7 @@ export default function AdminAccessCode() {
           </div>
         </div>
       </div>
+
       <Footer />
     </>
   );

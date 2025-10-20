@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Typography, Alert, Divider } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import banniereMinistere from "../assets/banniere-ministere.jpg";
@@ -11,6 +12,7 @@ const { Title, Text } = Typography;
 
 export default function LoginDRMNE() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -21,7 +23,7 @@ export default function LoginDRMNE() {
     setLoading(true);
 
     try {
-      // Utiliser l'endpoint DRMNE/PMNE avec role_id 11
+      // DRMNE / PNME endpoint (role_id 11)
       const response = await fetch(`${API_BASE}/api/login/pnme`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -34,19 +36,18 @@ export default function LoginDRMNE() {
       const data = await response.json();
 
       if (response.ok && data.token && data.user && data.user.role_id === 11) {
-        // Stocker le token et les informations utilisateur
         localStorage.setItem("adminToken", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
 
-        // Rediriger vers le dashboard DRMNE
-        window.location.href = "/dashboard-drmne";
+        // ✅ SPA navigation so Router basename (e.g. /mmiapp) is respected
+        navigate("/dashboard-drmne");
       } else if (response.ok && data.user && data.user.role_id !== 11) {
         setError(t("loginDRMNE.error_access"));
       } else {
         setError(data.error || t("loginDRMNE.error_login"));
       }
-    } catch (error) {
+    } catch {
       setError(t("loginDRMNE.error_network"));
     } finally {
       setLoading(false);
@@ -66,6 +67,7 @@ export default function LoginDRMNE() {
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
       </div>
+
       <div className="login-container">
         <div className="login-intro">
           <Title level={2} style={{ color: "#229954", fontWeight: "bold" }}>
@@ -119,10 +121,8 @@ export default function LoginDRMNE() {
                         new Error(t("loginDRMNE.error_identifiant"))
                       );
                     }
-                    // Accepter soit un email soit un identifiant de 8 chiffres
                     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     const identifiantRegex = /^\d{8}$/;
-
                     if (
                       emailRegex.test(value) ||
                       identifiantRegex.test(value)
@@ -170,16 +170,17 @@ export default function LoginDRMNE() {
           </Form>
 
           <div className="login-antd-links">
-            <a href="/forgot-password" className="login-antd-link">
+            <Link to="/forgot-password" className="login-antd-link">
               {t("loginDRMNE.forgot_password")}
-            </a>
+            </Link>
           </div>
 
-          <a href="/" className="login-antd-back-home">
+          <Link to="/" className="login-antd-back-home">
             {t("loginDRMNE.back_home")}
-          </a>
+          </Link>
         </div>
       </div>
+
       <Footer />
     </>
   );

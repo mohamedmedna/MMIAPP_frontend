@@ -23,7 +23,6 @@ const formatDate = (d, locale) => {
     numberingSystem: "latn",
     calendar: "gregory",
   }).format(date);
-
   return s.replace(/[\u200e\u200f\u061c]/g, "");
 };
 
@@ -51,7 +50,7 @@ const absolutize = (u) => {
   return `${API_BASE}${u.startsWith("/") ? "" : "/"}${u}`;
 };
 
-function Pager({ page, pageSize, total, onPage }) {
+function Pager({ page, pageSize, total, onPage, isRTL = false }) {
   const pages = Math.max(1, Math.ceil(total / pageSize));
   if (pages <= 1) return null;
 
@@ -67,10 +66,13 @@ function Pager({ page, pageSize, total, onPage }) {
   const nums = [];
   for (let p = start; p <= end; p++) nums.push(p);
 
+  const prevSymbol = isRTL ? "»" : "«";
+  const nextSymbol = isRTL ? "«" : "»";
+
   return (
-    <nav className="pager" aria-label="Pagination">
+    <nav className="pager" aria-label="Pagination" dir={isRTL ? "rtl" : "ltr"}>
       <button className="pager-btn" onClick={prev} disabled={page === 1}>
-        «
+        {prevSymbol}
       </button>
       {start > 1 && (
         <>
@@ -98,7 +100,7 @@ function Pager({ page, pageSize, total, onPage }) {
         </>
       )}
       <button className="pager-btn" onClick={next} disabled={page === pages}>
-        »
+        {nextSymbol}
       </button>
     </nav>
   );
@@ -152,6 +154,13 @@ function PlateformeGestion() {
     }
   });
 
+  // Apply document-level dir/lang so EVERYTHING flips in Arabic
+  useEffect(() => {
+    const isRTL = lang === "ar";
+    document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
+    document.documentElement.setAttribute("lang", lang);
+  }, [lang]);
+
   // react to i18n and other tabs
   useEffect(() => {
     const onChange = (lng) => setLang((lng || "fr").slice(0, 2));
@@ -167,6 +176,7 @@ function PlateformeGestion() {
   }, [i18n]);
 
   const currentLocale = LOCALE_MAP[lang] || "fr-FR";
+  const isRTL = lang === "ar";
 
   // types with lang
   useEffect(() => {
@@ -329,7 +339,10 @@ function PlateformeGestion() {
   return (
     <>
       <Header />
-      <div className="plateforme-gestion-container">
+      <div
+        className={`plateforme-gestion-container ${isRTL ? "rtl" : ""}`}
+        dir={isRTL ? "rtl" : "ltr"}
+      >
         {/* Hero */}
         <section
           className="hero section"
@@ -380,8 +393,11 @@ function PlateformeGestion() {
                   </select>
                 </label>
                 <span className="count-indicator">
-                  {t("plateformeGestion.actualites.page")} {actuPage} —{" "}
-                  {Math.min(actuPage * actuPageSize, actuTotal)}/{actuTotal}
+                  {t("plateformeGestion.actualites.page")}{" "}
+                  <span dir="ltr">{actuPage}</span> —{" "}
+                  <span dir="ltr">
+                    {Math.min(actuPage * actuPageSize, actuTotal)}/{actuTotal}
+                  </span>
                 </span>
               </div>
             </div>
@@ -428,7 +444,7 @@ function PlateformeGestion() {
                       <div className="news-content">
                         <div className="news-meta">
                           <Calendar size={16} />
-                          <span dir={lang === "ar" ? "ltr" : undefined}>
+                          <span dir={isRTL ? "ltr" : undefined}>
                             {formatDate(actualite.date, currentLocale)}
                           </span>
                         </div>
@@ -450,6 +466,7 @@ function PlateformeGestion() {
                   pageSize={actuPageSize}
                   total={actuTotal}
                   onPage={goActuPage}
+                  isRTL={isRTL}
                 />
               </>
             )}
@@ -507,8 +524,11 @@ function PlateformeGestion() {
                 </label>
 
                 <span className="count-indicator">
-                  {t("plateformeGestion.documents.page")} {docPage} —{" "}
-                  {Math.min(docPage * docPageSize, docTotal)}/{docTotal}
+                  {t("plateformeGestion.documents.page")}{" "}
+                  <span dir="ltr">{docPage}</span> —{" "}
+                  <span dir="ltr">
+                    {Math.min(docPage * docPageSize, docTotal)}/{docTotal}
+                  </span>
                 </span>
               </div>
             </div>
@@ -540,7 +560,7 @@ function PlateformeGestion() {
                         <div className="document-meta">
                           <div className="meta-item">
                             <Calendar size={14} />
-                            <span dir={lang === "ar" ? "ltr" : undefined}>
+                            <span dir={isRTL ? "ltr" : undefined}>
                               {formatDate(doc.date, currentLocale)}
                             </span>
                           </div>
@@ -589,6 +609,7 @@ function PlateformeGestion() {
                   pageSize={docPageSize}
                   total={docTotal}
                   onPage={goDocPage}
+                  isRTL={isRTL}
                 />
                 {errorDoc ? (
                   <div className="no-data" style={{ marginTop: 8 }}>
@@ -600,7 +621,15 @@ function PlateformeGestion() {
           </div>
         </section>
 
-        {/* Section map */}
+        <section className="section container" aria-labelledby="map-title">
+          <div className="section-header">
+            <h2 className="section-title" id="map-title">
+              {t("map.title")}
+            </h2>
+          </div>
+        </section>
+
+        {/* Map */}
         <section className="map-section" aria-labelledby="map-title">
           <MapComponent />
         </section>
