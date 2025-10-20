@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   HomeOutlined,
   PlusCircleOutlined,
@@ -9,21 +9,29 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   FileTextOutlined,
-  UserOutlined
-} from '@ant-design/icons';
-import { useTranslation } from 'react-i18next';
-import Footer from './Footer';
-import '../Styles/DashboardLayoutOptimization.css';
+  UserOutlined,
+} from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
+import Footer from "./Footer";
+import "../Styles/DashboardLayoutOptimization.css";
 
-export default function DashboardLayout({ children, user, logout, demandes = [], notifications = [] }) {
+export default function DashboardLayout({
+  children,
+  user,
+  logout,
+  demandes = [],
+  notifications = [],
+}) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeMenu, setActiveMenu] = useState('/dashboard');
+  const [activeMenu, setActiveMenu] = useState("/dashboard");
   const [localDemandes, setLocalDemandes] = useState([]);
   const [localNotifications, setLocalNotifications] = useState([]);
+
+  const API_BASE = window.__APP_CONFIG__?.API_BASE;
 
   useEffect(() => {
     setActiveMenu(location.pathname);
@@ -50,38 +58,44 @@ export default function DashboardLayout({ children, user, logout, demandes = [],
   // Fonction pour charger les demandes
   const loadDemandes = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/api/mes-demandes?user_id=${user.id}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
+      const response = await fetch(
+        `${API_BASE}/api/mes-demandes?user_id=${user.id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      });
-      
+      );
+
       if (response.ok) {
         const data = await response.json();
         setLocalDemandes(Array.isArray(data) ? data : []);
       }
     } catch (error) {
-      console.error('Erreur lors du chargement des demandes:', error);
+      console.error("Erreur lors du chargement des demandes:", error);
     }
   };
 
   // Fonction pour charger les notifications
   const loadNotifications = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/api/notifications?user_id=${user.id}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
+      const response = await fetch(
+        `${API_BASE}/api/notifications?user_id=${user.id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      });
-      
+      );
+
       if (response.ok) {
         const data = await response.json();
         setLocalNotifications(Array.isArray(data) ? data : []);
       }
     } catch (error) {
-      console.error('Erreur lors du chargement des notifications:', error);
+      console.error("Erreur lors du chargement des notifications:", error);
     }
   };
 
@@ -103,7 +117,7 @@ export default function DashboardLayout({ children, user, logout, demandes = [],
   return (
     <div className="dashboard-layout">
       {/* Bouton mobile pour ouvrir/fermer le menu */}
-      <button 
+      <button
         className="mobile-menu-toggle"
         onClick={toggleMobileMenu}
         aria-label="Toggle menu"
@@ -117,12 +131,16 @@ export default function DashboardLayout({ children, user, logout, demandes = [],
       )}
 
       <div className="dashboard-body">
-        <aside className={`dashboard-sidebar ${sidebarCollapsed ? 'collapsed' : ''} ${mobileMenuOpen ? 'mobile-open' : ''}`}>
+        <aside
+          className={`dashboard-sidebar ${
+            sidebarCollapsed ? "collapsed" : ""
+          } ${mobileMenuOpen ? "mobile-open" : ""}`}
+        >
           <div className="sidebar-header">
             <div className="sidebar-title">
-              {!sidebarCollapsed && t('dashboardDemandeur.sidebar.title')}
+              {!sidebarCollapsed && t("dashboardDemandeur.sidebar.title")}
             </div>
-            <button 
+            <button
               className="sidebar-toggle"
               onClick={toggleSidebar}
               aria-label="Toggle sidebar"
@@ -130,39 +148,49 @@ export default function DashboardLayout({ children, user, logout, demandes = [],
               {sidebarCollapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             </button>
           </div>
-          
+
           <div className="sidebar-menu">
             <Link
-              className={`sidebar-link${activeMenu === '/dashboard' ? ' active' : ''}`}
+              className={`sidebar-link${
+                activeMenu === "/dashboard" ? " active" : ""
+              }`}
               to="/dashboard"
               onClick={closeMobileMenu}
             >
-              <HomeOutlined /> 
-              {!sidebarCollapsed && <span>{t('dashboardDemandeur.sidebar.dashboard')}</span>}
+              <HomeOutlined />
+              {!sidebarCollapsed && (
+                <span>{t("dashboardDemandeur.sidebar.dashboard")}</span>
+              )}
             </Link>
-            
+
             <Link
-              className={`sidebar-link${activeMenu === '/mes-demandes' ? ' active' : ''}`}
+              className={`sidebar-link${
+                activeMenu === "/mes-demandes" ? " active" : ""
+              }`}
               to="/mes-demandes"
               onClick={closeMobileMenu}
             >
-              <FolderOpenOutlined /> 
+              <FolderOpenOutlined />
               {!sidebarCollapsed && (
                 <>
-                  <span>{t('dashboardDemandeur.sidebar.demandes')}</span>
+                  <span>{t("dashboardDemandeur.sidebar.demandes")}</span>
                   {localDemandes.length > 0 && (
-                    <span className="sidebar-badge">{localDemandes.length}</span>
+                    <span className="sidebar-badge">
+                      {localDemandes.length}
+                    </span>
                   )}
                 </>
               )}
             </Link>
 
             <Link
-              className={`sidebar-link${activeMenu === '/suivi-demandes' ? ' active' : ''}`}
+              className={`sidebar-link${
+                activeMenu === "/suivi-demandes" ? " active" : ""
+              }`}
               to="/suivi-demandes"
               onClick={closeMobileMenu}
             >
-              <FileTextOutlined /> 
+              <FileTextOutlined />
               {!sidebarCollapsed && (
                 <>
                   <span>Suivi des Demandes</span>
@@ -171,36 +199,44 @@ export default function DashboardLayout({ children, user, logout, demandes = [],
             </Link>
 
             <Link
-              className={`sidebar-link${activeMenu === '/notifications' ? ' active' : ''}`}
+              className={`sidebar-link${
+                activeMenu === "/notifications" ? " active" : ""
+              }`}
               to="/notifications"
               onClick={closeMobileMenu}
             >
-              <BellOutlined /> 
+              <BellOutlined />
               {!sidebarCollapsed && (
                 <>
-                  <span>{t('dashboardDemandeur.sidebar.notifications')}</span>
-                  {localNotifications.filter(n => !n.lu).length > 0 && (
+                  <span>{t("dashboardDemandeur.sidebar.notifications")}</span>
+                  {localNotifications.filter((n) => !n.lu).length > 0 && (
                     <span className="sidebar-badge notification-badge">
-                      {localNotifications.filter(n => !n.lu).length}
+                      {localNotifications.filter((n) => !n.lu).length}
                     </span>
                   )}
                 </>
               )}
             </Link>
-            
+
             <button className="sidebar-link logout-link" onClick={logout}>
-              <LogoutOutlined /> 
-              {!sidebarCollapsed && <span>{t('dashboardDemandeur.sidebar.logout')}</span>}
+              <LogoutOutlined />
+              {!sidebarCollapsed && (
+                <span>{t("dashboardDemandeur.sidebar.logout")}</span>
+              )}
             </button>
           </div>
         </aside>
-        
-        <main className={`dashboard-main-content ${sidebarCollapsed ? 'with-sidebar-collapsed' : 'with-sidebar'}`}>
+
+        <main
+          className={`dashboard-main-content ${
+            sidebarCollapsed ? "with-sidebar-collapsed" : "with-sidebar"
+          }`}
+        >
           {children}
         </main>
       </div>
-      
+
       <Footer />
     </div>
   );
-} 
+}
