@@ -19,13 +19,15 @@ export default function InscriptionFormAntd() {
   const [formeJuridique, setFormeJuridique] = useState('');
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const baseUrl = window.__APP_CONFIG__.API_BASE;
+
 
   const onFinish = async (values) => {
     setError('');
     setMessage('');
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:4000/api/inscription', {
+      const response = await fetch(`${baseUrl}/api/inscription`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values)

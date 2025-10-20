@@ -22,6 +22,8 @@ export default function DemandeDocumentsSG({ user, logout }) {
   const [demande, setDemande] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const baseUrl = window.__APP_CONFIG__.API_BASE;
+
 
   useEffect(() => {
     const loadDemandeDocuments = async () => {
@@ -31,7 +33,7 @@ export default function DemandeDocumentsSG({ user, logout }) {
         
         // Route spécifique pour le Secrétaire Général → utiliser le jeton admin
         const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
-        const response = await fetch(`http://localhost:4000/api/demande-documents/${id}`, {
+        const response = await fetch(`${baseUrl}/api/demande-documents/${id}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -68,7 +70,7 @@ export default function DemandeDocumentsSG({ user, logout }) {
       console.log(`📄 Téléchargement du document: ${fileName}`);
       
       const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
-      const response = await fetch(`http://localhost:4000/api/download/${encodeURIComponent(filePath)}`, {
+      const response = await fetch(`${baseUrl}/api/download/${encodeURIComponent(filePath)}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

@@ -27,6 +27,8 @@ const STATUT_COLORS = {
   AUTORISATION_SIGNEE: "#6f42c1",
   CLOTUREE: "#6f42c1"
 };
+const baseUrl = window.__APP_CONFIG__.API_BASE;
+
 
 const parseLienAutorisation = (demande) => {
   if (!demande) return null;
@@ -44,7 +46,7 @@ const parseLienAutorisation = (demande) => {
         const lien = notifAutorisationsignee.lien || notifAutorisationsignee.link;
         // S'assurer que le lien est complet
         if (lien && !lien.startsWith('http')) {
-          return `http://localhost:4000${lien}`;
+          return `${baseUrl}${lien}`;
         }
         return lien;
       }
@@ -54,7 +56,7 @@ const parseLienAutorisation = (demande) => {
   }
   // Fallback: si la demande est signée/clôturée, proposer le téléchargement par référence
   if ((demande.statut === 'AUTORISATION_SIGNEE' || demande.statut === 'CLOTUREE') && demande.reference) {
-    return `http://localhost:4000/api/download-autorisation/${demande.reference}`;
+    return `${baseUrl}/api/download-autorisation/${demande.reference}`;
   }
   return null;
 };
@@ -96,7 +98,7 @@ function InfoPopup({ demande, onClose }) {
             {demande.fichiers && Object.entries(demande.fichiers).map(([label, filename]) => (
               <li key={label}>
                 <a
-                  href={`http://localhost:4000/uploads/${filename}`}
+                  href={`${baseUrl}/uploads/${filename}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="piece-jointe-link"
@@ -158,7 +160,7 @@ export default function MesDemandes({ user }) {
       return;
     }
     
-    fetch(`http://localhost:4000/api/mes-demandes?user_id=${user.id}`)
+    fetch(`${baseUrl}/api/mes-demandes?user_id=${user.id}`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -298,7 +300,7 @@ export default function MesDemandes({ user }) {
                         </button>
                         {demande.fichier_accuse && !demande.lienAutorisation && demande.statut !== 'AUTORISATION_SIGNEE' && demande.statut !== 'CLOTUREE' && (
                           <a
-                            href={`http://localhost:4000/${demande.fichier_accuse}`}
+                            href={`${baseUrl}/${demande.fichier_accuse}`}
                             download
                             className="download-link"
                           >

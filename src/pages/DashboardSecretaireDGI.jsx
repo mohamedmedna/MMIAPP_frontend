@@ -32,6 +32,8 @@ export default function DashboardSecretaireDGI({ user, logout }) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const baseUrl = window.__APP_CONFIG__.API_BASE;
+
 
   useEffect(() => {
     loadDemandes();
@@ -41,7 +43,7 @@ export default function DashboardSecretaireDGI({ user, logout }) {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:4000/api/demandes-secretaire-dgi', {
+      const response = await fetch('${baseUrl}/api/demandes-secretaire-dgi', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -76,7 +78,7 @@ export default function DashboardSecretaireDGI({ user, logout }) {
   const handlePrintAccuse = async (demandeId) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:4000/api/demandes/${demandeId}/print-accuse`, {
+      const response = await fetch(`${baseUrl}/api/demandes/${demandeId}/print-accuse`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

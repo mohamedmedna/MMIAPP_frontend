@@ -22,6 +22,8 @@ export default function DemandeDocuments({ user, logout }) {
   const [demande, setDemande] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const baseUrl = window.__APP_CONFIG__.API_BASE;
+
 
   useEffect(() => {
     const loadDemandeDocuments = async () => {
@@ -32,8 +34,8 @@ export default function DemandeDocuments({ user, logout }) {
         // Utiliser la route appropriée selon le rôle de l'utilisateur
         const isAdmin = user?.role_id && [1, 2, 3, 5, 6, 7, 8, 9, 12].includes(user.role_id);
         const url = isAdmin 
-          ? `http://localhost:4000/api/demande-documents/${id}`
-          : `http://localhost:4000/api/mes-demandes/${id}?user_id=${user?.id}`;
+          ? `${baseUrl}/api/demande-documents/${id}`
+          : `${baseUrl}/api/mes-demandes/${id}?user_id=${user?.id}`;
         
         const token = localStorage.getItem('token');
         const response = await fetch(url, {
@@ -73,7 +75,7 @@ export default function DemandeDocuments({ user, logout }) {
       console.log(`📄 Téléchargement du document: ${fileName}`);
       
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:4000/api/download/${encodeURIComponent(filePath)}`, {
+      const response = await fetch(`${baseUrl}/api/download/${encodeURIComponent(filePath)}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

@@ -76,7 +76,7 @@ function ReportingPNME() {
   const handleDownload = async () => {
     setLoading(true);
     try {
-              const response = await fetch('http://localhost:4000/api/drmne/demandes?statut=TOUTES&format=csv', {
+              const response = await fetch(`${baseUrl}/api/drmne/demandes?statut=TOUTES&format=csv`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('pnme_token')}` },
       });
       if (!response.ok) throw new Error('Erreur réseau');
@@ -145,7 +145,7 @@ function TableDemandesPNME({ demandes, onVoirDetails, onValider, onRejeter, onDe
               </td>
               <td className="files-cell">
                 {demande.fichiers && Object.entries(demande.fichiers).map(([k,file]) => (
-                  <a key={k} href={`http://localhost:4000/uploads/${file}`} target="_blank" rel="noreferrer" className="piece-link">
+                  <a key={k} href={`${baseUrl}/uploads/${file}`} target="_blank" rel="noreferrer" className="piece-link">
                     {k.replace('_file', '').replace(/_/g, ' ')}
                   </a>
                 ))}
@@ -157,12 +157,12 @@ function TableDemandesPNME({ demandes, onVoirDetails, onValider, onRejeter, onDe
                 <button onClick={() => onRejeter(demande)} className="action-btn reject">Rejeter</button>
                 <button onClick={() => onDemanderPieces(demande)} className="action-btn request-pieces">Demander pièces</button>
                 {demande.fichier_accuse && (
-                  <a href={`http://localhost:4000/uploads/${demande.fichier_accuse}`} target="_blank" rel="noreferrer" className="action-btn-link">
+                  <a href={`${baseUrl}/uploads/${demande.fichier_accuse}`} target="_blank" rel="noreferrer" className="action-btn-link">
                     Accusé
                   </a>
                 )}
                  {demande.lien_autorisation && (
-                  <a href={`http://localhost:4000/uploads/${demande.lien_autorisation}`} target="_blank" rel="noreferrer" className="action-btn-link blue">
+                  <a href={`${baseUrl}/uploads/${demande.lien_autorisation}`} target="_blank" rel="noreferrer" className="action-btn-link blue">
                     Attestation
                   </a>
                 )}
@@ -182,7 +182,7 @@ function PopupDetailsPNME({ demande, onClose }) {
   useEffect(() => {
     if (demande) {
       setLoading(true);
-              fetch(`http://localhost:4000/api/drmne/demandes/${demande.id}/historique`, {
+              fetch(`${baseUrl}/api/drmne/demandes/${demande.id}/historique`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('pnme_token')}` }
       })
       .then(res => res.json())
@@ -205,19 +205,19 @@ function PopupDetailsPNME({ demande, onClose }) {
         <p><b>Motif rejet:</b> {demande.motif_rejet || '-'}</p>
         <p><b>Pièces jointes:</b>
           {demande.fichiers && Object.entries(demande.fichiers).map(([k,f]) => (
-            <a key={k} href={`http://localhost:4000/uploads/${f}`} target="_blank" rel="noreferrer" style={{ marginLeft: 8, color:'#229954', textDecoration:'underline'}}>
+            <a key={k} href={`${baseUrl}/uploads/${f}`} target="_blank" rel="noreferrer" style={{ marginLeft: 8, color:'#229954', textDecoration:'underline'}}>
               {k.replace('_file','').replace(/_/g,' ')}
             </a>
           ))}
         </p>
         {demande.fichier_accuse && (
-          <a href={`http://localhost:4000/uploads/${demande.fichier_accuse}`} target="_blank" rel="noreferrer" 
+          <a href={`${baseUrl}/uploads/${demande.fichier_accuse}`} target="_blank" rel="noreferrer" 
            style={{ display:'inline-block', marginTop: 10, background:'#229954', color:'#fff', padding: '6px 12px', borderRadius: 6, fontWeight:'700', textDecoration:'none'}}>
             Télécharger accusé
           </a>
         )}
          {demande.lien_autorisation && (
-          <a href={`http://localhost:4000/uploads/${demande.lien_autorisation}`} target="_blank" rel="noreferrer" 
+          <a href={`${baseUrl}/uploads/${demande.lien_autorisation}`} target="_blank" rel="noreferrer" 
            style={{ display:'inline-block', marginTop: 10, background:'#007bff', color:'#fff', padding: '6px 12px', borderRadius: 6, fontWeight:'700', textDecoration:'none'}}>
             Télécharger l'Attestation
           </a>
@@ -262,9 +262,9 @@ function DashboardPNME({ user }) {
     setLoading(true);
 
     const endpoints = {
-      a_traiter: 'http://localhost:4000/api/drmne/demandes?statut=DEPOSEE,EN_COURS_TRAITEMENT,PIECES_MANQUANTES',
-      historique: 'http://localhost:4000/api/drmne/demandes?statut=EN_ATTENTE_SIGNATURE,REJETEE,AUTORISATION_SIGNEE',
-      stats: 'http://localhost:4000/api/drmne/demandes?statut=TOUTES'
+      a_traiter: `${baseUrl}/api/drmne/demandes?statut=DEPOSEE,EN_COURS_TRAITEMENT,PIECES_MANQUANTES`,
+      historique: `${baseUrl}/api/drmne/demandes?statut=EN_ATTENTE_SIGNATURE,REJETEE,AUTORISATION_SIGNEE`,
+      stats: `${baseUrl}/api/drmne/demandes?statut=TOUTES`
     };
 
     const fetchDemandes = async (endpoint, setter) => {
@@ -294,7 +294,7 @@ function DashboardPNME({ user }) {
   const handleValider = async (demande) => {
     if (!window.confirm('Confirmer la validation ?')) return;
     try {
-      const res = await fetch(`http://localhost:4000/api/drmne/demandes/${demande.id}/valider`, {
+      const res = await fetch(`${baseUrl}/api/drmne/demandes/${demande.id}/valider`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('pnme_token')}` },
         body: JSON.stringify({ commentaire: 'Validé par PNME' })
@@ -315,7 +315,7 @@ function DashboardPNME({ user }) {
   const submitRejet = async () => {
     if (!motifRejet.trim()) return alert("Motif requis");
     try {
-      const res = await fetch(`http://localhost:4000/api/drmne/demandes/${demandeAction.id}/rejeter`, {
+      const res = await fetch(`${baseUrl}/api/drmne/demandes/${demandeAction.id}/rejeter`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('pnme_token')}` },
         body: JSON.stringify({ motif: motifRejet })
@@ -337,7 +337,7 @@ function DashboardPNME({ user }) {
   const submitPieces = async () => {
     if (!messagePieces.trim()) return alert('Message requis');
     try {
-      const res = await fetch(`http://localhost:4000/api/drmne/demandes/${demandeAction.id}/demander-complement`, {
+      const res = await fetch(`${baseUrl}/api/drmne/demandes/${demandeAction.id}/demander-complement`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('pnme_token')}` },
         body: JSON.stringify({ message: messagePieces })

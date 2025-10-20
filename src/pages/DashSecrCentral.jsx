@@ -23,6 +23,8 @@ const STATUT_COLORS = {
   TRANSMISE_AU_DGI: 'purple',
   REJETEE: 'red'
 };
+const baseUrl = window.__APP_CONFIG__.API_BASE;
+
 
 function SecretaireSidebar({ activeTab, onTabChange, onLogout, notifCount = 0, onGotoAccuses }) {
   return (
@@ -167,8 +169,8 @@ function DashSecrCentral() {
       return;
     }
 
-    let url = 'http://localhost:4000/api/demandes';
-    if (activeTab === 'accuses') url = 'http://localhost:4000/api/demandes/accuses-reception';
+    let url = `${baseUrl}/api/demandes`;
+    if (activeTab === 'accuses') url = `${baseUrl}/api/demandes/accuses-reception`;
     else if (activeTab === 'transmissions') url += '?statut=TRANSMISE';
     // Pour 'nouvelles': pas de paramètre → le serveur inclut DEPOSEE/RECEPTIONNEE/... par défaut
 
@@ -215,7 +217,7 @@ function DashSecrCentral() {
     }
     
     try {
-      const res = await fetch(`http://localhost:4000/api/demandes/${demandeId}/accuser-reception`, {
+      const res = await fetch(`${baseUrl}/api/demandes/${demandeId}/accuser-reception`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -257,7 +259,7 @@ function DashSecrCentral() {
     try {
       message.loading({ content: 'Transmission au SG en cours...', key: 'transmission' });
       
-      const res = await fetch(`http://localhost:4000/api/demandes/${demandeId}/transmettre-sg`, {
+      const res = await fetch(`${baseUrl}/api/demandes/${demandeId}/transmettre-sg`, {
         method: 'POST',
         headers: { 
           'Authorization': `Bearer ${token}`,
@@ -317,7 +319,7 @@ function DashSecrCentral() {
     }
     
     try {
-      const res = await fetch(`http://localhost:4000/api/demandes/${demande.id}/historique`, {
+      const res = await fetch(`${baseUrl}/api/demandes/${demande.id}/historique`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       

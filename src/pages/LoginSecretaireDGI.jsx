@@ -13,13 +13,15 @@ export default function LoginSecretaireDGI() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const baseUrl = window.__APP_CONFIG__.API_BASE;
+
 
   const onFinish = async (values) => {
     setLoading(true);
     setError('');
 
     try {
-      const response = await fetch('http://localhost:4000/api/login-secretaire-dgi', {
+      const response = await fetch(`${baseUrl}/api/login-secretaire-dgi`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

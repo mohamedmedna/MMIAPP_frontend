@@ -8,6 +8,8 @@ import '../Styles/LocationStyles.css';
 function FormPMNE({ user, setNotif, setError }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const baseUrl = window.__APP_CONFIG__.API_BASE;
+
   const [formKey, setFormKey] = useState(Date.now());
   const [form, setForm] = useState({
     telephone_proprietaire: '',
@@ -57,7 +59,7 @@ function FormPMNE({ user, setNotif, setError }) {
     formData.append('utilisateur_id', user.id);
 
     try {
-      const response = await fetch('http://localhost:4000/api/nouvelle-demande', {
+      const response = await fetch(`${baseUrl}/api/nouvelle-demande`, {
         method: 'POST',
         body: formData
       });

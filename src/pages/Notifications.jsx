@@ -28,6 +28,8 @@ export default function Notifications({ user, logout }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeMenu, setActiveMenu] = useState('/notifications');
+  const baseUrl = window.__APP_CONFIG__.API_BASE;
+
 
   useEffect(() => {
     setActiveMenu(location.pathname);
@@ -41,7 +43,7 @@ export default function Notifications({ user, logout }) {
     if (!showLoading) setRefreshing(true);
     
     try {
-      const response = await fetch(`http://localhost:4000/api/notifications?user_id=${user.id}`, {
+      const response = await fetch(`${baseUrl}/api/notifications?user_id=${user.id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -63,7 +65,7 @@ export default function Notifications({ user, logout }) {
     if (!user?.id) return;
     
     try {
-      const response = await fetch(`http://localhost:4000/api/mes-demandes?user_id=${user.id}`, {
+      const response = await fetch(`${baseUrl}/api/mes-demandes?user_id=${user.id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -113,7 +115,7 @@ export default function Notifications({ user, logout }) {
   // Fonction pour marquer une notification comme lue
   const markAsRead = async (notificationId) => {
     try {
-      const response = await fetch(`http://localhost:4000/api/notifications/${notificationId}/read`, {
+      const response = await fetch(`${baseUrl}/api/notifications/${notificationId}/read`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'

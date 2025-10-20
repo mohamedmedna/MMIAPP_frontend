@@ -28,6 +28,8 @@ export default function DetailsDemande({ user, logout }) {
   const [demande, setDemande] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const baseUrl = window.__APP_CONFIG__.API_BASE;
+
 
   // Vérification supplémentaire de l'utilisateur
   useEffect(() => {
@@ -63,7 +65,7 @@ export default function DetailsDemande({ user, logout }) {
         setLoading(true);
         console.log(`🔄 [DetailsDemande] Chargement demande ${id} pour utilisateur ${user.id}`);
         
-        const response = await fetch(`http://localhost:4000/api/mes-demandes/${id}?user_id=${user.id}`, {
+        const response = await fetch(`${baseUrl}/api/mes-demandes/${id}?user_id=${user.id}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -102,7 +104,7 @@ export default function DetailsDemande({ user, logout }) {
         throw new Error('Token d\'authentification manquant');
       }
       
-      const response = await fetch(`http://localhost:4000/api/mes-demandes/${reference}/autorisation`, {
+      const response = await fetch(`${baseUrl}/api/mes-demandes/${reference}/autorisation`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

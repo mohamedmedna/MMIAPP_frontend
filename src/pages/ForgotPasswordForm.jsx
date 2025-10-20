@@ -13,6 +13,8 @@ function ForgotPasswordForm() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const baseUrl = window.__APP_CONFIG__.API_BASE;
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +22,7 @@ function ForgotPasswordForm() {
     setError('');
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:4000/api/forgot-password', {
+      const response = await fetch(`${baseUrl}/api/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })

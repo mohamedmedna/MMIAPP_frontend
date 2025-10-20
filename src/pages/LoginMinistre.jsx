@@ -13,12 +13,14 @@ export default function LoginMinistre() {
   const { t } = useTranslation();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const baseUrl = window.__APP_CONFIG__.API_BASE;
+
 
   const onFinish = async (values) => {
     setError('');
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:4000/api/login/ministere', {
+      const response = await fetch(`${baseUrl}/api/login/ministere`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

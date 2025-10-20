@@ -15,12 +15,14 @@ export default function LoginSecretaireCentral() {
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const baseUrl = window.__APP_CONFIG__.API_BASE;
+
 
   const onFinish = async (values) => {
     setError('');
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:4000/api/login/secretaire', {
+      const response = await fetch(`${baseUrl}/api/login/secretaire`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

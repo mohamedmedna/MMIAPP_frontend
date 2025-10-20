@@ -95,6 +95,9 @@ function FormExtension({ user, setNotif, setError }) {
       }
     }
 
+    const baseUrl = window.__APP_CONFIG__.API_BASE;
+
+
     const formData = new FormData();
     Object.entries(form).forEach(([k, v]) => formData.append(k, v));
     Object.entries(files).forEach(([k, v]) => formData.append(k, v));
@@ -102,7 +105,7 @@ function FormExtension({ user, setNotif, setError }) {
     formData.append('utilisateur_id', user.id);
 
     try {
-      const response = await fetch('http://localhost:4000/api/nouvelle-demande', {
+      const response = await fetch(`${baseUrl}/api/nouvelle-demande`, {
         method: 'POST',
         body: formData
       });

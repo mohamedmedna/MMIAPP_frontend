@@ -17,6 +17,8 @@ function FormEauMinerale({ user, setNotif, setError }) {
     longitude: '',
     latitude: ''
   });
+  const baseUrl = window.__APP_CONFIG__.API_BASE;
+
   const [files, setFiles] = useState({
     // Dossier juridique de la société ou ETS
     statut_certifie_notaire_file: null,
@@ -104,7 +106,7 @@ function FormEauMinerale({ user, setNotif, setError }) {
     formData.append('utilisateur_id', user.id);
 
     try {
-      const response = await fetch('http://localhost:4000/api/nouvelle-demande', {
+      const response = await fetch(`${baseUrl}/api/nouvelle-demande`, {
         method: 'POST',
         body: formData
       });
