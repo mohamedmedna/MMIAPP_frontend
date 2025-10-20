@@ -6,20 +6,7 @@ import { Calendar, User, ArrowLeft } from "lucide-react";
 import "../Styles/ActualiteDetail.css";
 import { useTranslation } from "react-i18next";
 
-//const API_BASE =
-//import.meta?.env?.VITE_API_BASE ||
-//process.env.REACT_APP_API_BASE ||
-//"http://localhost:4000";
-
-//const API_BASE =
-//process.env.REACT_APP_API_BASE ||
-//window.__API_BASE__ ||
-//"http://localhost:4000";
-
-const API_BASE =
-  window.__APP_CONFIG__?.API_BASE ||
-  process.env.REACT_APP_API_BASE ||
-  "http://localhost:4000";
+const API_BASE = window.__APP_CONFIG__?.API_BASE;
 
 const LOCALE_MAP = { fr: "fr-FR", en: "en-US", ar: "ar-SA" };
 
