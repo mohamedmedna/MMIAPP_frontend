@@ -72,6 +72,7 @@ import SuiviDemandes from "./pages/SuiviDemandes";
 import Archive from "./pages/Archive";
 import ActualiteDetail from "./pages/ActualiteDetail";
 import AdminPortail from "./pages/AdminPortail";
+import Contact from "./pages/Contact";
 
 // ---------- Basename helpers ----------
 function normalizeBase(base) {
@@ -187,6 +188,7 @@ function App() {
           <Route path="/actualite/:id" element={<ActualiteDetail />} />
           <Route path="/admin-portail" element={<AdminPortail />} />
           <Route path="/gestion" element={<HomePage />} />
+          <Route path="/contact" element={<Contact />} />
 
           <Route path="/login" element={<LoginForm setUser={setUser} />} />
           <Route path="/inscription" element={<InscriptionForm />} />

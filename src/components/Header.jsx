@@ -26,9 +26,9 @@ const Navbar = () => {
           <span className="nav-link">
             {t('header.pmne')}
           </span>
-          <span className="nav-link">
+          <Link to="/contact" className="nav-link">
             {t('header.contact')}
-          </span>
+          </Link>
     </nav>
 
         {/* Language and Social Icons */}
