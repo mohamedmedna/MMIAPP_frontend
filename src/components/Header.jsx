@@ -23,9 +23,9 @@ const Navbar = () => {
           <Link to="/gestion" className="nav-link">
             {t('header.gestion_autorisations')}
           </Link>
-          <span className="nav-link">
+          <Link to="/pmne" className="nav-link">
             {t('header.pmne')}
-          </span>
+          </Link>
           <Link to="/contact" className="nav-link">
             {t('header.contact')}
           </Link>
