@@ -7,28 +7,27 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Conteneur principal */
 #root {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* Styles spécifiques à l'application */
 .app-container {
   min-height: 100vh;
   display: flex;
@@ -45,7 +44,6 @@ body {
   width: 100%;
   overflow: hidden;
   background: #7fa22b11;
-  border-bottom: 2px solid #7fa22b44;
 }
 .banniere-img {
   width: 100%;
@@ -58,7 +56,8 @@ body {
   text-align: center;
   margin: 24px 0;
 }
-.titre-fr, .sous-titre-fr {
+.titre-fr,
+.sous-titre-fr {
   color: #1e6a8e;
   font-weight: 700;
 }
@@ -152,11 +151,11 @@ body {
   .footer-links {
     gap: 15px;
   }
-  
+
   .footer-link {
     font-size: 13px;
   }
-  
+
   .footer-description {
     font-size: 13px;
   }

@@ -735,20 +735,37 @@
       "noData": "❌ لا توجد وثائق متاحة",
       "download": "تحميل",
       "unavailable": "الملف غير متاح"
+    },
+    "documentsAnnexes": {
+      "title": "الوثائق الملحقة",
+      "subtitle": "حمّل الوثائق الملحقة المنشورة",
+      "typeFilter": "النوع",
+      "allTypes": "جميع الأنواع",
+      "resultsPerPage": "نتائج / صفحة",
+      "page": "الصفحة",
+      "noData": "لا توجد وثائق ملحقة متاحة.",
+      "download": "تنزيل"
     }
   },
   "adminPortail": {
     "header": {
       "title": "إدارة البوابة",
-      "backToPortal": "العودة إلى البوابة"
+      "backToPortal": "العودة إلى البوابة",
+      "projets": "المشاريع"
     },
     "tabs": {
       "news": "الأخبار",
-      "documents": "الوثائق القانونية"
+      "documents": "الوثائق القانونية",
+      "documentsAnnexes": "الوثائق المرفقة"
+    },
+    "projetEtat": {
+      "EN_COURS": "قيد الإنجاز",
+      "ACHEVEE": "منجز"
     },
     "toolbar": {
       "newsTitle": "إدارة الأخبار",
-      "docsTitle": "إدارة الوثائق"
+      "docsTitle": "إدارة الوثائق",
+      "projectsTitle": "المشاريع"
     },
     "table": {
       "headers": {
@@ -761,14 +778,19 @@
     },
     "empty": {
       "news": "لا توجد أخبار",
-      "documents": "لا توجد وثائق"
+      "documents": "لا توجد وثائق",
+      "documentsAnnexes": "لا توجد وثائق مرفقة",
+      "projets": "لا توجد مشاريع"
     },
     "modal": {
       "title": {
         "addNews": "إضافة خبر",
         "editNews": "تعديل خبر",
         "addDocument": "إضافة وثيقة",
-        "editDocument": "تعديل وثيقة"
+        "editDocument": "تعديل وثيقة",
+        "addDocumentAnnexe": "إضافة وثيقة مرفقة",
+        "addProjet": "إضافة مشروع",
+        "editProjet": "تعديل مشروع"
       }
     },
     "fields": {
@@ -782,7 +804,8 @@
       "type": "النوع",
       "file": "ملف (PDF أو غيره)",
       "description": "الوصف",
-      "selectPlaceholder": "اختيار"
+      "selectPlaceholder": "اختيار",
+      "etat": "الحالة"
     },
     "placeholders": {
       "datetime": "يوم/شهر/سنة ساعة:دقيقة",
@@ -808,7 +831,8 @@
       "selectDocType": "يرجى اختيار نوع الوثيقة",
       "saveErrorGeneric": "حدث خطأ أثناء الحفظ",
       "savedAddSuccess": "تمت إضافة العنصر بنجاح",
-      "savedEditSuccess": "تم تعديل العنصر بنجاح"
+      "savedEditSuccess": "تم تعديل العنصر بنجاح",
+      "createProjectMissingFR": "يرجى إدخال العنوان بالفرنسية قبل حفظ المشروع."
     }
   },
   "title": "إدارة البوابة",
