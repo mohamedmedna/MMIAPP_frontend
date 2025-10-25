@@ -14,7 +14,12 @@ function FormUsine({ user, setNotif, setError }) {
     telephone_proprietaire: '',
     selected_juridique_doc: '',
     longitude: '',
-    latitude: ''
+    latitude: '',
+    nni_passeport: '',
+    secteur: '',
+    sous_secteur: '',
+    activite_principale: '',
+    filieres: ''
   });
   const [files, setFiles] = useState({
     // Dossier juridique de la société
@@ -48,6 +53,21 @@ function FormUsine({ user, setNotif, setError }) {
     { value: 'cnss_file', label: `📋 ${t('usine.cnss')}` }
   ];
 
+  // Options pour la liste déroulante du secteur
+  const secteurOptions = [
+    { value: '', label: 'Sélectionner un secteur' },
+    { value: 'agroalimentaire', label: '🍎 Agroalimentaire' },
+    { value: 'peche_halieutique', label: '🐟 Pêche / Halieutique' },
+    { value: 'metallurgie_metallerie', label: '🔧 Métallurgie / Métallerie' },
+    { value: 'materiaux_construction', label: '🏗️ Matériaux de construction' },
+    { value: 'chimie_plastique', label: '🧪 Chimie / Plastique' },
+    { value: 'pharma', label: '💊 Pharma' },
+    { value: 'textile', label: '👕 Textile' },
+    { value: 'papeterie_bois', label: '📄 Papeterie / Bois' },
+    { value: 'recyclage', label: '♻️ Recyclage' },
+    { value: 'autre', label: '📋 Autre' }
+  ];
+
   const handleSubmit = async e => {
     e.preventDefault();
     setError('');
@@ -55,8 +75,8 @@ function FormUsine({ user, setNotif, setError }) {
     setLoading(true);
 
     // Vérifier les champs texte
-    if (!form.telephone_proprietaire || !form.longitude || !form.latitude) {
-      setError(t('usine.error_required_text'));
+    if (!form.telephone_proprietaire || !form.longitude || !form.latitude || !form.nni_passeport || !form.secteur || !form.sous_secteur || !form.activite_principale || !form.filieres) {
+      setError('Tous les champs obligatoires doivent être remplis');
       setLoading(false);
       return;
     }
@@ -113,7 +133,12 @@ function FormUsine({ user, setNotif, setError }) {
         setForm({
           telephone_proprietaire: '',
           longitude: '',
-          latitude: ''
+          latitude: '',
+          nni_passeport: '',
+          secteur: '',
+          sous_secteur: '',
+          activite_principale: '',
+          filieres: ''
         });
         setFiles({
           statut_juridique_file: null, registre_commerce_file: null, nif_file: null, cnss_file: null,
@@ -300,6 +325,80 @@ function FormUsine({ user, setNotif, setError }) {
                 />
                 <small className="field-help">Format: nombre décimal (ex: 18.0735)</small>
               </div>
+            </div>
+          </div>
+
+          {/* Section Informations supplémentaires */}
+          <div className="form-section-supplementaires">
+            <h4 className="section-title">📋 Informations supplémentaires</h4>
+            
+            <div className="form-group">
+              <label>🆔 NNI ou Passeport</label>
+              <input 
+                type="text" 
+                name="nni_passeport" 
+                value={form.nni_passeport} 
+                onChange={handleChange} 
+                placeholder="Ex: 1234567890123 ou P1234567"
+                required 
+              />
+              <small className="field-help">Numéro national d'identité ou numéro de passeport</small>
+            </div>
+
+            <div className="form-group">
+              <label>🏭 Secteur d'activité</label>
+              <select 
+                name="secteur" 
+                value={form.secteur} 
+                onChange={handleChange}
+                className="secteur-select"
+                required
+              >
+                {secteurOptions.map((option, index) => (
+                  <option key={index} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>🔍 Sous-secteur</label>
+              <input 
+                type="text" 
+                name="sous_secteur" 
+                value={form.sous_secteur} 
+                onChange={handleChange} 
+                placeholder="Ex: Transformation de produits laitiers"
+                required 
+              />
+              <small className="field-help">Précisez le sous-secteur d'activité</small>
+            </div>
+
+            <div className="form-group">
+              <label>⚙️ Activité principale</label>
+              <input 
+                type="text" 
+                name="activite_principale" 
+                value={form.activite_principale} 
+                onChange={handleChange} 
+                placeholder="Ex: Production de yaourt et fromage"
+                required 
+              />
+              <small className="field-help">Décrivez l'activité principale de l'usine</small>
+            </div>
+
+            <div className="form-group">
+              <label>🔗 Filières</label>
+              <input 
+                type="text" 
+                name="filieres" 
+                value={form.filieres} 
+                onChange={handleChange} 
+                placeholder="Ex: Filière lait, Filière céréales"
+                required 
+              />
+              <small className="field-help">Listez les filières concernées par votre activité</small>
             </div>
           </div>
 

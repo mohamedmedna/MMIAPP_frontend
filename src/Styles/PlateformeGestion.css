@@ -1,30 +1,44 @@
 /* PlateformeGestion.css */
 
+/* Reset global pour la bannière pleine largeur */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+#root {
+  overflow-x: hidden !important;
+  max-width: none !important;
+}
+
 .plateforme-gestion-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+  margin-top: 0;
+  overflow-x: hidden;
 }
 
-/* Hero Section */
+/* Hero Section - Bannière pleine largeur */
 .hero {
   position: relative;
   height: 500px;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  margin-top: 80px; /* Espace pour le header fixe */
 }
 
-.hero::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 100, 0, 0.6);
-  z-index: 1;
-}
 
 .hero-content {
   position: relative;

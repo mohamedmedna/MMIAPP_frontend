@@ -1,6 +1,6 @@
 /* Header Styles */
 .navbar {
-  background: linear-gradient(90deg, #006400 0%, #ffd700 100%);
+  background: #1e6a8e;
   padding: 1rem 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: sticky;
@@ -51,7 +51,7 @@
 
 .nav-link:hover {
   background-color: rgba(255, 255, 255, 0.1);
-  color: #ffd700;
+  color: #7fa22b;
 }
 
 /* Right Section */
@@ -99,7 +99,7 @@
 }
 
 .social-icon:hover {
-  color: #ffd700;
+  color: #7fa22b;
 }
 
 /* Responsive Design */
