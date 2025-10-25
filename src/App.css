@@ -40,18 +40,6 @@ body {
   flex-direction: column;
 }
 
-.banniere-ministere {
-  width: 100%;
-  overflow: hidden;
-  background: #7fa22b11;
-}
-.banniere-img {
-  width: 100%;
-  display: block;
-  margin: 0 auto;
-  object-fit: cover;
-  max-height: 270px;
-}
 .ministere-titres {
   text-align: center;
   margin: 24px 0;

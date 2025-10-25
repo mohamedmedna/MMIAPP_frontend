@@ -7,7 +7,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   margin: 0 !important;
   padding: 0 !important;
   overflow-x: hidden !important;
@@ -20,16 +21,6 @@ html, body {
   max-width: none !important;
 }
 
-/* Suppression globale des espaces en bas pour la bannière */
-.banniere-ministere,
-.banniere-ministere *,
-.banniere-img,
-section,
-img {
-  margin-bottom: 0 !important;
-  padding-bottom: 0 !important;
-}
-
 /* Header fixe - Sticky avec gradient vert-jaune seulement */
 .navbar {
   position: fixed !important;
@@ -38,7 +29,12 @@ img {
   right: 0 !important;
   z-index: 1000 !important;
   width: 100% !important;
-  background: linear-gradient(90deg, #22c55e 0%, #16a34a 50%, #fbbf24 100%) !important;
+  background: linear-gradient(
+    90deg,
+    #22c55e 0%,
+    #16a34a 50%,
+    #fbbf24 100%
+  ) !important;
 }
 
 /* Ajustement du contenu pour compenser le header fixe */
@@ -46,7 +42,7 @@ img {
   margin-top: 80px !important; /* Hauteur du header fixe */
   min-height: calc(100vh - 300px); /* Ajuster pour header/bannière/footer */
   background: #f8f9fa;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   padding: 0;
   margin-left: 0;
   margin-right: 0;
@@ -66,53 +62,10 @@ img {
   padding: 0 !important;
 }
 
-.full-width-banner-wrapper .banniere-ministere {
-  width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  max-width: none !important;
-  margin-bottom: 0 !important;
-}
-
-.full-width-banner-wrapper .banniere-img {
-  width: 100% !important;
-  height: auto !important;
-  display: block !important;
-  object-fit: cover !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  max-width: none !important;
-  margin-bottom: 0 !important;
-  vertical-align: top !important;
-}
-
 /* Suppression complète des espaces de la bannière */
 .full-width-banner-wrapper * {
   margin-bottom: 0 !important;
   padding-bottom: 0 !important;
-}
-
-/* Suppression des anciens styles de bannière */
-.banniere-ministere {
-  margin-top: 0 !important;
-  width: auto !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  margin-bottom: 0 !important;
-  padding-bottom: 0 !important;
-}
-
-/* Force la suppression de tous les espaces en bas */
-section.banniere-ministere {
-  margin-bottom: 0 !important;
-  padding-bottom: 0 !important;
-}
-
-img.banniere-img {
-  margin-bottom: 0 !important;
-  padding-bottom: 0 !important;
-  display: block !important;
-  vertical-align: top !important;
 }
 
 /* Header Section - Fond blanc */
@@ -278,41 +231,41 @@ img.banniere-img {
     top: 0 !important;
     z-index: 1000 !important;
   }
-  
+
   .pmne-page {
     margin-top: 70px !important; /* Hauteur réduite sur mobile */
   }
-  
+
   .full-width-banner-wrapper {
     margin-top: 70px !important; /* Espace réduit sur mobile */
   }
-  
+
   .pmne-title {
     font-size: 2rem;
   }
-  
+
   .pmne-description {
     font-size: 1rem;
   }
-  
+
   .section-title {
     font-size: 1.5rem;
   }
-  
+
   .objectifs-section,
   .adhesion-section {
     padding: 30px 15px;
   }
-  
+
   .adhesion-cards {
     grid-template-columns: 1fr;
     gap: 20px;
   }
-  
+
   .adhesion-card {
     padding: 30px 20px;
   }
-  
+
   .cta-button {
     width: 100% !important;
     height: 50px !important;
@@ -325,20 +278,20 @@ img.banniere-img {
   .pmne-header {
     padding: 30px 15px;
   }
-  
+
   .pmne-title {
     font-size: 1.5rem;
   }
-  
+
   .objectifs-list {
     grid-template-columns: 1fr;
   }
-  
+
   .objectifs-list li {
     padding: 15px;
     padding-left: 40px;
   }
-  
+
   .objectifs-list li::before {
     left: 15px;
     top: 15px;

@@ -3,7 +3,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   margin: 0 !important;
   padding: 0 !important;
   overflow-x: hidden !important;
@@ -32,11 +33,6 @@ html, body {
   margin-right: calc(-50vw + 50%);
   overflow: hidden;
   position: relative;
-<<<<<<< HEAD
-=======
-  background: linear-gradient(135deg, #016b5b 0%, #0d8a7a 100%);
-  margin-top: 80px; /* Espace pour le header fixe */
->>>>>>> origin/main
 }
 
 .banniere-ministere img {

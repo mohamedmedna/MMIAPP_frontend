@@ -681,23 +681,20 @@ body {
   pointer-events: none;
 }
 
-.banniere-ministere {
-  position: relative;
-  overflow: hidden;
-  border-radius: 12px;
-  height: 36vh;
-}
-@media (max-width: 768px) {
-  .banniere-ministere {
-    height: 28vh;
-  }
-}
-
-.banniere-ministere {
-  z-index: 0;
-}
 .homepage-container {
   position: relative;
   z-index: 1;
   margin-top: 24px;
+}
+:root {
+  --header-h: 72px;
+} /* adjust to your real header height */
+@media (max-width: 768px) {
+  :root {
+    --header-h: 60px;
+  }
+}
+
+.header-spacer {
+  height: var(--header-h);
 }
