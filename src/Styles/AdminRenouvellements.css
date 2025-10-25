@@ -1,0 +1,468 @@
+/* =====================================================
+   STYLES POUR L'INTERFACE D'ADMINISTRATION DES RENOUVELLEMENTS
+   ===================================================== */
+
+.admin-renouvellements-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-renouvellements-content {
+  flex: 1;
+  padding: 20px;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.page-header {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.page-header h1 {
+  color: #1890ff;
+  font-size: 2.5rem;
+  margin: 0 0 10px 0;
+  font-weight: 700;
+}
+
+.page-header p {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.page-header .ant-btn {
+  height: auto;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  margin-left: 10px;
+}
+
+/* Styles pour les cartes de statistiques */
+.ant-statistic-title {
+  color: #666;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ant-statistic-content {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+/* Styles pour la table des renouvellements */
+.renouvellements-table {
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: none;
+}
+
+.renouvellements-table .ant-card-head {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 15px 15px 0 0;
+  margin: -1px -1px 0 -1px;
+}
+
+.renouvellements-table .ant-card-head-title {
+  color: white;
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+
+.renouvellements-table .ant-card-body {
+  padding: 25px;
+}
+
+/* Styles pour les tables */
+.ant-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ant-table-thead > tr > th {
+  background: #fafafa;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #e8e8e8;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: #f0f8ff;
+}
+
+.ant-table-tbody > tr > td {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Styles pour les tags de statut */
+.ant-tag {
+  border-radius: 6px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Styles pour les boutons d'action */
+.ant-btn-primary {
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.ant-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+}
+
+.ant-btn-danger {
+  background: linear-gradient(135deg, #ff4d4f 0%, #cf1322 100%);
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.ant-btn-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 77, 79, 0.3);
+}
+
+.ant-btn:not(.ant-btn-primary):not(.ant-btn-danger) {
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.ant-btn:not(.ant-btn-primary):not(.ant-btn-danger):hover {
+  transform: translateY(-1px);
+}
+
+/* Styles pour les modales */
+.ant-modal-content {
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.ant-modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-bottom: none;
+}
+
+.ant-modal-title {
+  color: white;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.ant-modal-close {
+  color: white;
+}
+
+.ant-modal-close:hover {
+  color: #ffccc7;
+}
+
+.ant-modal-body {
+  padding: 30px;
+}
+
+/* Styles pour les descriptions */
+.ant-descriptions-title {
+  color: #1890ff;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+}
+
+.ant-descriptions-item-label {
+  font-weight: 600;
+  color: #333;
+  background: #fafafa;
+}
+
+.ant-descriptions-item-content {
+  color: #666;
+}
+
+/* Styles pour les prévisualisations de données */
+.form-data-preview {
+  margin: 15px 0;
+}
+
+.form-data-preview pre {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #333;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  background: #f9f9f9;
+  padding: 15px;
+  margin: 0;
+  overflow-x: auto;
+}
+
+/* Styles pour les alertes */
+.ant-alert {
+  border-radius: 8px;
+  border: none;
+  margin: 15px 0;
+}
+
+.ant-alert-error {
+  background: linear-gradient(135deg, #fff2f0 0%, #ffccc7 100%);
+  border-left: 4px solid #ff4d4f;
+}
+
+.ant-alert-info {
+  background: linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%);
+  border-left: 4px solid #1890ff;
+}
+
+/* Styles pour les formulaires dans les modales */
+.ant-form-item-label > label {
+  font-weight: 600;
+  color: #333;
+}
+
+.ant-input,
+.ant-textarea {
+  border-radius: 8px;
+  border: 2px solid #e8e8e8;
+  transition: all 0.3s ease;
+}
+
+.ant-input:focus,
+.ant-textarea:focus {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* Styles pour les codes */
+code {
+  background: #f5f5f5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  color: #1890ff;
+  font-weight: 600;
+}
+
+/* Styles pour les tooltips */
+.ant-tooltip-inner {
+  background: #333;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.ant-tooltip-arrow::before {
+  background: #333;
+}
+
+/* Styles pour les paginations */
+.ant-pagination {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.ant-pagination-item {
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+}
+
+.ant-pagination-item-active {
+  background: #1890ff;
+  border-color: #1890ff;
+}
+
+.ant-pagination-item-active a {
+  color: white;
+}
+
+/* Styles pour les états de chargement */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background: white;
+  border-radius: 15px;
+  margin: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.loading-container p {
+  margin-top: 20px;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .admin-renouvellements-content {
+    padding: 15px;
+  }
+  
+  .page-header {
+    padding: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .page-header .ant-btn {
+    margin: 10px 10px 0 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-renouvellements-content {
+    padding: 10px;
+  }
+  
+  .page-header {
+    padding: 15px;
+  }
+  
+  .page-header h1 {
+    font-size: 2rem;
+  }
+  
+  .page-header p {
+    font-size: 1rem;
+  }
+  
+  .renouvellements-table .ant-card-body {
+    padding: 15px;
+  }
+  
+  .ant-table {
+    font-size: 0.9rem;
+  }
+  
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    padding: 8px 4px;
+  }
+  
+  .ant-modal-body {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .renouvellements-table .ant-card-head-title {
+    font-size: 1.1rem;
+  }
+  
+  .ant-statistic-content {
+    font-size: 1.5rem;
+  }
+  
+  .ant-descriptions-title {
+    font-size: 1rem;
+  }
+  
+  .form-data-preview pre {
+    font-size: 0.8rem;
+    padding: 10px;
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.renouvellements-table {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Styles pour les badges de notification */
+.ant-badge-count {
+  background: #ff4d4f;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Styles pour les timelines (si utilisées) */
+.ant-timeline-item-content {
+  margin-left: 20px;
+}
+
+.ant-timeline-item-head {
+  background: #1890ff;
+  border-color: #1890ff;
+}
+
+/* Styles pour les séparateurs */
+.ant-divider {
+  border-color: #e8e8e8;
+  margin: 20px 0;
+}
+
+.ant-divider-horizontal.ant-divider-with-text {
+  color: #1890ff;
+  font-weight: 600;
+}
+
+/* Styles pour les espaces */
+.ant-space {
+  display: flex;
+  align-items: center;
+}
+
+.ant-space-item {
+  display: flex;
+  align-items: center;
+}
+
+/* Styles pour les icônes dans les boutons */
+.ant-btn .anticon {
+  margin-right: 4px;
+}
+
+/* Styles pour les états de survol des lignes de tableau */
+.ant-table-tbody > tr.ant-table-row:hover > td {
+  background: #f0f8ff;
+}
+
+.ant-table-tbody > tr.ant-table-row-selected > td {
+  background: #e6f7ff;
+}
+
+.ant-table-tbody > tr.ant-table-row-selected:hover > td {
+  background: #bae7ff;
+}

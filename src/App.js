@@ -21,6 +21,7 @@ import ResetPasswordForm from "./pages/ResetPasswordForm";
 import DashboardDemandeur from "./pages/DashboardDemandeur";
 import MesDemandes from "./pages/MesDemandes";
 import NouvelleDemande from "./pages/NouvelleDemande";
+import PMNE from "./pages/PMNE";
 import AdminSpace from "./pages/AdminSpace";
 import AdminCodeVerification from "./pages/AdminCodeVerification";
 import AdminAccessCode from "./pages/AdminAccessCode";
@@ -241,6 +242,12 @@ function App() {
                 <Navigate to="/login" />
               )
             }
+          />
+
+          {/* Programme PMNE */}
+          <Route
+            path="/pmne"
+            element={<PMNE />}
           />
 
           {/* Archive des Demandes Clôturées */}

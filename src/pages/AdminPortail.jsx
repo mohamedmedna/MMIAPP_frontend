@@ -13,11 +13,9 @@ import { useTranslation } from "react-i18next";
 registerLocale("fr", fr);
 
 const API_BASE = window.__APP_CONFIG__?.API_BASE;
-
 const LOCALE_MAP = { fr: "fr-FR", en: "en-GB", ar: "ar-MA" };
 
 // Helpers
-
 const formatDateLatn = (d, locale = "fr-FR") => {
   if (!d) return "-";
   const date = new Date(d);
@@ -107,11 +105,15 @@ function AdminPortail() {
     [makeSlug]
   );
 
+  // Tabs: add "projets"
   const [activeTab, setActiveTab] = useState("actualites");
 
   const [actualites, setActualites] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [typeDocs, setTypeDocs] = useState([]);
+  const [documentsAnnexes, setDocumentsAnnexes] = useState([]);
+  const [projets, setProjets] = useState([]); // NEW
+
   const [images, setImages] = useState([]);
 
   const typeLabelById = useMemo(() => {
@@ -137,6 +139,15 @@ function AdminPortail() {
     datePublication: null,
   });
 
+  // -------- PROJET: add "etat" ----------
+  // etat: "EN_COURS" | "ACHEVEE"
+  const [formProjet, setFormProjet] = useState({
+    status: "BROUILLON",
+    etat: "EN_COURS",
+    fichierMediaId: null,
+    datePublication: null,
+  });
+
   const [trLocale, setTrLocale] = useState("fr");
   const [trTitre, setTrTitre] = useState("");
   const [trContenuHtml, setTrContenuHtml] = useState("");
@@ -157,9 +168,13 @@ function AdminPortail() {
 
   async function fetchLists() {
     try {
-      const [actuRes, docRes] = await Promise.all([
+      const [actuRes, docRes, annexRes, projRes] = await Promise.all([
         fetch(`${API_BASE}/api/actualites?page=1&pageSize=100&lang=${lang}`),
         fetch(`${API_BASE}/api/documents?page=1&pageSize=100&lang=${lang}`),
+        fetch(
+          `${API_BASE}/api/documents-annexes?page=1&pageSize=100&lang=${lang}`
+        ),
+        fetch(`${API_BASE}/api/projets?page=1&pageSize=100&lang=${lang}`), // NEW
       ]);
 
       if (actuRes.ok) {
@@ -169,6 +184,14 @@ function AdminPortail() {
       if (docRes.ok) {
         const js = await docRes.json();
         setDocuments(Array.isArray(js.data) ? js.data : []);
+      }
+      if (annexRes.ok) {
+        const js = await annexRes.json();
+        setDocumentsAnnexes(Array.isArray(js.data) ? js.data : []);
+      }
+      if (projRes.ok) {
+        const js = await projRes.json();
+        setProjets(Array.isArray(js.data) ? js.data : []);
       }
     } catch (e) {
       console.error("Erreur lors du chargement des listes:", e);
@@ -217,6 +240,7 @@ function AdminPortail() {
       setTrTitre(tcache.titre || "");
       setTrContenuHtml(tcache.contenuHtml || "");
     } else {
+      // documents, annexes, projets share title/description UI
       setTrDocTitre(tcache.titre || "");
       setTrDocDescription(tcache.extrait || "");
     }
@@ -238,6 +262,13 @@ function AdminPortail() {
     if (activeTab === "actualites") {
       setFormActualite({
         status: "BROUILLON",
+        fichierMediaId: null,
+        datePublication: null,
+      });
+    } else if (activeTab === "projets") {
+      setFormProjet({
+        status: "BROUILLON",
+        etat: "EN_COURS",
         fichierMediaId: null,
         datePublication: null,
       });
@@ -272,7 +303,6 @@ function AdminPortail() {
           : null,
       });
 
-      // load translations
       try {
         const r = await fetch(
           `${API_BASE}/api/actualites/${item.id}/translations`
@@ -299,6 +329,82 @@ function AdminPortail() {
         }
       } catch (e) {
         console.error("Failed to load actualité translations", e);
+      }
+    } else if (activeTab === "documents-annexes") {
+      setFormDocument({
+        status: item.status || "BROUILLON",
+        docTypeId: item.docTypeId || "",
+        fichierMediaId: item.fichierMediaId || null,
+        datePublication: item.datePublication
+          ? new Date(item.datePublication)
+          : null,
+      });
+
+      try {
+        const r = await fetch(
+          `${API_BASE}/api/documents-annexes/${item.id}/translations`
+        );
+        if (r.ok) {
+          const rows = await r.json();
+          const byLocale = {
+            fr: { ...EMPTY_T },
+            ar: { ...EMPTY_T },
+            en: { ...EMPTY_T },
+          };
+          rows.forEach((tr) => {
+            const loc = (tr.locale || "").toLowerCase();
+            if (byLocale[loc]) {
+              byLocale[loc] = {
+                ...byLocale[loc],
+                titre: tr.titre || "",
+                extrait: tr.description || "",
+              };
+            }
+          });
+          setI18nCache(byLocale);
+          setTrLocale("fr");
+          setTimeout(() => applyTrFromCache("fr"), 0);
+        }
+      } catch (e) {
+        console.error("Failed to load document annexe translations", e);
+      }
+    } else if (activeTab === "projets") {
+      setFormProjet({
+        status: item.status || "BROUILLON",
+        etat: item.etat || "EN_COURS",
+        fichierMediaId: item.fichierMediaId || null,
+        datePublication: item.datePublication
+          ? new Date(item.datePublication)
+          : null,
+      });
+
+      try {
+        const r = await fetch(
+          `${API_BASE}/api/projets/${item.id}/translations`
+        );
+        if (r.ok) {
+          const rows = await r.json();
+          const byLocale = {
+            fr: { ...EMPTY_T },
+            ar: { ...EMPTY_T },
+            en: { ...EMPTY_T },
+          };
+          rows.forEach((tr) => {
+            const loc = (tr.locale || "").toLowerCase();
+            if (byLocale[loc]) {
+              byLocale[loc] = {
+                ...byLocale[loc],
+                titre: tr.titre || "",
+                extrait: tr.description || "",
+              };
+            }
+          });
+          setI18nCache(byLocale);
+          setTrLocale("fr");
+          setTimeout(() => applyTrFromCache("fr"), 0);
+        }
+      } catch (e) {
+        console.error("Failed to load projet translations", e);
       }
     } else {
       // Documents side
@@ -346,7 +452,12 @@ function AdminPortail() {
     if (!window.confirm(t("adminPortail.messages.confirmDelete"))) return;
 
     try {
-      const endpoint = activeTab === "actualites" ? "actualites" : "documents";
+      let endpoint;
+      if (activeTab === "actualites") endpoint = "actualites";
+      else if (activeTab === "documents") endpoint = "documents";
+      else if (activeTab === "documents-annexes")
+        endpoint = "documents-annexes";
+      else endpoint = "projets";
       const r = await fetch(`${API_BASE}/api/${endpoint}/${id}`, {
         method: "DELETE",
       });
@@ -375,10 +486,7 @@ function AdminPortail() {
     setUploading(true);
 
     try {
-      let endpoint = activeTab === "actualites" ? "actualites" : "documents";
-      let method = editMode ? "PUT" : "POST";
-      let id = currentItem?.id;
-
+      // 1) ACTUALITES
       if (activeTab === "actualites") {
         const frT = i18nCache.fr?.titre?.trim();
         if (!editMode && !frT) {
@@ -393,8 +501,9 @@ function AdminPortail() {
           fichierMediaId = media.id;
         }
 
+        const endpoint = "actualites";
         const url = editMode
-          ? `${API_BASE}/api/${endpoint}/${id}`
+          ? `${API_BASE}/api/${endpoint}/${currentItem?.id}`
           : `${API_BASE}/api/${endpoint}`;
 
         const payload = editMode
@@ -414,7 +523,7 @@ function AdminPortail() {
             };
 
         const r = await fetch(url, {
-          method,
+          method: editMode ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
@@ -423,7 +532,7 @@ function AdminPortail() {
           throw new Error(js?.error || "Erreur sauvegarde actualité");
         }
         const base = await r.json();
-        id = base.id;
+        const id = base.id;
 
         for (const loc of ["fr", "en", "ar"]) {
           const tcache = i18nCache[loc];
@@ -447,85 +556,130 @@ function AdminPortail() {
             throw new Error(js?.error || `Erreur traduction (${loc})`);
           }
         }
-      } else {
-        // DOCUMENTS
-        const frDocTitle = i18nCache.fr?.titre?.trim();
-        if (!editMode && !frDocTitle) {
-          alert(t("adminPortail.messages.createDocMissingFR"));
-          setUploading(false);
-          return;
-        }
 
-        let fichierMediaId = formDocument.fichierMediaId;
-        if (documentFile) {
-          const media = await uploadMedia(documentFile);
-          fichierMediaId = media.id;
-        }
+        await fetchLists();
+        setShowModal(false);
+        setImageFile(null);
+        alert(
+          editMode
+            ? t("adminPortail.messages.savedEditSuccess")
+            : t("adminPortail.messages.savedAddSuccess")
+        );
+        setUploading(false);
+        return;
+      }
 
-        if (!formDocument.docTypeId) {
-          alert(t("adminPortail.messages.selectDocType"));
-          setUploading(false);
-          return;
-        }
+      // 2) DOCUMENTS / DOCUMENTS-ANNEXES / PROJETS
+      const isDocuments = activeTab === "documents";
+      const isAnnexes = activeTab === "documents-annexes";
+      const isProjets = activeTab === "projets";
 
-        const url = editMode
-          ? `${API_BASE}/api/documents/${id}`
-          : `${API_BASE}/api/documents`;
+      const endpoint = isDocuments
+        ? "documents"
+        : isAnnexes
+        ? "documents-annexes"
+        : "projets";
 
-        const payload = editMode
+      const frDocTitle = i18nCache.fr?.titre?.trim();
+      if (!editMode && !frDocTitle) {
+        alert(
+          isProjets
+            ? t("adminPortail.messages.createProjectMissingFR") ||
+                "Veuillez renseigner le titre FR du projet."
+            : t("adminPortail.messages.createDocMissingFR")
+        );
+        setUploading(false);
+        return;
+      }
+
+      // upload file if provided
+      let fichierMediaId =
+        (isProjets ? formProjet.fichierMediaId : formDocument.fichierMediaId) ??
+        null;
+      if (documentFile) {
+        const media = await uploadMedia(documentFile);
+        fichierMediaId = media.id;
+      }
+
+      // doc type check (not for projets)
+      if (!isProjets && !formDocument.docTypeId) {
+        alert(t("adminPortail.messages.selectDocType"));
+        setUploading(false);
+        return;
+      }
+
+      const url = editMode
+        ? `${API_BASE}/api/${endpoint}/${currentItem?.id}`
+        : `${API_BASE}/api/${endpoint}`;
+
+      const payload = editMode
+        ? isProjets
           ? {
-              status: formDocument.status || "BROUILLON",
-              docTypeId: parseInt(formDocument.docTypeId, 10),
+              status: formProjet.status || "BROUILLON",
+              etat: formProjet.etat || "EN_COURS",
               fichierMediaId: parseInt(fichierMediaId, 10),
-              datePublication: toYYYYMMDD(formDocument.datePublication),
+              datePublication: toYYYYMMDD(formProjet.datePublication),
             }
           : {
-              titre: i18nCache.fr.titre,
-              description: i18nCache.fr.extrait || "",
               status: formDocument.status || "BROUILLON",
               docTypeId: parseInt(formDocument.docTypeId, 10),
               fichierMediaId: parseInt(fichierMediaId, 10),
               datePublication: toYYYYMMDD(formDocument.datePublication),
-            };
-
-        const r = await fetch(url, {
-          method,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (!r.ok) {
-          const js = await r.json().catch(() => ({}));
-          throw new Error(js?.error || "Erreur sauvegarde document");
-        }
-        const base = await r.json();
-        id = base.id;
-
-        for (const loc of ["fr", "en", "ar"]) {
-          const tcache = i18nCache[loc];
-          const title = tcache?.titre?.trim();
-          if (!title) continue;
-          const resp = await fetch(
-            `${API_BASE}/api/documents/${id}/translations`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                locale: loc,
-                titre: title,
-                description: tcache?.extrait || "",
-              }),
             }
-          );
-          if (!resp.ok) {
-            const js = await resp.json().catch(() => ({}));
-            throw new Error(js?.error || `Erreur traduction doc (${loc})`);
+        : isProjets
+        ? {
+            titre: i18nCache.fr.titre,
+            description: i18nCache.fr.extrait || "",
+            status: formProjet.status || "BROUILLON",
+            etat: formProjet.etat || "EN_COURS",
+            fichierMediaId: parseInt(fichierMediaId, 10),
+            datePublication: toYYYYMMDD(formProjet.datePublication),
           }
-        }
+        : {
+            titre: i18nCache.fr.titre,
+            description: i18nCache.fr.extrait || "",
+            status: formDocument.status || "BROUILLON",
+            docTypeId: parseInt(formDocument.docTypeId, 10),
+            fichierMediaId: parseInt(fichierMediaId, 10),
+            datePublication: toYYYYMMDD(formDocument.datePublication),
+          };
+
+      const r = await fetch(url, {
+        method: editMode ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!r.ok)
+        throw new Error(
+          isProjets
+            ? "Erreur sauvegarde projet"
+            : "Erreur sauvegarde document/annexe"
+        );
+      const base = await r.json();
+      const id = base.id;
+
+      // translations (title + description for docs/annexes/projets)
+      for (const loc of ["fr", "en", "ar"]) {
+        const tcache = i18nCache[loc];
+        if (!tcache?.titre?.trim()) continue;
+        const resp = await fetch(
+          `${API_BASE}/api/${endpoint}/${id}/translations`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              locale: loc,
+              titre: tcache.titre,
+              description: tcache.extrait || "",
+            }),
+          }
+        );
+        if (!resp.ok) throw new Error(`Erreur traduction ${endpoint} (${loc})`);
       }
 
       await fetchLists();
       setShowModal(false);
-      setImageFile(null);
       setDocumentFile(null);
       alert(
         editMode
@@ -539,6 +693,15 @@ function AdminPortail() {
       setUploading(false);
     }
   }
+
+  // toolbar title by tab
+  const toolbarTitle = (() => {
+    if (activeTab === "actualites") return t("adminPortail.toolbar.newsTitle");
+    if (activeTab === "documents") return t("adminPortail.toolbar.docsTitle");
+    if (activeTab === "documents-annexes")
+      return t("adminPortail.toolbar.docsAnnexesTitle") || "Documents annexes";
+    return t("adminPortail.toolbar.projectsTitle") || "Projets";
+  })();
 
   return (
     <>
@@ -569,15 +732,27 @@ function AdminPortail() {
             <FileText size={20} />
             {t("adminPortail.tabs.documents")}
           </button>
+          <button
+            className={`tab-btn ${
+              activeTab === "documents-annexes" ? "active" : ""
+            }`}
+            onClick={() => setActiveTab("documents-annexes")}
+          >
+            <FileText size={20} />
+            {t("adminPortail.tabs.documentsAnnexes")}
+          </button>
+          <button
+            className={`tab-btn ${activeTab === "projets" ? "active" : ""}`}
+            onClick={() => setActiveTab("projets")}
+          >
+            <FileText size={20} />
+            {t("adminPortail.tabs.projets") || "Projets"}
+          </button>
         </div>
 
         <div className="admin-content">
           <div className="admin-toolbar">
-            <h2>
-              {activeTab === "actualites"
-                ? t("adminPortail.toolbar.newsTitle")
-                : t("adminPortail.toolbar.docsTitle")}
-            </h2>
+            <h2>{toolbarTitle}</h2>
             <button className="btn-add" onClick={handleAddNew}>
               <Plus size={20} />
               {t("adminPortail.buttons.add")}
@@ -639,7 +814,7 @@ function AdminPortail() {
                 </tbody>
               </table>
             </div>
-          ) : (
+          ) : activeTab === "documents" ? (
             <div className="admin-table">
               <table>
                 <thead>
@@ -700,6 +875,132 @@ function AdminPortail() {
                 </tbody>
               </table>
             </div>
+          ) : activeTab === "documents-annexes" ? (
+            <div className="admin-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>{t("adminPortail.table.headers.title")}</th>
+                    <th>{t("adminPortail.table.headers.type")}</th>
+                    <th>{t("adminPortail.table.headers.status")}</th>
+                    <th>{t("adminPortail.table.headers.publishDate")}</th>
+                    <th>{t("adminPortail.table.headers.actions")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {documentsAnnexes.map((d) => (
+                    <tr key={d.id}>
+                      <td>{d.titre}</td>
+                      <td>
+                        <span className="badge">
+                          {typeLabelById[d.docTypeId] || d.docTypeId}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="badge">
+                          {t(`adminPortail.status.${d.status}`)}
+                        </span>
+                      </td>
+                      <td className="num">
+                        <span dir="ltr">
+                          {formatDateLatn(d.datePublication, currentLocale)}
+                        </span>
+                      </td>
+                      <td className="actions">
+                        <button
+                          className="btn-edit"
+                          onClick={() => handleEdit(d)}
+                        >
+                          <Edit size={16} />
+                        </button>
+                        <button
+                          className="btn-delete"
+                          onClick={() => handleDelete(d.id)}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {documentsAnnexes.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        style={{ textAlign: "center", opacity: 0.7 }}
+                      >
+                        {t("adminPortail.empty.documentsAnnexes")}
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            // -------- PROJETS table (adds Etat column) --------
+            <div className="admin-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>{t("adminPortail.table.headers.title")}</th>
+                    <th>{t("adminPortail.fields.etat") || "État"}</th>
+                    <th>{t("adminPortail.table.headers.status")}</th>
+                    <th>{t("adminPortail.table.headers.publishDate")}</th>
+                    <th>{t("adminPortail.table.headers.actions")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {projets.map((p) => (
+                    <tr key={p.id}>
+                      <td>{p.titre}</td>
+                      <td>
+                        <span className="badge">
+                          {t(`adminPortail.projetEtat.${p.etat}`) ||
+                            (p.etat === "ACHEVEE"
+                              ? "Achevée"
+                              : p.etat === "EN_COURS"
+                              ? "En cours"
+                              : p.etat || "-")}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="badge">
+                          {t(`adminPortail.status.${p.status}`)}
+                        </span>
+                      </td>
+                      <td className="num">
+                        <span dir="ltr">
+                          {formatDateLatn(p.datePublication, currentLocale)}
+                        </span>
+                      </td>
+                      <td className="actions">
+                        <button
+                          className="btn-edit"
+                          onClick={() => handleEdit(p)}
+                        >
+                          <Edit size={16} />
+                        </button>
+                        <button
+                          className="btn-delete"
+                          onClick={() => handleDelete(p.id)}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {projets.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        style={{ textAlign: "center", opacity: 0.7 }}
+                      >
+                        {t("adminPortail.empty.projets") || "Aucun projet"}
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
 
@@ -712,10 +1013,20 @@ function AdminPortail() {
                   {editMode
                     ? activeTab === "actualites"
                       ? t("adminPortail.modal.title.editNews")
-                      : t("adminPortail.modal.title.editDocument")
+                      : activeTab === "documents"
+                      ? t("adminPortail.modal.title.editDocument")
+                      : activeTab === "documents-annexes"
+                      ? t("adminPortail.modal.title.editDocumentAnnexe")
+                      : t("adminPortail.modal.title.editProjet") ||
+                        "Modifier un projet"
                     : activeTab === "actualites"
                     ? t("adminPortail.modal.title.addNews")
-                    : t("adminPortail.modal.title.addDocument")}
+                    : activeTab === "documents"
+                    ? t("adminPortail.modal.title.addDocument")
+                    : activeTab === "documents-annexes"
+                    ? t("adminPortail.modal.title.addDocumentAnnexe")
+                    : t("adminPortail.modal.title.addProjet") ||
+                      "Ajouter un projet"}
                 </h3>
                 <button
                   className="btn-close"
@@ -838,9 +1149,140 @@ function AdminPortail() {
                       </div>
                     </fieldset>
                   </>
+                ) : activeTab === "projets" ? (
+                  // -------- PROJETS form (file + date + etat + status + translations) --------
+                  <>
+                    <div className="form-group">
+                      <label>{t("adminPortail.fields.file")} *</label>
+                      <input
+                        type="file"
+                        accept="application/pdf,application/*,image/*"
+                        onChange={(e) =>
+                          setDocumentFile(e.target.files?.[0] || null)
+                        }
+                        className="file-input"
+                      />
+                      {documentFile && (
+                        <p className="file-name">
+                          📄 {documentFile.name} (
+                          <span dir="ltr">
+                            {(documentFile.size / (1024 * 1024)).toFixed(2)}
+                          </span>{" "}
+                          MB)
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="form-group">
+                      <label>{t("adminPortail.fields.publicationDate")}</label>
+                      <DatePicker
+                        selected={formProjet.datePublication}
+                        onChange={(d) =>
+                          setFormProjet({ ...formProjet, datePublication: d })
+                        }
+                        dateFormat="dd/MM/yyyy"
+                        locale="fr"
+                        placeholderText={t("adminPortail.placeholders.date")}
+                        isClearable
+                        calendarStartDay={1}
+                      />
+                    </div>
+
+                    {/* NEW: État */}
+                    <div className="form-group">
+                      <label>{t("adminPortail.fields.etat") || "État"} *</label>
+                      <select
+                        value={formProjet.etat}
+                        onChange={(e) =>
+                          setFormProjet({ ...formProjet, etat: e.target.value })
+                        }
+                        required
+                      >
+                        <option value="EN_COURS">
+                          {t("adminPortail.projetEtat.EN_COURS") || "En cours"}
+                        </option>
+                        <option value="ACHEVEE">
+                          {t("adminPortail.projetEtat.ACHEVEE") || "Achevée"}
+                        </option>
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label>{t("adminPortail.fields.status")} *</label>
+                      <select
+                        value={formProjet.status}
+                        onChange={(e) =>
+                          setFormProjet({
+                            ...formProjet,
+                            status: e.target.value,
+                          })
+                        }
+                        required
+                      >
+                        <option value="BROUILLON">
+                          {t("adminPortail.status.BROUILLON")}
+                        </option>
+                        <option value="PUBLIE">
+                          {t("adminPortail.status.PUBLIE")}
+                        </option>
+                        <option value="ARCHIVE">
+                          {t("adminPortail.status.ARCHIVE")}
+                        </option>
+                      </select>
+                    </div>
+
+                    {/* Translations panel */}
+                    <fieldset className="i18n-panel">
+                      <legend>
+                        {t("adminPortail.fields.translationsLegend")}
+                      </legend>
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>{t("adminPortail.fields.locale")}</label>
+                          <select
+                            value={trLocale}
+                            onChange={(e) => setTrLocale(e.target.value)}
+                          >
+                            <option value="fr">fr</option>
+                            <option value="en">en</option>
+                            <option value="ar">ar</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="form-group">
+                        <label>{t("adminPortail.fields.title")} *</label>
+                        <input
+                          type="text"
+                          value={trDocTitre}
+                          dir={trIsRTL ? "rtl" : "ltr"}
+                          onChange={(e) => {
+                            const v = e.target.value;
+                            setTrDocTitre(v);
+                            updateCacheFor(trLocale, { titre: v });
+                          }}
+                          required={!editMode}
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>{t("adminPortail.fields.description")}</label>
+                        <textarea
+                          rows={4}
+                          value={trDocDescription}
+                          dir={trIsRTL ? "rtl" : "ltr"}
+                          onChange={(e) => {
+                            const v = e.target.value;
+                            setTrDocDescription(v);
+                            updateCacheFor(trLocale, { extrait: v });
+                          }}
+                        />
+                      </div>
+                    </fieldset>
+                  </>
                 ) : (
                   <>
-                    {/* DOCUMENTS */}
+                    {/* DOCUMENTS / DOCUMENTS ANNEXES */}
                     <div className="form-row">
                       <div className="form-group">
                         <label>{t("adminPortail.fields.type")} *</label>

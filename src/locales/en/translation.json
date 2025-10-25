@@ -517,7 +517,8 @@
       "telechargementReussi": "Download successful",
       "telechargementError": "Download error",
       "refreshSuccess": "Data updated",
-      "loading": "Loading..."
+      "loading": "Loading...",
+      "createProjectMissingFR": "Please fill in the French title before saving the project."
     }
   },
   "dashboardDGI": {
@@ -689,6 +690,16 @@
       "noData": "❌ No documents available",
       "download": "Download",
       "unavailable": "File unavailable"
+    },
+    "documentsAnnexes": {
+      "title": "Annex Documents",
+      "subtitle": "Download the published annex documents",
+      "typeFilter": "Type",
+      "allTypes": "All types",
+      "resultsPerPage": "Results / page",
+      "page": "Page",
+      "noData": "No annex documents available.",
+      "download": "Download"
     }
   },
   "adminPortail": {
@@ -698,11 +709,18 @@
     },
     "tabs": {
       "news": "News",
-      "documents": "Legal Documents"
+      "documents": "Legal Documents",
+      "documentsAnnexes": "Attached Documents",
+      "projets": "Projects"
     },
     "toolbar": {
       "newsTitle": "News Management",
-      "docsTitle": "Document Management"
+      "docsTitle": "Document Management",
+      "projectsTitle": "Projects Management"
+    },
+    "projetEtat": {
+      "EN_COURS": "In Progress",
+      "ACHEVEE": "Completed"
     },
     "table": {
       "headers": {
@@ -715,14 +733,20 @@
     },
     "empty": {
       "news": "No news available",
-      "documents": "No documents available"
+      "documents": "No documents available",
+      "documentsAnnexes": "No attached documents available",
+      "projets": "No projects yet"
     },
     "modal": {
       "title": {
         "addNews": "Add a news item",
         "editNews": "Edit a news item",
         "addDocument": "Add a document",
-        "editDocument": "Edit a document"
+        "editDocument": "Edit a document",
+        "addDocumentAnnexe": "Add an attached document",
+        "editDocumentAnnexe": "Edit an attached document",
+        "addProjet": "Add a project",
+        "editProjet": "Edit project"
       }
     },
     "fields": {
@@ -736,7 +760,8 @@
       "type": "Type",
       "file": "File (PDF or other)",
       "description": "Description",
-      "selectPlaceholder": "Select"
+      "selectPlaceholder": "Select",
+      "etat": "Status"
     },
     "placeholders": {
       "datetime": "dd/mm/yyyy hh:mm",
@@ -770,6 +795,7 @@
   "tabs": {
     "actualites": "News",
     "documents": "Legal Documents",
+    "documentsAnnexes": "Attached Documents",
     "images": "Images"
   },
   "actualites": {
