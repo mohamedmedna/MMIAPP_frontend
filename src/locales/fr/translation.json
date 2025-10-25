@@ -1627,6 +1627,117 @@
       "imageName": "📷"
     }
   },
+
+  "pmne": {
+    "title": "Présentation du Programme",
+    "description": "L'objectif du programme de mise à niveau est d'accompagner l'entreprise vers un niveau supérieur de performance à travers un appui technique, financier et organisationnel.",
+    "objectives": {
+      "title": "Objectifs Principaux",
+      "items": [
+        "Améliorer la performance des entreprises",
+        "Moderniser les équipements et processus industriels",
+        "Renforcer la compétitivité internationale",
+        "Stimuler l'innovation et la transformation digitale"
+      ]
+    },
+    "adhesion": {
+      "title": "Types d'Adhésion",
+      "cards": {
+        "enterprise": {
+          "title": "Entreprise",
+          "description": "Parcours de mise à niveau complet"
+        },
+        "association": {
+          "title": "Association",
+          "description": "Accompagnement collectif"
+        },
+        "individual": {
+          "title": "Membre Individuel",
+          "description": "Parcours personnalisé"
+        }
+      }
+    },
+    "cta": "Demander une adhésion au PMNE (à venir)"
+  },
+
+  "common": {
+    "utilisateur": "Utilisateur"
+  },
+  "dashboardDemandeur": {
+    "sidebar": {
+      "espaceDemandeur": "Espace Demandeur",
+      "dashboardDemandeur": "Dashboard Demandeur",
+      "tableauDeBord": "Tableau de bord",
+      "nouvelleDemande": "Nouvelle demande",
+      "suiviDemandes": "Suivi des demandes",
+      "notifications": "Notifications",
+      "mesDemandes": "Mes demandes",
+      "archive": "Archive",
+      "deconnexion": "Déconnexion"
+    },
+    "header": {
+      "bienvenue": "🏠 Bienvenue {{prenom}} {{nom}}"
+    },
+    "actions": {
+      "nouvelleDemande": "Nouvelle demande",
+      "suiviDemandes": "Suivi des demandes",
+      "notifications": "Notifications",
+      "archive": "Archive",
+      "voirDetails": "Voir détails",
+      "telechargerAccuse": "Télécharger Accusé",
+      "telechargerAutorisation": "Télécharger Autorisation",
+      "creerPremiereDemande": "Créer ma première demande",
+      "voirToutes": "Voir toutes mes demandes ({{count}})",
+      "refresh": "Rafraîchir"
+    },
+    "messages": {
+      "loading": "Chargement...",
+      "loadingProfile": "Chargement du profil utilisateur...",
+      "chargementDemandes": "Chargement des demandes...",
+      "aucuneDemande": "Aucune demande pour le moment",
+      "downloadAccuseError": "Erreur lors du téléchargement de l'accusé de réception",
+      "downloadAutorisationError": "Erreur lors du téléchargement de l'autorisation. Vérifiez que vous êtes connecté et que l'autorisation est disponible."
+    },
+    "statistiques": {
+      "totalDemandes": "Total demandes",
+      "enCours": "En cours",
+      "validees": "Validées",
+      "rejetees": "Rejetées"
+    },
+    "sections": {
+      "suiviDemandesTitre": "Suivi des Étapes de vos Demandes ({{count}} demandes)"
+    },
+    "progress": {
+      "complet": "{{percent}}% complété"
+    },
+    "etapes": {
+      "deposee": "Déposée",
+      "recue": "Reçue",
+      "transmise": "Transmise",
+      "enCours": "En cours",
+      "validee": "Validée",
+      "autorisee": "Autorisée"
+    },
+    "status": {
+      "DEPOSEE": "Déposée",
+      "RECEPTIONNEE": "Réceptionnée",
+      "TRANSMISE_AU_SG": "Transmise au SG",
+      "TRANSMISE_AU_DGI": "Transmise à la DGI",
+      "TRANSMISE_AU_MINISTRE": "Transmise au Ministre",
+      "AUTORISATION_SIGNEE": "Autorisation Signée",
+      "VALIDEE_DDPI": "Validée DDPI",
+      "VALIDEE_DGI": "Validée DGI",
+      "TRANSMISE_A_DGI": "Transmise à la DGI",
+      "EN_COURS_DGI": "En cours DGI",
+      "VALIDEE_PNME": "Validée PNME",
+      "CLOTUREE": "Clôturée",
+      "REJETEE": "Rejetée",
+      "REFUSEE": "Refusée",
+      "EN_COURS_PNME": "En cours PNME",
+      "COMPLEMENT_REQUIS_PNME": "Complément requis"
+    }
+  },
+
   "documents": {
     "title": "Gestion des Documents",
     "columns": {

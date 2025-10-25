@@ -826,6 +826,39 @@
       "imageName": "📷"
     }
   },
+
+  "pmne": {
+    "title": "Program Overview",
+    "description": "The upgrading program aims to support companies toward a higher level of performance through technical, financial, and organizational assistance.",
+    "objectives": {
+      "title": "Main Objectives",
+      "items": [
+        "Improve corporate performance",
+        "Modernize equipment and industrial processes",
+        "Strengthen international competitiveness",
+        "Foster innovation and digital transformation"
+      ]
+    },
+    "adhesion": {
+      "title": "Membership Types",
+      "cards": {
+        "enterprise": {
+          "title": "Enterprise",
+          "description": "Comprehensive upgrading pathway"
+        },
+        "association": {
+          "title": "Association",
+          "description": "Collective support"
+        },
+        "individual": {
+          "title": "Individual Member",
+          "description": "Personalized pathway"
+        }
+      }
+    },
+    "cta": "Request PMNE membership (coming soon)"
+  },
+
   "documents": {
     "title": "Documents Management",
     "columns": {

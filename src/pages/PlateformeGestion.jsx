@@ -987,10 +987,12 @@ function PlateformeGestion() {
             <div className="section-header">
               <div>
                 <h2 className="section-title" id="projects-title">
-                  Banque des projets
+                  {t("plateformeGestion.projects.title", {
+                    defaultValue: "Banque des projets",
+                  })}
                 </h2>
                 <p className="section-subtitle">
-                  {t("plateformeGestion?.projects?.subtitle", {
+                  {t("plateformeGestion.projects.subtitle", {
                     defaultValue:
                       "Découvrez une sélection de projets structurants en cours ou achevés.",
                   })}
