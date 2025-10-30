@@ -676,527 +676,424 @@ function PlateformeGestion() {
           </div>
         </section>
 
-        {/* Documents */}
+        {/* === Unified Hub: Documents | Banque des projets | Documents annexes === */}
         <section
-          className="documents section"
-          aria-labelledby="documents-title"
-          ref={docsSectionRef}
+          className="hub section"
+          aria-labelledby="hub-title"
+          ref={docsSectionRef} // keep this for scroll-to on docs pager; annex/projets refs are used below
         >
           <div className="container">
             <div className="section-header">
               <div>
-                <h2 className="section-title" id="documents-title">
-                  {t("plateformeGestion.documents.title")}
+                <h2 className="section-title" id="hub-title">
+                  {t("plateformeGestion.hub.title", {
+                    defaultValue: "Espace documentaire et projets",
+                  })}
                 </h2>
                 <p className="section-subtitle">
-                  {t("plateformeGestion.documents.subtitle")}
+                  {t("plateformeGestion.hub.subtitle", {
+                    defaultValue:
+                      "Consultez les documents, la banque des projets et les documents annexes dans un seul espace.",
+                  })}
                 </p>
-              </div>
-
-              <div className="section-controls">
-                <label className="filter-label">
-                  {t("plateformeGestion.documents.typeFilter")}&nbsp;
-                  <select
-                    value={docTypeFilter}
-                    onChange={(e) => setDocTypeFilter(e.target.value)}
-                  >
-                    <option value="">
-                      {t("plateformeGestion.documents.allTypes")}
-                    </option>
-                    {typeDocs.map((tDoc) => (
-                      <option key={tDoc.id} value={tDoc.id}>
-                        {tDoc.libelle}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                <label className="filter-label">
-                  {t("plateformeGestion.documents.resultsPerPage")}&nbsp;
-                  <select
-                    value={docPageSize}
-                    onChange={(e) => {
-                      setDocPageSize(Number(e.target.value));
-                      goDocPage(1);
-                    }}
-                  >
-                    <option value={3}>3</option>
-                    <option value={10}>10</option>
-                    <option value={20}>20</option>
-                  </select>
-                </label>
-
-                <span className="count-indicator">
-                  {t("plateformeGestion.documents.page")}{" "}
-                  <span dir="ltr">{docPage}</span> —{" "}
-                  <span dir="ltr">
-                    {Math.min(docPage * docPageSize, docTotal)}/{docTotal}
-                  </span>
-                </span>
               </div>
             </div>
 
-            {documents.length === 0 && !pagingDoc && !errorDoc ? (
-              <div className="no-data">
-                <p>{t("plateformeGestion.documents.noData")}</p>
-              </div>
-            ) : (
-              <>
+            <div
+              className={`hub-grid ${isRTL ? "rtl" : ""}`}
+              dir={isRTL ? "rtl" : "ltr"}
+            >
+              {/* --- Column 1: Documents --- */}
+              <section
+                className="hub-col"
+                aria-labelledby="hub-docs-title"
+                ref={docsSectionRef}
+              >
+                <header className="hub-col-header">
+                  <h3 className="hub-col-title" id="hub-docs-title">
+                    {t("plateformeGestion.documents.title")}
+                  </h3>
+                  <div className="section-controls">
+                    <label className="filter-label">
+                      {t("plateformeGestion.documents.typeFilter")}&nbsp;
+                      <select
+                        value={docTypeFilter}
+                        onChange={(e) => setDocTypeFilter(e.target.value)}
+                      >
+                        <option value="">
+                          {t("plateformeGestion.documents.allTypes")}
+                        </option>
+                        {typeDocs.map((tDoc) => (
+                          <option key={tDoc.id} value={tDoc.id}>
+                            {tDoc.libelle}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <label className="filter-label">
+                      {t("plateformeGestion.documents.resultsPerPage")}&nbsp;
+                      <select
+                        value={docPageSize}
+                        onChange={(e) => {
+                          setDocPageSize(Number(e.target.value));
+                          goDocPage(1);
+                        }}
+                      >
+                        <option value={5}>5</option>
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
+                      </select>
+                    </label>
+                  </div>
+                </header>
+
                 {pagingDoc && (
                   <div className="thin-loader" aria-hidden="true" />
                 )}
 
-                <div className="documents-grid">
-                  {documents.map((doc) => (
-                    <article key={doc.id} className="document-card">
-                      <div className="document-icon">
-                        <FileText size={32} />
-                      </div>
-                      <div className="document-content">
-                        <div className="document-header">
-                          <h3 className="document-title">{doc.titre}</h3>
-                          <span className="document-type">{doc.type}</span>
-                        </div>
-                        <p className="document-description">
-                          {doc.description}
-                        </p>
-                        <div className="document-meta">
-                          <div className="meta-item">
-                            <Calendar size={14} />
-                            <span dir={isRTL ? "ltr" : undefined}>
-                              {formatDate(doc.date, currentLocale)}
-                            </span>
-                          </div>
-                          {doc.categorie ? (
-                            <div className="meta-item">
-                              <Tag size={14} />
-                              <span>{doc.categorie}</span>
-                            </div>
-                          ) : null}
-                          {doc.taille ? (
-                            <div className="meta-item">
-                              <span className="document-size">
-                                {doc.taille}
-                              </span>
-                            </div>
-                          ) : null}
-                        </div>
-                        <div className="document-actions">
-                          {doc.url ? (
+                {documents.length === 0 && !pagingDoc && !errorDoc ? (
+                  <div className="no-data">
+                    <p>{t("plateformeGestion.documents.noData")}</p>
+                  </div>
+                ) : (
+                  <>
+                    <ul className="note-list">
+                      {documents.map((doc) => {
+                        const href = doc?.url || `/document/${doc.id}`;
+                        return (
+                          <li key={doc.id} className="note-card">
                             <a
-                              href={doc.url}
+                              href={href}
                               target="_blank"
                               rel="noreferrer"
-                              className="document-download-btn"
-                              download
+                              className="note-card-link"
+                              title={doc.titre}
                             >
-                              <Download size={16} />
-                              {t("plateformeGestion.documents.download")}
+                              <span className="note-icon" aria-hidden="true">
+                                <FileText size={18} />
+                              </span>
+                              <span className="note-main">
+                                <span className="note-title">{doc.titre}</span>
+                                <span className="note-meta">
+                                  <span className="note-badge">{doc.type}</span>
+                                  <span className="note-dot">•</span>
+                                  <span
+                                    className="note-date"
+                                    dir={isRTL ? "ltr" : undefined}
+                                  >
+                                    {formatDate(doc.date, currentLocale)}
+                                  </span>
+                                  {doc.taille ? (
+                                    <>
+                                      <span className="note-dot">•</span>
+                                      <span className="note-size">
+                                        {doc.taille}
+                                      </span>
+                                    </>
+                                  ) : null}
+                                </span>
+                              </span>
                             </a>
-                          ) : (
-                            <button
-                              className="document-download-btn"
-                              disabled
-                              title="Fichier indisponible"
-                            >
-                              <Download size={16} />
-                              {t("plateformeGestion.documents.download")}
-                            </button>
-                          )}
-                        </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+
+                    <Pager
+                      page={docPage}
+                      pageSize={docPageSize}
+                      total={docTotal}
+                      onPage={goDocPage}
+                      isRTL={isRTL}
+                    />
+                    {errorDoc ? (
+                      <div className="no-data" style={{ marginTop: 8 }}>
+                        <small style={{ opacity: 0.7 }}>({errorDoc})</small>
                       </div>
-                    </article>
-                  ))}
-                </div>
-
-                <Pager
-                  page={docPage}
-                  pageSize={docPageSize}
-                  total={docTotal}
-                  onPage={goDocPage}
-                  isRTL={isRTL}
-                />
-                {errorDoc ? (
-                  <div className="no-data" style={{ marginTop: 8 }}>
-                    <small style={{ opacity: 0.7 }}>({errorDoc})</small>
-                  </div>
-                ) : null}
-              </>
-            )}
-          </div>
-        </section>
-
-        {/* Documents annexes  */}
-        <section
-          className="documents section"
-          aria-labelledby="documents-annexes-title"
-          ref={annexSectionRef}
-        >
-          <div className="container">
-            <div className="section-header">
-              <div>
-                <h2 className="section-title" id="documents-annexes-title">
-                  {t("plateformeGestion.documentsAnnexes.title")}
-                </h2>
-                <p className="section-subtitle">
-                  {t("plateformeGestion.documentsAnnexes.subtitle")}
-                </p>
-              </div>
-
-              <div className="section-controls">
-                <label className="filter-label">
-                  {t("plateformeGestion.documentsAnnexes.typeFilter")}&nbsp;
-                  <select
-                    value={annexTypeFilter}
-                    onChange={(e) => setAnnexTypeFilter(e.target.value)}
-                  >
-                    <option value="">
-                      {t("plateformeGestion.documentsAnnexes.allTypes")}
-                    </option>
-                    {typeDocs.map((tDoc) => (
-                      <option key={tDoc.id} value={tDoc.id}>
-                        {tDoc.libelle}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                <label className="filter-label">
-                  {t("plateformeGestion.documentsAnnexes.resultsPerPage")}&nbsp;
-                  <select
-                    value={annexPageSize}
-                    onChange={(e) => {
-                      setAnnexPageSize(Number(e.target.value));
-                      goAnnexPage(1);
-                    }}
-                  >
-                    <option value={3}>3</option>
-                    <option value={10}>10</option>
-                    <option value={20}>20</option>
-                  </select>
-                </label>
-
-                <span className="count-indicator">
-                  {t("plateformeGestion.documentsAnnexes.page")}{" "}
-                  <span dir="ltr">{annexPage}</span> —{" "}
-                  <span dir="ltr">
-                    {Math.min(annexPage * annexPageSize, annexTotal)}/
-                    {annexTotal}
-                  </span>
-                </span>
-              </div>
-            </div>
-
-            {documentsAnnexes.length === 0 && !pagingAnnex && !errorAnnex ? (
-              <div className="no-data">
-                <p>{t("plateformeGestion.documentsAnnexes.noData")}</p>
-              </div>
-            ) : (
-              <>
-                {pagingAnnex && (
-                  <div className="thin-loader" aria-hidden="true" />
+                    ) : null}
+                  </>
                 )}
+              </section>
 
-                <div className="documents-grid">
-                  {documentsAnnexes.map((doc) => (
-                    <article key={doc.id} className="document-card">
-                      <div className="document-icon">
-                        <FileText size={32} />
-                      </div>
-                      <div className="document-content">
-                        <div className="document-header">
-                          <h3 className="document-title">{doc.titre}</h3>
-                          <span className="document-type">{doc.type}</span>
-                        </div>
-                        <p className="document-description">
-                          {doc.description}
-                        </p>
-                        <div className="document-meta">
-                          <div className="meta-item">
-                            <Calendar size={14} />
-                            <span dir={isRTL ? "ltr" : undefined}>
-                              {formatDate(doc.date, currentLocale)}
-                            </span>
-                          </div>
-                          {doc.categorie ? (
-                            <div className="meta-item">
-                              <Tag size={14} />
-                              <span>{doc.categorie}</span>
-                            </div>
-                          ) : null}
-                          {doc.taille ? (
-                            <div className="meta-item">
-                              <span className="document-size">
-                                {doc.taille}
-                              </span>
-                            </div>
-                          ) : null}
-                        </div>
-                        <div className="document-actions">
-                          {doc.url ? (
-                            <a
-                              href={doc.url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="document-download-btn"
-                              download
-                            >
-                              <Download size={16} />
-                              {t("plateformeGestion.documentsAnnexes.download")}
-                            </a>
-                          ) : (
-                            <button
-                              className="document-download-btn"
-                              disabled
-                              title="Fichier indisponible"
-                            >
-                              <Download size={16} />
-                              {t("plateformeGestion.documentsAnnexes.download")}
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </article>
-                  ))}
-                </div>
+              {/* --- Column 2: Banque des projets --- */}
+              <section
+                className="hub-col"
+                aria-labelledby="hub-projets-title"
+                ref={projetsSectionRef}
+              >
+                <header className="hub-col-header">
+                  <h3 className="hub-col-title" id="hub-projets-title">
+                    {t("plateformeGestion.projects.title", {
+                      defaultValue: "Banque des projets",
+                    })}
+                  </h3>
+                  <div className="section-controls">
+                    <label className="filter-label">
+                      {t("plateformeGestion.projects.stateFilter", {
+                        defaultValue: "État",
+                      })}
+                      &nbsp;
+                      <select
+                        value={projetEtatFilter}
+                        onChange={(e) => setProjetEtatFilter(e.target.value)}
+                      >
+                        <option value="">
+                          {t("plateformeGestion.projects.allStates", {
+                            defaultValue: "Tous",
+                          })}
+                        </option>
+                        <option value="EN_COURS">
+                          {t("adminPortail.projetEtat.EN_COURS", {
+                            defaultValue: "En cours",
+                          })}
+                        </option>
+                        <option value="ACHEVEE">
+                          {t("adminPortail.projetEtat.ACHEVEE", {
+                            defaultValue: "Achevée",
+                          })}
+                        </option>
+                      </select>
+                    </label>
 
-                <Pager
-                  page={annexPage}
-                  pageSize={annexPageSize}
-                  total={annexTotal}
-                  onPage={goAnnexPage}
-                  isRTL={isRTL}
-                />
-                {errorAnnex ? (
-                  <div className="no-data" style={{ marginTop: 8 }}>
-                    <small style={{ opacity: 0.7 }}>({errorAnnex})</small>
+                    <label className="filter-label">
+                      {t("plateformeGestion.projects.resultsPerPage", {
+                        defaultValue: "Résultats / page",
+                      })}
+                      &nbsp;
+                      <select
+                        value={projetPageSize}
+                        onChange={(e) => {
+                          setProjetPageSize(Number(e.target.value));
+                          goProjetPage(1);
+                        }}
+                      >
+                        <option value={5}>5</option>
+                        <option value={9}>9</option>
+                        <option value={12}>12</option>
+                      </select>
+                    </label>
                   </div>
-                ) : null}
-              </>
-            )}
-          </div>
-        </section>
+                </header>
 
-        {/* Banque des projets */}
-        <section
-          className="projects section"
-          aria-labelledby="projects-title"
-          ref={projetsSectionRef}
-        >
-          <div className="container">
-            <div className="section-header">
-              <div>
-                <h2 className="section-title" id="projects-title">
-                  {t("plateformeGestion.projects.title", {
-                    defaultValue: "Banque des projets",
-                  })}
-                </h2>
-                <p className="section-subtitle">
-                  {t("plateformeGestion.projects.subtitle", {
-                    defaultValue:
-                      "Découvrez une sélection de projets structurants en cours ou achevés.",
-                  })}
-                </p>
-              </div>
-              <div className="section-controls">
-                {/* NEW: Etat filter */}
-                <label className="filter-label">
-                  {t("plateformeGestion.projects.stateFilter", {
-                    defaultValue: "État",
-                  })}
-                  &nbsp;
-                  <select
-                    value={projetEtatFilter}
-                    onChange={(e) => setProjetEtatFilter(e.target.value)}
-                  >
-                    <option value="">
-                      {t("plateformeGestion.projects.allStates", {
-                        defaultValue: "Tous",
-                      })}
-                    </option>
-                    <option value="EN_COURS">
-                      {t("adminPortail.projetEtat.EN_COURS", {
-                        defaultValue: "En cours",
-                      })}
-                    </option>
-                    <option value="ACHEVEE">
-                      {t("adminPortail.projetEtat.ACHEVEE", {
-                        defaultValue: "Achevée",
-                      })}
-                    </option>
-                  </select>
-                </label>
-
-                <label className="filter-label">
-                  {t("plateformeGestion.projects.resultsPerPage", {
-                    defaultValue: "Résultats / page",
-                  })}
-                  &nbsp;
-                  <select
-                    value={projetPageSize}
-                    onChange={(e) => {
-                      setProjetPageSize(Number(e.target.value));
-                      goProjetPage(1);
-                    }}
-                  >
-                    <option value={6}>6</option>
-                    <option value={9}>9</option>
-                    <option value={12}>12</option>
-                  </select>
-                </label>
-
-                <span className="count-indicator">
-                  {t("plateformeGestion.projects.page", {
-                    defaultValue: "Page",
-                  })}{" "}
-                  <span dir="ltr">{projetPage}</span> —{" "}
-                  <span dir="ltr">
-                    {Math.min(projetPage * projetPageSize, derivedProjetTotal)}/
-                    {derivedProjetTotal}
-                  </span>
-                </span>
-              </div>
-            </div>
-
-            {projets.length === 0 && !pagingProjet && !errorProjet ? (
-              <div className="no-data">
-                <p>
-                  {t("plateformeGestion.projects.noData", {
-                    defaultValue: "Aucun projet pour le moment.",
-                  })}
-                </p>
-              </div>
-            ) : (
-              <>
                 {pagingProjet && (
                   <div className="thin-loader" aria-hidden="true" />
                 )}
 
-                {/* New compact, image-free project cards */}
-                <div className="projects-grid">
-                  {projets.map((p, idx) => (
-                    <article
-                      key={p.id}
-                      className={`project-card project-card--compact animate-fade-in-up delay-${
-                        idx % 3
-                      }`}
-                    >
-                      <div className="project-head">
-                        <div className="project-avatar" aria-hidden="true">
-                          <Layers size={20} />
-                        </div>
-                        <div className="project-title-wrap">
-                          <h3 className="project-title">{p.titre}</h3>
-                          <div className="project-meta-line">
-                            <span
-                              className={`project-chip ${
-                                p.etat === "ACHEVEE"
-                                  ? "chip-done"
-                                  : "chip-progress"
-                              }`}
-                            >
-                              {p.etat === "ACHEVEE"
-                                ? t("adminPortail.projetEtat.ACHEVEE", {
-                                    defaultValue: "Achevée",
-                                  })
-                                : t("adminPortail.projetEtat.EN_COURS", {
-                                    defaultValue: "En cours",
-                                  })}
-                            </span>
-                            <span className="project-dot" aria-hidden="true">
-                              •
-                            </span>
-                            <span className="project-date">
-                              <Calendar size={14} />
-                              &nbsp;
-                              <span dir={isRTL ? "ltr" : undefined}>
-                                {formatDate(p.date, currentLocale)}
-                              </span>
-                            </span>
-                            {p.taille ? (
-                              <>
-                                <span
-                                  className="project-dot"
-                                  aria-hidden="true"
-                                >
-                                  •
-                                </span>
-                                <span className="project-size">{p.taille}</span>
-                              </>
-                            ) : null}
-                          </div>
-                        </div>
-                      </div>
-
-                      {p.description ? (
-                        <p className="project-desc">{p.description}</p>
-                      ) : null}
-
-                      <div className="project-actions">
-                        {p.url ? (
-                          <>
-                            {/* View (open in new tab) */}
+                {projets.length === 0 && !pagingProjet && !errorProjet ? (
+                  <div className="no-data">
+                    <p>
+                      {t("plateformeGestion.projects.noData", {
+                        defaultValue: "Aucun projet pour le moment.",
+                      })}
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <ul className="note-list">
+                      {projets.map((p) => {
+                        const href =
+                          p?.detailUrl || p?.url || `/projet/${p.id}`;
+                        return (
+                          <li key={p.id} className="note-card">
                             <a
-                              href={p.url}
+                              href={href}
                               target="_blank"
                               rel="noreferrer"
-                              className="project-btn primary"
-                              aria-label={t(
-                                "plateformeGestion.projects.viewDetails",
-                                { defaultValue: "Voir le projet" }
-                              )}
+                              className="note-card-link"
+                              title={p.titre}
                             >
-                              <ExternalLink size={16} />
-                              {t("plateformeGestion.projects.viewDetails", {
-                                defaultValue: "Voir le projet",
-                              })}
+                              <span className="note-icon" aria-hidden="true">
+                                <Layers size={18} />
+                              </span>
+                              <span className="note-main">
+                                <span className="note-title">{p.titre}</span>
+                                <span className="note-meta">
+                                  <span
+                                    className={`note-chip ${
+                                      p.etat === "ACHEVEE"
+                                        ? "chip-done"
+                                        : "chip-progress"
+                                    }`}
+                                  >
+                                    {p.etat === "ACHEVEE"
+                                      ? t("adminPortail.projetEtat.ACHEVEE", {
+                                          defaultValue: "Achevée",
+                                        })
+                                      : t("adminPortail.projetEtat.EN_COURS", {
+                                          defaultValue: "En cours",
+                                        })}
+                                  </span>
+                                  <span className="note-dot">•</span>
+                                  <span
+                                    className="note-date"
+                                    dir={isRTL ? "ltr" : undefined}
+                                  >
+                                    {formatDate(p.date, currentLocale)}
+                                  </span>
+                                  {p.taille ? (
+                                    <>
+                                      <span className="note-dot">•</span>
+                                      <span className="note-size">
+                                        {p.taille}
+                                      </span>
+                                    </>
+                                  ) : null}
+                                </span>
+                              </span>
                             </a>
-                          </>
-                        ) : (
-                          <button
-                            className="project-btn primary"
-                            disabled
-                            title="Fichier indisponible"
-                          >
-                            <FileText size={16} />
-                            {t("plateformeGestion.projects.viewDetails", {
-                              defaultValue: "Voir le projet",
-                            })}
-                          </button>
-                        )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+
+                    <Pager
+                      page={projetPage}
+                      pageSize={projetPageSize}
+                      total={derivedProjetTotal}
+                      onPage={goProjetPage}
+                      isRTL={isRTL}
+                    />
+                    {errorProjet ? (
+                      <div className="no-data" style={{ marginTop: 8 }}>
+                        <small style={{ opacity: 0.7 }}>({errorProjet})</small>
                       </div>
-                    </article>
-                  ))}
-                </div>
+                    ) : null}
+                  </>
+                )}
+              </section>
 
-                <Pager
-                  page={projetPage}
-                  pageSize={projetPageSize}
-                  total={derivedProjetTotal}
-                  onPage={goProjetPage}
-                  isRTL={isRTL}
-                />
-                {errorProjet ? (
-                  <div className="no-data" style={{ marginTop: 8 }}>
-                    <small style={{ opacity: 0.7 }}>({errorProjet})</small>
+              {/* --- Column 3: Documents annexes --- */}
+              <section
+                className="hub-col"
+                aria-labelledby="hub-annex-title"
+                ref={annexSectionRef}
+              >
+                <header className="hub-col-header">
+                  <h3 className="hub-col-title" id="hub-annex-title">
+                    {t("plateformeGestion.documentsAnnexes.title")}
+                  </h3>
+                  <div className="section-controls">
+                    <label className="filter-label">
+                      {t("plateformeGestion.documentsAnnexes.typeFilter")}&nbsp;
+                      <select
+                        value={annexTypeFilter}
+                        onChange={(e) => setAnnexTypeFilter(e.target.value)}
+                      >
+                        <option value="">
+                          {t("plateformeGestion.documentsAnnexes.allTypes")}
+                        </option>
+                        {typeDocs.map((tDoc) => (
+                          <option key={tDoc.id} value={tDoc.id}>
+                            {tDoc.libelle}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <label className="filter-label">
+                      {t("plateformeGestion.documentsAnnexes.resultsPerPage")}
+                      &nbsp;
+                      <select
+                        value={annexPageSize}
+                        onChange={(e) => {
+                          setAnnexPageSize(Number(e.target.value));
+                          goAnnexPage(1);
+                        }}
+                      >
+                        <option value={5}>5</option>
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
+                      </select>
+                    </label>
                   </div>
-                ) : null}
-              </>
-            )}
+                </header>
+
+                {pagingAnnex && (
+                  <div className="thin-loader" aria-hidden="true" />
+                )}
+
+                {documentsAnnexes.length === 0 &&
+                !pagingAnnex &&
+                !errorAnnex ? (
+                  <div className="no-data">
+                    <p>{t("plateformeGestion.documentsAnnexes.noData")}</p>
+                  </div>
+                ) : (
+                  <>
+                    <ul className="note-list">
+                      {documentsAnnexes.map((doc) => {
+                        const href = doc?.url || `/document-annexe/${doc.id}`;
+                        return (
+                          <li key={doc.id} className="note-card">
+                            <a
+                              href={href}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="note-card-link"
+                              title={doc.titre}
+                            >
+                              <span className="note-icon" aria-hidden="true">
+                                <FileText size={18} />
+                              </span>
+                              <span className="note-main">
+                                <span className="note-title">{doc.titre}</span>
+                                <span className="note-meta">
+                                  <span className="note-badge">{doc.type}</span>
+                                  <span className="note-dot">•</span>
+                                  <span
+                                    className="note-date"
+                                    dir={isRTL ? "ltr" : undefined}
+                                  >
+                                    {formatDate(doc.date, currentLocale)}
+                                  </span>
+                                  {doc.taille ? (
+                                    <>
+                                      <span className="note-dot">•</span>
+                                      <span className="note-size">
+                                        {doc.taille}
+                                      </span>
+                                    </>
+                                  ) : null}
+                                </span>
+                              </span>
+                            </a>
+                          </li>
+                        );
+                      })}
+                    </ul>
+
+                    <Pager
+                      page={annexPage}
+                      pageSize={annexPageSize}
+                      total={annexTotal}
+                      onPage={goAnnexPage}
+                      isRTL={isRTL}
+                    />
+                    {errorAnnex ? (
+                      <div className="no-data" style={{ marginTop: 8 }}>
+                        <small style={{ opacity: 0.7 }}>({errorAnnex})</small>
+                      </div>
+                    ) : null}
+                  </>
+                )}
+              </section>
+            </div>
           </div>
         </section>
 
-        <section className="section container" aria-labelledby="map-title">
-          <div className="section-header">
-            <h2 className="section-title" id="map-title">
-              {t("map.title")}
-            </h2>
-          </div>
-        </section>
+        <section className="map-block section" aria-labelledby="map-title">
+          <div className="container">
+            <div className="section-header">
+              <h2 className="section-title" id="map-title">
+                {t("map.title")}
+              </h2>
+            </div>
 
-        {/* Map */}
-        <section className="map-section" aria-labelledby="map-title">
-          <MapComponent />
+            <div className="map-block-content">
+              <MapComponent />
+            </div>
+          </div>
         </section>
 
         <Footer />

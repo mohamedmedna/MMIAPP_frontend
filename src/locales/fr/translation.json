@@ -1497,7 +1497,7 @@
       "title": "Documents annexes",
       "subtitle": "Téléchargez les documents annexes publiés",
       "typeFilter": "Type",
-      "allTypes": "Tous les types",
+      "allTypes": "Tous",
       "resultsPerPage": "Résultats / page",
       "page": "Page",
       "noData": "Aucun document annexe disponible.",
@@ -1906,7 +1906,7 @@
   },
 
   "map": {
-    "title": "Cartographie des demandes d'autorisation",
+    "title": "Cartographie des unités industrielles",
     "loc": "Localisation"
   },
 

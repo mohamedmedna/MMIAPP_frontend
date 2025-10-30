@@ -5,7 +5,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   margin: 0 !important;
   padding: 0 !important;
   overflow-x: hidden !important;
@@ -38,7 +39,6 @@ html, body {
   overflow: hidden;
   margin-top: 80px; /* Espace pour le header fixe */
 }
-
 
 .hero-content {
   position: relative;
@@ -750,4 +750,156 @@ html, body {
 .project-btn[disabled] {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* === Unified Hub styles === */
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+/* Stack on tablets/phones */
+@media (max-width: 1100px) {
+  .hub-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 768px) {
+  .hub-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hub-col {
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 14px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+}
+
+.hub-col-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.hub-col-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #2c3e50;
+}
+
+/* Note list */
+.note-list {
+  list-style: none;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.note-card {
+  border: 1px solid #edf2f7;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfbfc 100%);
+  transition: transform 0.15s ease, box-shadow 0.15s ease,
+    border-color 0.15s ease;
+  overflow: hidden;
+}
+
+.note-card:hover {
+  transform: translateY(-2px);
+  border-color: #cfead6;
+  box-shadow: 0 6px 18px rgba(0, 100, 0, 0.08);
+}
+
+.note-card-link {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.65rem 0.8rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.note-icon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #006400, #228b22);
+  color: #fff;
+}
+
+.note-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.note-title {
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: #2c3e50;
+  line-height: 1.25;
+}
+
+.note-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+  flex-wrap: wrap;
+}
+
+.note-badge {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.note-chip {
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.78rem;
+  border: 1px solid transparent;
+}
+.note-chip.chip-progress {
+  background: #fff7ed;
+  color: #9a3412;
+  border-color: #fed7aa;
+}
+.note-chip.chip-done {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+
+.note-dot {
+  opacity: 0.4;
+}
+
+.note-size {
+  font-weight: 600;
+  color: #006400;
+}
+
+/* keep lists stretching to the bottom (so pagers sit below consistently) */
+.hub-col .pager {
+  margin-top: 0.75rem;
 }
