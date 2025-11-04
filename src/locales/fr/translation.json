@@ -1114,7 +1114,7 @@
     "success": "Votre demande a été déposée avec succès !"
   },
   "pnme": {
-    "title": "Petite et Moyenne Entreprise (PMNE)",
+  "title": "Programme de Mise à Niveau des Entreprises (PMNE)",
     "raison_sociale": "Raison sociale",
     "rc": "Registre du Commerce",
     "nif": "Numéro d'identification fiscale",
@@ -1502,6 +1502,10 @@
       "page": "Page",
       "noData": "Aucun document annexe disponible.",
       "download": "Télécharger"
+    },
+    "hub": {
+      "title": "Espace documentaire et projets",
+      "subtitle": "Consultez les documents, la banque des projets et les documents annexes dans un seul espace."
     }
   },
   "adminPortail": {

@@ -14,7 +14,6 @@ function FormBoulangerie({ user, setNotif, setError }) {
   const [form, setForm] = useState({
     telephone_proprietaire: '',
     activite_principale: '',
-    selected_juridique_doc: '',
     longitude: '',
     latitude: ''
   });
@@ -39,15 +38,6 @@ function FormBoulangerie({ user, setNotif, setError }) {
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
   const handleFileChange = e => setFiles({ ...files, [e.target.name]: e.target.files[0] });
-
-  // Options pour la liste déroulante du dossier juridique
-  const juridiqueOptions = [
-    { value: '', label: t('boulangerie.dossier_juridique') },
-    { value: 'statut_certifie_notaire_file', label: `📄 ${t('boulangerie.statut_certifie_notaire')}` },
-    { value: 'registre_commerce_local_file', label: `🏢 ${t('boulangerie.registre_commerce_local')}` },
-    { value: 'numero_identification_fiscale_file', label: `🆔 ${t('boulangerie.numero_identification_fiscale')}` },
-    { value: 'certificat_enregistrement_cnss_file', label: `📋 ${t('boulangerie.certificat_enregistrement_cnss')}` }
-  ];
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -115,7 +105,6 @@ function FormBoulangerie({ user, setNotif, setError }) {
         setForm({
           telephone_proprietaire: '',
           activite_principale: '',
-          selected_juridique_doc: '',
           longitude: '',
           latitude: ''
         });
@@ -206,52 +195,57 @@ function FormBoulangerie({ user, setNotif, setError }) {
 
         </div>
         
-        {/* Section Dossier juridique avec liste déroulante */}
+        {/* Section Dossier juridique complet */}
         <div className="form-section-juridique">
           <h4 className="section-title">📋 {t('boulangerie.dossier_juridique')}</h4>
           
           <div className="form-group">
-            <label>📋 {t('boulangerie.dossier_juridique')} :</label>
-            <select 
-              name="selected_juridique_doc" 
-              value={form.selected_juridique_doc} 
-              onChange={handleChange}
-              className="juridique-select"
-              required
-            >
-              {juridiqueOptions.map((option, index) => (
-                <option key={index} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+            <label>📄 {t('boulangerie.statut_certifie_notaire')}</label>
+            <input 
+              type="file" 
+              name="statut_certifie_notaire_file" 
+              accept=".pdf,.jpg,.png" 
+              onChange={handleFileChange} 
+              required 
+            />
+            <small className="file-help">Format accepté: PDF, JPG, PNG</small>
           </div>
 
-          {form.selected_juridique_doc && (
-            <div className="form-group">
-              <label>📄 {t('boulangerie.upload_document')} :</label>
-              <input 
-                type="file" 
-                name={form.selected_juridique_doc} 
-                accept=".pdf,.jpg,.png" 
-                onChange={handleFileChange} 
-                required 
-              />
-              <small className="file-help">Format accepté: PDF, JPG, PNG</small>
-              
-              {/* Afficher les documents déjà uploadés */}
-              <div className="uploaded-files">
-                <h5>{t('boulangerie.documents_uploaded')} :</h5>
-                <ul className="files-list">
-                  {juridiqueOptions.slice(1).map((option, index) => (
-                    <li key={index} className={files[option.value] ? 'uploaded' : 'not-uploaded'}>
-                      {option.label} - {files[option.value] ? '✅ Uploadé' : '❌ Manquant'}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          )}
+          <div className="form-group">
+            <label>🏢 {t('boulangerie.registre_commerce_local')}</label>
+            <input 
+              type="file" 
+              name="registre_commerce_local_file" 
+              accept=".pdf,.jpg,.png" 
+              onChange={handleFileChange} 
+              required 
+            />
+            <small className="file-help">Format accepté: PDF, JPG, PNG</small>
+          </div>
+
+          <div className="form-group">
+            <label>🆔 {t('boulangerie.numero_identification_fiscale')}</label>
+            <input 
+              type="file" 
+              name="numero_identification_fiscale_file" 
+              accept=".pdf,.jpg,.png" 
+              onChange={handleFileChange} 
+              required 
+            />
+            <small className="file-help">Format accepté: PDF, JPG, PNG</small>
+          </div>
+
+          <div className="form-group">
+            <label>📋 {t('boulangerie.certificat_enregistrement_cnss')}</label>
+            <input 
+              type="file" 
+              name="certificat_enregistrement_cnss_file" 
+              accept=".pdf,.jpg,.png" 
+              onChange={handleFileChange} 
+              required 
+            />
+            <small className="file-help">Format accepté: PDF, JPG, PNG</small>
+          </div>
         </div>
 
         {/* Section Documents spécifiques à la boulangerie */}

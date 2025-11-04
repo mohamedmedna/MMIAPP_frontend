@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import BanniereMinistereCoupee from "../components/BanniereMinistereCoupee";
 import "../Styles/DashboardPNME.css";
 
 const baseUrl = window.__APP_CONFIG__?.API_BASE;
@@ -535,6 +536,7 @@ function DashboardPNME({ user }) {
           setActiveMenu={setActiveMenu}
         />
         <main className="dashboard-main">
+          <Header />
           <div className="dashboard-content">
             {error && <div className="error-message">{error}</div>}
             {notif && <div className="success-message">{notif}</div>}

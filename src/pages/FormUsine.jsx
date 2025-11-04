@@ -12,7 +12,6 @@ function FormUsine({ user, setNotif, setError }) {
   const [formKey, setFormKey] = useState(Date.now());
   const [form, setForm] = useState({
     telephone_proprietaire: '',
-    selected_juridique_doc: '',
     longitude: '',
     latitude: '',
     nni_passeport: '',
@@ -43,15 +42,6 @@ function FormUsine({ user, setNotif, setError }) {
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
   const handleFileChange = e => setFiles({ ...files, [e.target.name]: e.target.files[0] });
-
-  // Options pour la liste déroulante du dossier juridique
-  const juridiqueOptions = [
-    { value: '', label: t('usine.dossier_juridique') },
-    { value: 'statut_juridique_file', label: `📄 ${t('usine.statut_juridique')}` },
-    { value: 'registre_commerce_file', label: `🏢 ${t('usine.registre_commerce')}` },
-    { value: 'nif_file', label: `🆔 ${t('usine.nif')}` },
-    { value: 'cnss_file', label: `📋 ${t('usine.cnss')}` }
-  ];
 
   // Options pour la liste déroulante du secteur
   const secteurOptions = [
@@ -180,52 +170,57 @@ function FormUsine({ user, setNotif, setError }) {
       >
         <h3>{t('usine.title')}</h3>
         
-        {/* Section Dossier juridique avec liste déroulante */}
+        {/* Section Dossier juridique complet */}
         <div className="form-section-juridique">
           <h4 className="section-title">📋 {t('usine.dossier_juridique')}</h4>
           
           <div className="form-group">
-            <label>📋 {t('usine.dossier_juridique')} :</label>
-            <select 
-              name="selected_juridique_doc" 
-              value={form.selected_juridique_doc} 
-              onChange={handleChange}
-              className="juridique-select"
-              required
-            >
-              {juridiqueOptions.map((option, index) => (
-                <option key={index} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+            <label>📄 {t('usine.statut_juridique')}</label>
+            <input 
+              type="file" 
+              name="statut_juridique_file" 
+              accept=".pdf,.jpg,.png" 
+              onChange={handleFileChange} 
+              required 
+            />
+            <small className="file-help">Format accepté: PDF, JPG, PNG</small>
           </div>
 
-          {form.selected_juridique_doc && (
-            <div className="form-group">
-              <label>📄 {t('usine.upload_document')} :</label>
-              <input 
-                type="file" 
-                name={form.selected_juridique_doc} 
-                accept=".pdf,.jpg,.png" 
-                onChange={handleFileChange} 
-                required 
-              />
-              <small className="file-help">Format accepté: PDF, JPG, PNG</small>
-              
-              {/* Afficher les documents déjà uploadés */}
-              <div className="uploaded-files">
-                <h5>{t('usine.documents_uploaded')} :</h5>
-                <ul className="files-list">
-                  {juridiqueOptions.slice(1).map((option, index) => (
-                    <li key={index} className={files[option.value] ? 'uploaded' : 'not-uploaded'}>
-                      {option.label} - {files[option.value] ? '✅ Uploadé' : '❌ Manquant'}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          )}
+          <div className="form-group">
+            <label>🏢 {t('usine.registre_commerce')}</label>
+            <input 
+              type="file" 
+              name="registre_commerce_file" 
+              accept=".pdf,.jpg,.png" 
+              onChange={handleFileChange} 
+              required 
+            />
+            <small className="file-help">Format accepté: PDF, JPG, PNG</small>
+          </div>
+
+          <div className="form-group">
+            <label>🆔 {t('usine.nif')}</label>
+            <input 
+              type="file" 
+              name="nif_file" 
+              accept=".pdf,.jpg,.png" 
+              onChange={handleFileChange} 
+              required 
+            />
+            <small className="file-help">Format accepté: PDF, JPG, PNG</small>
+          </div>
+
+          <div className="form-group">
+            <label>📋 {t('usine.cnss')}</label>
+            <input 
+              type="file" 
+              name="cnss_file" 
+              accept=".pdf,.jpg,.png" 
+              onChange={handleFileChange} 
+              required 
+            />
+            <small className="file-help">Format accepté: PDF, JPG, PNG</small>
+          </div>
         </div>
 
         {/* Section Documents spécifiques à l'usine */}

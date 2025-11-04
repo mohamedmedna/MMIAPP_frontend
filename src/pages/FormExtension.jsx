@@ -13,7 +13,6 @@ function FormExtension({ user, setNotif, setError }) {
   const [form, setForm] = useState({
     telephone_proprietaire: '',
     activite_principale: '',
-    selected_juridique_doc: '',
     longitude: '',
     latitude: ''
   });
@@ -38,15 +37,6 @@ function FormExtension({ user, setNotif, setError }) {
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
   const handleFileChange = e => setFiles({ ...files, [e.target.name]: e.target.files[0] });
-
-  // Options pour la liste déroulante du dossier juridique
-  const juridiqueOptions = [
-    { value: '', label: 'Sélectionnez un document du dossier juridique' },
-    { value: 'statut_certifie_notaire_file', label: '📄 Statut certifié par Notaire' },
-    { value: 'registre_commerce_local_file', label: '🏢 Registre du Commerce Local (RC)' },
-    { value: 'numero_identification_fiscale_file', label: '🆔 Numéro d\'identification fiscale (NIF)' },
-    { value: 'certificat_enregistrement_cnss_file', label: '📋 Certificat d\'enregistrement à la CNSS' }
-  ];
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -115,7 +105,6 @@ function FormExtension({ user, setNotif, setError }) {
         setForm({
           telephone_proprietaire: '',
           activite_principale: '',
-          selected_juridique_doc: '',
           longitude: '',
           latitude: ''
         });
@@ -202,52 +191,57 @@ function FormExtension({ user, setNotif, setError }) {
           </div>
         </div>
         
-        {/* Section Dossier juridique avec liste déroulante */}
+        {/* Section Dossier juridique complet */}
         <div className="form-section-juridique">
           <h4 className="section-title">📋 Dossier juridique de la société ou ETS</h4>
           
           <div className="form-group">
-            <label>📋 Sélectionnez le document à uploader :</label>
-            <select 
-              name="selected_juridique_doc" 
-              value={form.selected_juridique_doc} 
-              onChange={handleChange}
-              className="juridique-select"
-              required
-            >
-              {juridiqueOptions.map((option, index) => (
-                <option key={index} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+            <label>📄 Statut certifié par Notaire</label>
+            <input 
+              type="file" 
+              name="statut_certifie_notaire_file" 
+              accept=".pdf,.jpg,.png" 
+              onChange={handleFileChange} 
+              required 
+            />
+            <small className="file-help">Format accepté: PDF, JPG, PNG</small>
           </div>
 
-          {form.selected_juridique_doc && (
-            <div className="form-group">
-              <label>📄 Upload du document sélectionné :</label>
-              <input 
-                type="file" 
-                name={form.selected_juridique_doc} 
-                accept=".pdf,.jpg,.png" 
-                onChange={handleFileChange} 
-                required 
-              />
-              <small className="file-help">Format accepté: PDF, JPG, PNG</small>
-              
-              {/* Afficher les documents déjà uploadés */}
-              <div className="uploaded-files">
-                <h5>Documents déjà uploadés :</h5>
-                <ul className="files-list">
-                  {juridiqueOptions.slice(1).map((option, index) => (
-                    <li key={index} className={files[option.value] ? 'uploaded' : 'not-uploaded'}>
-                      {option.label} - {files[option.value] ? '✅ Uploadé' : '❌ Manquant'}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          )}
+          <div className="form-group">
+            <label>🏢 Registre du Commerce Local (RC)</label>
+            <input 
+              type="file" 
+              name="registre_commerce_local_file" 
+              accept=".pdf,.jpg,.png" 
+              onChange={handleFileChange} 
+              required 
+            />
+            <small className="file-help">Format accepté: PDF, JPG, PNG</small>
+          </div>
+
+          <div className="form-group">
+            <label>🆔 Numéro d'identification fiscale (NIF)</label>
+            <input 
+              type="file" 
+              name="numero_identification_fiscale_file" 
+              accept=".pdf,.jpg,.png" 
+              onChange={handleFileChange} 
+              required 
+            />
+            <small className="file-help">Format accepté: PDF, JPG, PNG</small>
+          </div>
+
+          <div className="form-group">
+            <label>📋 Certificat d'enregistrement à la CNSS</label>
+            <input 
+              type="file" 
+              name="certificat_enregistrement_cnss_file" 
+              accept=".pdf,.jpg,.png" 
+              onChange={handleFileChange} 
+              required 
+            />
+            <small className="file-help">Format accepté: PDF, JPG, PNG</small>
+          </div>
         </div>
 
         {/* Section Documents spécifiques à l'extension */}

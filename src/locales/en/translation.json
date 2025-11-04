@@ -700,6 +700,10 @@
       "page": "Page",
       "noData": "No annex documents available.",
       "download": "Download"
+    },
+    "hub": {
+      "title": "Documentary Space and Projects",
+      "subtitle": "Consult documents, project database and annex documents in one space."
     }
   },
   "adminPortail": {
@@ -1886,7 +1890,7 @@
   },
 
   "map": {
-    "title": "Authorization Requests Mapping",
+    "title": "Industrial Units Mapping",
     "loc": "Location"
   },
 
