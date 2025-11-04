@@ -1,4 +1,3 @@
-
 // === UTILS ===
 function mailActivationHTML({ nom, prenom, activationLink }) {
   return `
@@ -34,34 +33,59 @@ function mailActivationHTML({ nom, prenom, activationLink }) {
 }
 
 // === INSCRIPTION AVEC ACTIVATION ===
-app.post('/api/inscription', async (req, res) => {
-  const { nom, prenom, email, mot_de_passe, registre_commerce, nif, telephone, adresse } = req.body;
+app.post("/api/inscription", async (req, res) => {
+  const {
+    nom,
+    prenom,
+    email,
+    mot_de_passe,
+    registre_commerce,
+    nif,
+    telephone,
+    adresse,
+  } = req.body;
   if (!nom || !prenom || !email || !mot_de_passe) {
-    return res.status(400).json({ error: "Tous les champs obligatoires doivent être remplis." });
+    return res
+      .status(400)
+      .json({ error: "Tous les champs obligatoires doivent être remplis." });
   }
   try {
     const conn = await mysql.createConnection(dbConfig);
-    const [exists] = await conn.execute('SELECT id FROM utilisateurs WHERE email = ?', [email]);
+    const [exists] = await conn.execute(
+      "SELECT id FROM utilisateurs WHERE email = ?",
+      [email]
+    );
     if (exists.length > 0) {
       await conn.end();
       return res.status(400).json({ error: "Cet email est déjà utilisé." });
     }
     const hash = await bcrypt.hash(mot_de_passe, 10);
-    const activationToken = crypto.randomBytes(32).toString('hex');
+    const activationToken = crypto.randomBytes(32).toString("hex");
     await conn.execute(
       `INSERT INTO utilisateurs (nom, prenom, email, mot_de_passe, registre_commerce, nif, telephone, adresse, role_id, statut, email_verifie, activation_token, created_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 10, 'EN_ATTENTE', 0, ?, NOW())`,
-      [nom, prenom, email, hash, registre_commerce, nif, telephone, adresse, activationToken]
+      [
+        nom,
+        prenom,
+        email,
+        hash,
+        registre_commerce,
+        nif,
+        telephone,
+        adresse,
+        activationToken,
+      ]
     );
     await conn.end();
 
     // Envoi du mail d'activation
-    const activationLink = `http://localhost:3000/activation/${activationToken}`;
+    const activationLink = `http://localhost:3000/mmiapp/activation/${activationToken}`;
     await transporter.sendMail({
       from: '"Ministère des Mines et de l’Industrie" <oumar.parhe-sow@richat-partners.com>',
       to: destinataire,
-      subject: "Activation de votre compte - Ministère des Mines et de l’Industrie",
-      html: mailActivationHTML({ nom, prenom, activationLink })
+      subject:
+        "Activation de votre compte - Ministère des Mines et de l’Industrie",
+      html: mailActivationHTML({ nom, prenom, activationLink }),
     });
 
     res.json({ success: true });
@@ -71,28 +95,39 @@ app.post('/api/inscription', async (req, res) => {
 });
 
 // === ENDPOINT D'ACTIVATION DE COMPTE ===
-app.get('/api/activation/:token', async (req, res) => {
+app.get("/api/activation/:token", async (req, res) => {
   const { token } = req.params;
   const conn = await mysql.createConnection(dbConfig);
-  const [rows] = await conn.execute('SELECT id FROM utilisateurs WHERE activation_token = ?', [token]);
+  const [rows] = await conn.execute(
+    "SELECT id FROM utilisateurs WHERE activation_token = ?",
+    [token]
+  );
   if (rows.length === 0) {
     await conn.end();
-    return res.status(400).json({ error: "Lien d'activation invalide ou expiré." });
+    return res
+      .status(400)
+      .json({ error: "Lien d'activation invalide ou expiré." });
   }
-  await conn.execute('UPDATE utilisateurs SET statut="ACTIF", email_verifie=1, activation_token=NULL WHERE id=?', [rows[0].id]);
+  await conn.execute(
+    'UPDATE utilisateurs SET statut="ACTIF", email_verifie=1, activation_token=NULL WHERE id=?',
+    [rows[0].id]
+  );
   await conn.end();
   res.json({ success: true, message: "Votre compte est maintenant activé." });
 });
 
 // === CONNEXION ===
-app.post('/api/login', async (req, res) => {
+app.post("/api/login", async (req, res) => {
   const { email, mot_de_passe } = req.body;
   if (!email || !mot_de_passe) {
     return res.status(400).json({ error: "Email et mot de passe requis." });
   }
   try {
     const conn = await mysql.createConnection(dbConfig);
-    const [rows] = await conn.execute('SELECT * FROM utilisateurs WHERE email = ?', [email]);
+    const [rows] = await conn.execute(
+      "SELECT * FROM utilisateurs WHERE email = ?",
+      [email]
+    );
     await conn.end();
     if (rows.length === 0) {
       return res.status(401).json({ error: "Identifiants incorrects." });
@@ -101,13 +136,21 @@ app.post('/api/login', async (req, res) => {
     if (!(await bcrypt.compare(mot_de_passe, user.mot_de_passe))) {
       return res.status(401).json({ error: "Identifiants incorrects." });
     }
-    if (user.statut !== 'ACTIF' || user.email_verifie !== 1) {
-      return res.status(403).json({ error: "Veuillez activer votre compte via l'email reçu." });
+    if (user.statut !== "ACTIF" || user.email_verifie !== 1) {
+      return res
+        .status(403)
+        .json({ error: "Veuillez activer votre compte via l'email reçu." });
     }
     const token = jwt.sign(
-      { id: user.id, email: user.email, nom: user.nom, prenom: user.prenom, role_id: user.role_id },
+      {
+        id: user.id,
+        email: user.email,
+        nom: user.nom,
+        prenom: user.prenom,
+        role_id: user.role_id,
+      },
       JWT_SECRET,
-      { expiresIn: '2h' }
+      { expiresIn: "2h" }
     );
     const userToSend = {
       id: user.id,
@@ -123,7 +166,7 @@ app.post('/api/login', async (req, res) => {
       email_verifie: user.email_verifie,
       derniere_connexion: user.derniere_connexion,
       created_at: user.created_at,
-      updated_at: user.updated_at
+      updated_at: user.updated_at,
     };
     res.json({ token, user: userToSend });
   } catch (err) {
@@ -132,16 +175,22 @@ app.post('/api/login', async (req, res) => {
 });
 
 // === MOT DE PASSE OUBLIÉ ===
-app.post('/api/forgot-password', async (req, res) => {
+app.post("/api/forgot-password", async (req, res) => {
   const { email } = req.body;
   const conn = await mysql.createConnection(dbConfig);
-  const [users] = await conn.execute('SELECT id, nom, prenom FROM utilisateurs WHERE email=?', [email]);
+  const [users] = await conn.execute(
+    "SELECT id, nom, prenom FROM utilisateurs WHERE email=?",
+    [email]
+  );
   if (users.length === 0) {
     await conn.end();
     return res.status(200).json({ success: true }); // Ne jamais révéler si l'email existe ou non
   }
-  const resetToken = crypto.randomBytes(32).toString('hex');
-  await conn.execute('UPDATE utilisateurs SET reset_token=?, reset_token_expire=DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE id=?', [resetToken, users[0].id]);
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  await conn.execute(
+    "UPDATE utilisateurs SET reset_token=?, reset_token_expire=DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE id=?",
+    [resetToken, users[0].id]
+  );
   await conn.end();
 
   // Envoi mail
@@ -159,19 +208,20 @@ app.post('/api/forgot-password', async (req, res) => {
         <p>Ce lien expirera dans 1 heure.<br>
         Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>
       </div>
-    `
+    `,
   });
 
   res.json({ success: true });
 });
 
 // === RÉINITIALISATION DU MOT DE PASSE ===
-app.post('/api/reset-password/:token', async (req, res) => {
+app.post("/api/reset-password/:token", async (req, res) => {
   const { token } = req.params;
   const { nouveau_mot_de_passe } = req.body;
   const conn = await mysql.createConnection(dbConfig);
   const [users] = await conn.execute(
-    'SELECT id FROM utilisateurs WHERE reset_token=? AND reset_token_expire > NOW()', [token]
+    "SELECT id FROM utilisateurs WHERE reset_token=? AND reset_token_expire > NOW()",
+    [token]
   );
   if (users.length === 0) {
     await conn.end();
@@ -179,7 +229,7 @@ app.post('/api/reset-password/:token', async (req, res) => {
   }
   const hash = await bcrypt.hash(nouveau_mot_de_passe, 10);
   await conn.execute(
-    'UPDATE utilisateurs SET mot_de_passe=?, reset_token=NULL, reset_token_expire=NULL WHERE id=?',
+    "UPDATE utilisateurs SET mot_de_passe=?, reset_token=NULL, reset_token_expire=NULL WHERE id=?",
     [hash, users[0].id]
   );
   await conn.end();
@@ -187,33 +237,46 @@ app.post('/api/reset-password/:token', async (req, res) => {
 });
 
 // === DASHBOARD DEMANDEUR ===
-app.get('/api/demandeur/stats', async (req, res) => {
+app.get("/api/demandeur/stats", async (req, res) => {
   const userId = req.query.userId;
   try {
     const conn = await mysql.createConnection(dbConfig);
-    const [total] = await conn.execute('SELECT COUNT(*) AS total FROM demandes WHERE utilisateur_id=?', [userId]);
-    const [enCours] = await conn.execute('SELECT COUNT(*) AS enCours FROM demandes WHERE utilisateur_id=? AND statut="EN_COURS"', [userId]);
-    const [approuvees] = await conn.execute('SELECT COUNT(*) AS approuvees FROM demandes WHERE utilisateur_id=? AND statut="APPROUVEE"', [userId]);
-    const [refusees] = await conn.execute('SELECT COUNT(*) AS refusees FROM demandes WHERE utilisateur_id=? AND statut="REFUSEE"', [userId]);
+    const [total] = await conn.execute(
+      "SELECT COUNT(*) AS total FROM demandes WHERE utilisateur_id=?",
+      [userId]
+    );
+    const [enCours] = await conn.execute(
+      'SELECT COUNT(*) AS enCours FROM demandes WHERE utilisateur_id=? AND statut="EN_COURS"',
+      [userId]
+    );
+    const [approuvees] = await conn.execute(
+      'SELECT COUNT(*) AS approuvees FROM demandes WHERE utilisateur_id=? AND statut="APPROUVEE"',
+      [userId]
+    );
+    const [refusees] = await conn.execute(
+      'SELECT COUNT(*) AS refusees FROM demandes WHERE utilisateur_id=? AND statut="REFUSEE"',
+      [userId]
+    );
     await conn.end();
     res.json({
       total: total[0].total,
       enCours: enCours[0].enCours,
       approuvees: approuvees[0].approuvees,
-      refusees: refusees[0].refusees
+      refusees: refusees[0].refusees,
     });
   } catch (err) {
-    res.status(500).json({ error: 'Erreur serveur stats' });
+    res.status(500).json({ error: "Erreur serveur stats" });
   }
 });
 
 // === NOTIFICATIONS ===
-app.get('/api/notifications', async (req, res) => {
+app.get("/api/notifications", async (req, res) => {
   const user_id = req.query.user_id;
   try {
     const conn = await mysql.createConnection(dbConfig);
     const [rows] = await conn.execute(
-      'SELECT * FROM notifications WHERE utilisateur_id = ? ORDER BY created_at DESC', [user_id]
+      "SELECT * FROM notifications WHERE utilisateur_id = ? ORDER BY created_at DESC",
+      [user_id]
     );
     await conn.end();
     res.json(rows);
@@ -222,11 +285,13 @@ app.get('/api/notifications', async (req, res) => {
   }
 });
 
-app.post('/api/notifications/lu', async (req, res) => {
+app.post("/api/notifications/lu", async (req, res) => {
   const { notification_id } = req.body;
   try {
     const conn = await mysql.createConnection(dbConfig);
-    await conn.execute('UPDATE notifications SET lu=1 WHERE id=?', [notification_id]);
+    await conn.execute("UPDATE notifications SET lu=1 WHERE id=?", [
+      notification_id,
+    ]);
     await conn.end();
     res.json({ success: true });
   } catch (err) {
@@ -235,16 +300,20 @@ app.post('/api/notifications/lu', async (req, res) => {
 });
 
 // === MES DEMANDES ===
-app.get('/api/mes-demandes', async (req, res) => {
+app.get("/api/mes-demandes", async (req, res) => {
   const user_id = req.query.user_id;
   try {
     const conn = await mysql.createConnection(dbConfig);
     const [rows] = await conn.execute(
-      'SELECT id, reference, type, statut, created_at, fichiers FROM demandes WHERE utilisateur_id = ? ORDER BY created_at DESC',
+      "SELECT id, reference, type, statut, created_at, fichiers FROM demandes WHERE utilisateur_id = ? ORDER BY created_at DESC",
       [user_id]
     );
-    rows.forEach(d => {
-      try { d.fichiers = JSON.parse(d.fichiers); } catch { d.fichiers = {}; }
+    rows.forEach((d) => {
+      try {
+        d.fichiers = JSON.parse(d.fichiers);
+      } catch {
+        d.fichiers = {};
+      }
     });
     await conn.end();
     res.json(rows);
@@ -255,23 +324,23 @@ app.get('/api/mes-demandes', async (req, res) => {
 
 // === UPLOAD DEMANDE (avec référence unique) ===
 async function generateReference(conn) {
-  const date = new Date().toISOString().slice(0,10).replace(/-/g,'');
+  const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
   const [[{ seq }]] = await conn.execute(
-    'SELECT COUNT(*)+1 AS seq FROM demandes WHERE DATE(created_at) = CURDATE()'
+    "SELECT COUNT(*)+1 AS seq FROM demandes WHERE DATE(created_at) = CURDATE()"
   );
-  return `${date}-${String(seq).padStart(4,'0')}`;
+  return `${date}-${String(seq).padStart(4, "0")}`;
 }
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const ref = req.reference || 'temp';
-    const dir = path.join(__dirname, 'uploads', ref);
+    const ref = req.reference || "temp";
+    const dir = path.join(__dirname, "uploads", ref);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     cb(null, dir);
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + '-' + file.originalname);
-  }
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + "-" + file.originalname);
+  },
 });
 const upload = multer({ storage });
 const generateReferenceMiddleware = async (req, res, next) => {
@@ -281,19 +350,23 @@ const generateReferenceMiddleware = async (req, res, next) => {
     await conn.end();
     next();
   } catch (err) {
-    res.status(500).json({ error: "Erreur lors de la génération de la référence : " + err.message });
+    res.status(500).json({
+      error: "Erreur lors de la génération de la référence : " + err.message,
+    });
   }
 };
 
 app.post(
-  '/api/nouvelle-demande',
+  "/api/nouvelle-demande",
   generateReferenceMiddleware,
   upload.any(),
   async (req, res) => {
     try {
       const { typeDemande, utilisateur_id, ...fields } = req.body;
       if (!typeDemande || !utilisateur_id) {
-        return res.status(400).json({ error: "Champs obligatoires manquants." });
+        return res
+          .status(400)
+          .json({ error: "Champs obligatoires manquants." });
       }
       const conn = await mysql.createConnection(dbConfig);
 
@@ -304,13 +377,17 @@ app.post(
       );
       if (existing.length > 0) {
         await conn.end();
-        return res.status(400).json({ error: "Vous avez déjà une demande en cours pour ce type." });
+        return res
+          .status(400)
+          .json({ error: "Vous avez déjà une demande en cours pour ce type." });
       }
 
       const reference = req.reference;
       const files = {};
       if (req.files && req.files.length > 0) {
-        req.files.forEach(f => { files[f.fieldname] = path.join(reference, f.filename); });
+        req.files.forEach((f) => {
+          files[f.fieldname] = path.join(reference, f.filename);
+        });
       }
 
       await conn.execute(
@@ -321,7 +398,7 @@ app.post(
           typeDemande,
           reference,
           JSON.stringify(fields),
-          JSON.stringify(files)
+          JSON.stringify(files),
         ]
       );
       await conn.end();

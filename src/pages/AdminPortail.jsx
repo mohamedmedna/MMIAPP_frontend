@@ -15,7 +15,6 @@ registerLocale("fr", fr);
 const API_BASE = window.__APP_CONFIG__?.API_BASE;
 const LOCALE_MAP = { fr: "fr-FR", en: "en-GB", ar: "ar-MA" };
 
-// Helpers
 const formatDateLatn = (d, locale = "fr-FR") => {
   if (!d) return "-";
   const date = new Date(d);
@@ -28,12 +27,6 @@ const formatDateLatn = (d, locale = "fr-FR") => {
     calendar: "gregory",
   }).format(date);
   return s.replace(/[\u200e\u200f\u061c]/g, "");
-};
-
-const toYYYYMMDD = (d) => {
-  if (!d) return null;
-  const pad = (n) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 };
 const toYYYYMMDD_HHMMSS = (d) => {
   if (!d) return null;
@@ -81,17 +74,14 @@ function AdminPortail() {
   const currentLocale = LOCALE_MAP[lang] || "fr-FR";
   const isRTL = lang === "ar";
 
-  // one empty translation “shape”
-  const EMPTY_T = { titre: "", contenuHtml: "" };
+  const EMPTY_T = { titre: "", contenuHtml: "", extrait: "" };
 
-  // i18n cache for the 3 locales
   const [i18nCache, setI18nCache] = useState({
     fr: { ...EMPTY_T },
     ar: { ...EMPTY_T },
     en: { ...EMPTY_T },
   });
 
-  // slug helpers
   const makeSlug = useCallback((str) => {
     return (str || "")
       .normalize("NFKD")
@@ -105,16 +95,13 @@ function AdminPortail() {
     [makeSlug]
   );
 
-  // Tabs: add "projets"
   const [activeTab, setActiveTab] = useState("actualites");
 
   const [actualites, setActualites] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [typeDocs, setTypeDocs] = useState([]);
   const [documentsAnnexes, setDocumentsAnnexes] = useState([]);
-  const [projets, setProjets] = useState([]); // NEW
-
-  const [images, setImages] = useState([]);
+  const [projets, setProjets] = useState([]);
 
   const typeLabelById = useMemo(() => {
     const m = {};
@@ -126,26 +113,24 @@ function AdminPortail() {
   const [editMode, setEditMode] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
 
+  // Forms
   const [formActualite, setFormActualite] = useState({
-    status: "BROUILLON",
+    status: "PUBLIE",
     fichierMediaId: null,
-    datePublication: null,
+    datePublication: null, // only for actualités
   });
 
+  // documents (keep type), no date in UI
   const [formDocument, setFormDocument] = useState({
-    status: "BROUILLON",
+    status: "PUBLIE",
     docTypeId: "",
     fichierMediaId: null,
-    datePublication: null,
   });
 
-  // -------- PROJET: add "etat" ----------
-  // etat: "EN_COURS" | "ACHEVEE"
+  // projets: NO etat, NO date
   const [formProjet, setFormProjet] = useState({
-    status: "BROUILLON",
-    etat: "EN_COURS",
+    status: "PUBLIE",
     fichierMediaId: null,
-    datePublication: null,
   });
 
   const [trLocale, setTrLocale] = useState("fr");
@@ -153,14 +138,12 @@ function AdminPortail() {
   const [trContenuHtml, setTrContenuHtml] = useState("");
   const [trDocTitre, setTrDocTitre] = useState("");
   const [trDocDescription, setTrDocDescription] = useState("");
-
   const trIsRTL = trLocale === "ar";
 
   const [imageFile, setImageFile] = useState(null);
   const [documentFile, setDocumentFile] = useState(null);
   const [uploading, setUploading] = useState(false);
 
-  // ---------- Load lists ----------
   useEffect(() => {
     fetchLists();
     fetchTypeDocs();
@@ -174,25 +157,12 @@ function AdminPortail() {
         fetch(
           `${API_BASE}/api/documents-annexes?page=1&pageSize=100&lang=${lang}`
         ),
-        fetch(`${API_BASE}/api/projets?page=1&pageSize=100&lang=${lang}`), // NEW
+        fetch(`${API_BASE}/api/projets?page=1&pageSize=100&lang=${lang}`),
       ]);
-
-      if (actuRes.ok) {
-        const js = await actuRes.json();
-        setActualites(Array.isArray(js.data) ? js.data : []);
-      }
-      if (docRes.ok) {
-        const js = await docRes.json();
-        setDocuments(Array.isArray(js.data) ? js.data : []);
-      }
-      if (annexRes.ok) {
-        const js = await annexRes.json();
-        setDocumentsAnnexes(Array.isArray(js.data) ? js.data : []);
-      }
-      if (projRes.ok) {
-        const js = await projRes.json();
-        setProjets(Array.isArray(js.data) ? js.data : []);
-      }
+      if (actuRes.ok) setActualites((await actuRes.json()).data ?? []);
+      if (docRes.ok) setDocuments((await docRes.json()).data ?? []);
+      if (annexRes.ok) setDocumentsAnnexes((await annexRes.json()).data ?? []);
+      if (projRes.ok) setProjets((await projRes.json()).data ?? []);
     } catch (e) {
       console.error("Erreur lors du chargement des listes:", e);
     }
@@ -202,9 +172,7 @@ function AdminPortail() {
     try {
       const r = await fetch(`${API_BASE}/api/type-documents?lang=${lang}`);
       if (r.ok) setTypeDocs(await r.json());
-    } catch (e) {
-      console.error("Erreur chargement type-documents:", e);
-    }
+    } catch {}
   }
 
   async function uploadMedia(file) {
@@ -225,7 +193,6 @@ function AdminPortail() {
     setTrDocTitre("");
     setTrDocDescription("");
   }
-
   function resetI18nCache() {
     setI18nCache({
       fr: { ...EMPTY_T },
@@ -233,23 +200,19 @@ function AdminPortail() {
       en: { ...EMPTY_T },
     });
   }
-
   function applyTrFromCache(locale) {
     const tcache = i18nCache[locale] || EMPTY_T;
     if (activeTab === "actualites") {
       setTrTitre(tcache.titre || "");
       setTrContenuHtml(tcache.contenuHtml || "");
     } else {
-      // documents, annexes, projets share title/description UI
       setTrDocTitre(tcache.titre || "");
       setTrDocDescription(tcache.extrait || "");
     }
   }
-
   useEffect(() => {
     applyTrFromCache(trLocale);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trLocale]);
+  }, [trLocale]); // eslint-disable-line
 
   function handleAddNew() {
     setEditMode(false);
@@ -261,26 +224,19 @@ function AdminPortail() {
 
     if (activeTab === "actualites") {
       setFormActualite({
-        status: "BROUILLON",
+        status: "PUBLIE",
         fichierMediaId: null,
         datePublication: null,
       });
     } else if (activeTab === "projets") {
-      setFormProjet({
-        status: "BROUILLON",
-        etat: "EN_COURS",
-        fichierMediaId: null,
-        datePublication: null,
-      });
+      setFormProjet({ status: "PUBLIE", fichierMediaId: null });
     } else {
       setFormDocument({
-        status: "BROUILLON",
+        status: "PUBLIE",
         docTypeId: "",
         fichierMediaId: null,
-        datePublication: null,
       });
     }
-
     setShowModal(true);
   }
 
@@ -296,13 +252,12 @@ function AdminPortail() {
 
     if (activeTab === "actualites") {
       setFormActualite({
-        status: item.status || "BROUILLON",
+        status: item.status || "PUBLIE",
         fichierMediaId: item.fichierMediaId || null,
         datePublication: item.datePublication
           ? new Date(item.datePublication)
           : null,
       });
-
       try {
         const r = await fetch(
           `${API_BASE}/api/actualites/${item.id}/translations`
@@ -316,30 +271,22 @@ function AdminPortail() {
           };
           rows.forEach((tr) => {
             const loc = (tr.locale || "").toLowerCase();
-            if (byLocale[loc]) {
+            if (byLocale[loc])
               byLocale[loc] = {
                 titre: tr.titre || "",
                 contenuHtml: tr.contenuHtml || "",
               };
-            }
           });
           setI18nCache(byLocale);
-          setTrLocale("fr");
           setTimeout(() => applyTrFromCache("fr"), 0);
         }
-      } catch (e) {
-        console.error("Failed to load actualité translations", e);
-      }
+      } catch {}
     } else if (activeTab === "documents-annexes") {
       setFormDocument({
-        status: item.status || "BROUILLON",
-        docTypeId: item.docTypeId || "",
+        status: item.status || "PUBLIE",
+        docTypeId: 1, // ignored in UI/submit for annexes, harmless placeholder
         fichierMediaId: item.fichierMediaId || null,
-        datePublication: item.datePublication
-          ? new Date(item.datePublication)
-          : null,
       });
-
       try {
         const r = await fetch(
           `${API_BASE}/api/documents-annexes/${item.id}/translations`
@@ -353,31 +300,21 @@ function AdminPortail() {
           };
           rows.forEach((tr) => {
             const loc = (tr.locale || "").toLowerCase();
-            if (byLocale[loc]) {
+            if (byLocale[loc])
               byLocale[loc] = {
-                ...byLocale[loc],
                 titre: tr.titre || "",
                 extrait: tr.description || "",
               };
-            }
           });
           setI18nCache(byLocale);
-          setTrLocale("fr");
           setTimeout(() => applyTrFromCache("fr"), 0);
         }
-      } catch (e) {
-        console.error("Failed to load document annexe translations", e);
-      }
+      } catch {}
     } else if (activeTab === "projets") {
       setFormProjet({
-        status: item.status || "BROUILLON",
-        etat: item.etat || "EN_COURS",
+        status: item.status || "PUBLIE",
         fichierMediaId: item.fichierMediaId || null,
-        datePublication: item.datePublication
-          ? new Date(item.datePublication)
-          : null,
       });
-
       try {
         const r = await fetch(
           `${API_BASE}/api/projets/${item.id}/translations`
@@ -391,32 +328,23 @@ function AdminPortail() {
           };
           rows.forEach((tr) => {
             const loc = (tr.locale || "").toLowerCase();
-            if (byLocale[loc]) {
+            if (byLocale[loc])
               byLocale[loc] = {
-                ...byLocale[loc],
                 titre: tr.titre || "",
                 extrait: tr.description || "",
               };
-            }
           });
           setI18nCache(byLocale);
-          setTrLocale("fr");
           setTimeout(() => applyTrFromCache("fr"), 0);
         }
-      } catch (e) {
-        console.error("Failed to load projet translations", e);
-      }
+      } catch {}
     } else {
-      // Documents side
+      // documents
       setFormDocument({
-        status: item.status || "BROUILLON",
+        status: item.status || "PUBLIE",
         docTypeId: item.docTypeId || "",
         fichierMediaId: item.fichierMediaId || null,
-        datePublication: item.datePublication
-          ? new Date(item.datePublication)
-          : null,
       });
-
       try {
         const r = await fetch(
           `${API_BASE}/api/documents/${item.id}/translations`
@@ -430,34 +358,30 @@ function AdminPortail() {
           };
           rows.forEach((tr) => {
             const loc = (tr.locale || "").toLowerCase();
-            if (byLocale[loc]) {
+            if (byLocale[loc])
               byLocale[loc] = {
-                ...byLocale[loc],
                 titre: tr.titre || "",
                 extrait: tr.description || "",
               };
-            }
           });
           setI18nCache(byLocale);
-          setTrLocale("fr");
           setTimeout(() => applyTrFromCache("fr"), 0);
         }
-      } catch (e) {
-        console.error("Failed to load document translations", e);
-      }
+      } catch {}
     }
   }
 
   async function handleDelete(id) {
     if (!window.confirm(t("adminPortail.messages.confirmDelete"))) return;
-
     try {
-      let endpoint;
-      if (activeTab === "actualites") endpoint = "actualites";
-      else if (activeTab === "documents") endpoint = "documents";
-      else if (activeTab === "documents-annexes")
-        endpoint = "documents-annexes";
-      else endpoint = "projets";
+      let endpoint =
+        activeTab === "actualites"
+          ? "actualites"
+          : activeTab === "documents"
+          ? "documents"
+          : activeTab === "documents-annexes"
+          ? "documents-annexes"
+          : "projets";
       const r = await fetch(`${API_BASE}/api/${endpoint}/${id}`, {
         method: "DELETE",
       });
@@ -468,8 +392,7 @@ function AdminPortail() {
         const js = await r.json().catch(() => ({}));
         alert(js?.error || t("adminPortail.messages.deleteError"));
       }
-    } catch (e) {
-      console.error(e);
+    } catch {
       alert(t("adminPortail.messages.deleteError"));
     }
   }
@@ -486,7 +409,7 @@ function AdminPortail() {
     setUploading(true);
 
     try {
-      // 1) ACTUALITES
+      // ACTUALITÉS (keep date)
       if (activeTab === "actualites") {
         const frT = i18nCache.fr?.titre?.trim();
         if (!editMode && !frT) {
@@ -494,13 +417,11 @@ function AdminPortail() {
           setUploading(false);
           return;
         }
-
         let fichierMediaId = formActualite.fichierMediaId;
         if (imageFile) {
           const media = await uploadMedia(imageFile);
           fichierMediaId = media.id;
         }
-
         const endpoint = "actualites";
         const url = editMode
           ? `${API_BASE}/api/${endpoint}/${currentItem?.id}`
@@ -508,7 +429,7 @@ function AdminPortail() {
 
         const payload = editMode
           ? {
-              status: formActualite.status || "BROUILLON",
+              status: formActualite.status || "PUBLIE",
               datePublication: toYYYYMMDD_HHMMSS(formActualite.datePublication),
               fichierMediaId: fichierMediaId ?? null,
             }
@@ -517,7 +438,7 @@ function AdminPortail() {
               contenuHtml: i18nCache.fr.contenuHtml || "",
               slug: makeUniqueSlug(i18nCache.fr.titre),
               extrait: "",
-              status: formActualite.status || "BROUILLON",
+              status: "PUBLIE",
               datePublication: toYYYYMMDD_HHMMSS(formActualite.datePublication),
               fichierMediaId: fichierMediaId ?? null,
             };
@@ -569,7 +490,7 @@ function AdminPortail() {
         return;
       }
 
-      // 2) DOCUMENTS / DOCUMENTS-ANNEXES / PROJETS
+      // DOCUMENTS / DOCUMENTS ANNEXES / PROJETS
       const isDocuments = activeTab === "documents";
       const isAnnexes = activeTab === "documents-annexes";
       const isProjets = activeTab === "projets";
@@ -592,7 +513,6 @@ function AdminPortail() {
         return;
       }
 
-      // upload file if provided
       let fichierMediaId =
         (isProjets ? formProjet.fichierMediaId : formDocument.fichierMediaId) ??
         null;
@@ -601,8 +521,7 @@ function AdminPortail() {
         fichierMediaId = media.id;
       }
 
-      // doc type check (not for projets)
-      if (!isProjets && !formDocument.docTypeId) {
+      if (isDocuments && !formDocument.docTypeId) {
         alert(t("adminPortail.messages.selectDocType"));
         setUploading(false);
         return;
@@ -615,33 +534,52 @@ function AdminPortail() {
       const payload = editMode
         ? isProjets
           ? {
-              status: formProjet.status || "BROUILLON",
-              etat: formProjet.etat || "EN_COURS",
-              fichierMediaId: parseInt(fichierMediaId, 10),
-              datePublication: toYYYYMMDD(formProjet.datePublication),
+              status: formProjet.status || "PUBLIE",
+              fichierMediaId: fichierMediaId
+                ? parseInt(fichierMediaId, 10)
+                : null,
+            }
+          : isAnnexes
+          ? {
+              status: formDocument.status || "PUBLIE",
+              fichierMediaId: fichierMediaId
+                ? parseInt(fichierMediaId, 10)
+                : null,
             }
           : {
-              status: formDocument.status || "BROUILLON",
+              status: formDocument.status || "PUBLIE",
               docTypeId: parseInt(formDocument.docTypeId, 10),
-              fichierMediaId: parseInt(fichierMediaId, 10),
-              datePublication: toYYYYMMDD(formDocument.datePublication),
+              fichierMediaId: fichierMediaId
+                ? parseInt(fichierMediaId, 10)
+                : null,
             }
         : isProjets
         ? {
             titre: i18nCache.fr.titre,
             description: i18nCache.fr.extrait || "",
-            status: formProjet.status || "BROUILLON",
-            etat: formProjet.etat || "EN_COURS",
-            fichierMediaId: parseInt(fichierMediaId, 10),
-            datePublication: toYYYYMMDD(formProjet.datePublication),
+            status: "PUBLIE",
+            fichierMediaId: fichierMediaId
+              ? parseInt(fichierMediaId, 10)
+              : null,
           }
-        : {
+        : isAnnexes
+        ? {
             titre: i18nCache.fr.titre,
             description: i18nCache.fr.extrait || "",
-            status: formDocument.status || "BROUILLON",
+            status: "PUBLIE",
+            fichierMediaId: fichierMediaId
+              ? parseInt(fichierMediaId, 10)
+              : null,
+          }
+        : {
+            // documents (keep type)
+            titre: i18nCache.fr.titre,
+            description: i18nCache.fr.extrait || "",
+            status: "PUBLIE",
             docTypeId: parseInt(formDocument.docTypeId, 10),
-            fichierMediaId: parseInt(fichierMediaId, 10),
-            datePublication: toYYYYMMDD(formDocument.datePublication),
+            fichierMediaId: fichierMediaId
+              ? parseInt(fichierMediaId, 10)
+              : null,
           };
 
       const r = await fetch(url, {
@@ -649,17 +587,16 @@ function AdminPortail() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
       if (!r.ok)
         throw new Error(
           isProjets
             ? "Erreur sauvegarde projet"
             : "Erreur sauvegarde document/annexe"
         );
+
       const base = await r.json();
       const id = base.id;
 
-      // translations (title + description for docs/annexes/projets)
       for (const loc of ["fr", "en", "ar"]) {
         const tcache = i18nCache[loc];
         if (!tcache?.titre?.trim()) continue;
@@ -694,7 +631,6 @@ function AdminPortail() {
     }
   }
 
-  // toolbar title by tab
   const toolbarTitle = (() => {
     if (activeTab === "actualites") return t("adminPortail.toolbar.newsTitle");
     if (activeTab === "documents") return t("adminPortail.toolbar.docsTitle");
@@ -784,7 +720,6 @@ function AdminPortail() {
                           {formatDateLatn(a.datePublication, currentLocale)}
                         </span>
                       </td>
-
                       <td className="actions">
                         <button
                           className="btn-edit"
@@ -815,6 +750,7 @@ function AdminPortail() {
               </table>
             </div>
           ) : activeTab === "documents" ? (
+            // DOCUMENTS (juridiques): keep Type, remove Publish Date
             <div className="admin-table">
               <table>
                 <thead>
@@ -822,7 +758,6 @@ function AdminPortail() {
                     <th>{t("adminPortail.table.headers.title")}</th>
                     <th>{t("adminPortail.table.headers.type")}</th>
                     <th>{t("adminPortail.table.headers.status")}</th>
-                    <th>{t("adminPortail.table.headers.publishDate")}</th>
                     <th>{t("adminPortail.table.headers.actions")}</th>
                   </tr>
                 </thead>
@@ -840,12 +775,6 @@ function AdminPortail() {
                           {t(`adminPortail.status.${d.status}`)}
                         </span>
                       </td>
-                      <td className="num">
-                        <span dir="ltr">
-                          {formatDateLatn(d.datePublication, currentLocale)}
-                        </span>
-                      </td>
-
                       <td className="actions">
                         <button
                           className="btn-edit"
@@ -865,7 +794,7 @@ function AdminPortail() {
                   {documents.length === 0 && (
                     <tr>
                       <td
-                        colSpan={5}
+                        colSpan={4}
                         style={{ textAlign: "center", opacity: 0.7 }}
                       >
                         {t("adminPortail.empty.documents")}
@@ -876,14 +805,13 @@ function AdminPortail() {
               </table>
             </div>
           ) : activeTab === "documents-annexes" ? (
+            // DOCUMENTS ANNEXES: remove Type and Publish Date
             <div className="admin-table">
               <table>
                 <thead>
                   <tr>
                     <th>{t("adminPortail.table.headers.title")}</th>
-                    <th>{t("adminPortail.table.headers.type")}</th>
                     <th>{t("adminPortail.table.headers.status")}</th>
-                    <th>{t("adminPortail.table.headers.publishDate")}</th>
                     <th>{t("adminPortail.table.headers.actions")}</th>
                   </tr>
                 </thead>
@@ -893,17 +821,7 @@ function AdminPortail() {
                       <td>{d.titre}</td>
                       <td>
                         <span className="badge">
-                          {typeLabelById[d.docTypeId] || d.docTypeId}
-                        </span>
-                      </td>
-                      <td>
-                        <span className="badge">
                           {t(`adminPortail.status.${d.status}`)}
-                        </span>
-                      </td>
-                      <td className="num">
-                        <span dir="ltr">
-                          {formatDateLatn(d.datePublication, currentLocale)}
                         </span>
                       </td>
                       <td className="actions">
@@ -925,7 +843,7 @@ function AdminPortail() {
                   {documentsAnnexes.length === 0 && (
                     <tr>
                       <td
-                        colSpan={5}
+                        colSpan={3}
                         style={{ textAlign: "center", opacity: 0.7 }}
                       >
                         {t("adminPortail.empty.documentsAnnexes")}
@@ -936,15 +854,13 @@ function AdminPortail() {
               </table>
             </div>
           ) : (
-            // -------- PROJETS table (adds Etat column) --------
+            // PROJETS: remove Publish Date
             <div className="admin-table">
               <table>
                 <thead>
                   <tr>
                     <th>{t("adminPortail.table.headers.title")}</th>
-                    <th>{t("adminPortail.fields.etat") || "État"}</th>
                     <th>{t("adminPortail.table.headers.status")}</th>
-                    <th>{t("adminPortail.table.headers.publishDate")}</th>
                     <th>{t("adminPortail.table.headers.actions")}</th>
                   </tr>
                 </thead>
@@ -954,22 +870,7 @@ function AdminPortail() {
                       <td>{p.titre}</td>
                       <td>
                         <span className="badge">
-                          {t(`adminPortail.projetEtat.${p.etat}`) ||
-                            (p.etat === "ACHEVEE"
-                              ? "Achevée"
-                              : p.etat === "EN_COURS"
-                              ? "En cours"
-                              : p.etat || "-")}
-                        </span>
-                      </td>
-                      <td>
-                        <span className="badge">
                           {t(`adminPortail.status.${p.status}`)}
-                        </span>
-                      </td>
-                      <td className="num">
-                        <span dir="ltr">
-                          {formatDateLatn(p.datePublication, currentLocale)}
                         </span>
                       </td>
                       <td className="actions">
@@ -991,7 +892,7 @@ function AdminPortail() {
                   {projets.length === 0 && (
                     <tr>
                       <td
-                        colSpan={5}
+                        colSpan={3}
                         style={{ textAlign: "center", opacity: 0.7 }}
                       >
                         {t("adminPortail.empty.projets") || "Aucun projet"}
@@ -1053,7 +954,6 @@ function AdminPortail() {
                         <p className="file-name">📷 {imageFile.name}</p>
                       )}
                     </div>
-
                     <div className="form-group">
                       <label>{t("adminPortail.fields.publicationDate")}</label>
                       <DatePicker
@@ -1076,32 +976,34 @@ function AdminPortail() {
                         calendarStartDay={1}
                       />
                     </div>
+                    {editMode ? (
+                      <div className="form-group">
+                        <label>{t("adminPortail.fields.status")} *</label>
+                        <select
+                          value={formActualite.status}
+                          onChange={(e) =>
+                            setFormActualite({
+                              ...formActualite,
+                              status: e.target.value,
+                            })
+                          }
+                          required
+                        >
+                          <option value="BROUILLON">
+                            {t("adminPortail.status.BROUILLON")}
+                          </option>
+                          <option value="PUBLIE">
+                            {t("adminPortail.status.PUBLIE")}
+                          </option>
+                          <option value="ARCHIVE">
+                            {t("adminPortail.status.ARCHIVE")}
+                          </option>
+                        </select>
+                      </div>
+                    ) : (
+                      <input type="hidden" value="PUBLIE" />
+                    )}
 
-                    <div className="form-group">
-                      <label>{t("adminPortail.fields.status")} *</label>
-                      <select
-                        value={formActualite.status}
-                        onChange={(e) =>
-                          setFormActualite({
-                            ...formActualite,
-                            status: e.target.value,
-                          })
-                        }
-                        required
-                      >
-                        <option value="BROUILLON">
-                          {t("adminPortail.status.BROUILLON")}
-                        </option>
-                        <option value="PUBLIE">
-                          {t("adminPortail.status.PUBLIE")}
-                        </option>
-                        <option value="ARCHIVE">
-                          {t("adminPortail.status.ARCHIVE")}
-                        </option>
-                      </select>
-                    </div>
-
-                    {/* Translations panel */}
                     <fieldset className="i18n-panel">
                       <legend>
                         {t("adminPortail.fields.translationsLegend")}
@@ -1150,7 +1052,6 @@ function AdminPortail() {
                     </fieldset>
                   </>
                 ) : activeTab === "projets" ? (
-                  // -------- PROJETS form (file + date + etat + status + translations) --------
                   <>
                     <div className="form-group">
                       <label>{t("adminPortail.fields.file")} *</label>
@@ -1161,6 +1062,7 @@ function AdminPortail() {
                           setDocumentFile(e.target.files?.[0] || null)
                         }
                         className="file-input"
+                        required={!editMode}
                       />
                       {documentFile && (
                         <p className="file-name">
@@ -1173,65 +1075,35 @@ function AdminPortail() {
                       )}
                     </div>
 
-                    <div className="form-group">
-                      <label>{t("adminPortail.fields.publicationDate")}</label>
-                      <DatePicker
-                        selected={formProjet.datePublication}
-                        onChange={(d) =>
-                          setFormProjet({ ...formProjet, datePublication: d })
-                        }
-                        dateFormat="dd/MM/yyyy"
-                        locale="fr"
-                        placeholderText={t("adminPortail.placeholders.date")}
-                        isClearable
-                        calendarStartDay={1}
-                      />
-                    </div>
+                    {/* No date, no etat. Status only on edit (on add: fixed to PUBLIE) */}
+                    {editMode ? (
+                      <div className="form-group">
+                        <label>{t("adminPortail.fields.status")} *</label>
+                        <select
+                          value={formProjet.status}
+                          onChange={(e) =>
+                            setFormProjet({
+                              ...formProjet,
+                              status: e.target.value,
+                            })
+                          }
+                          required
+                        >
+                          <option value="BROUILLON">
+                            {t("adminPortail.status.BROUILLON")}
+                          </option>
+                          <option value="PUBLIE">
+                            {t("adminPortail.status.PUBLIE")}
+                          </option>
+                          <option value="ARCHIVE">
+                            {t("adminPortail.status.ARCHIVE")}
+                          </option>
+                        </select>
+                      </div>
+                    ) : (
+                      <input type="hidden" value="PUBLIE" />
+                    )}
 
-                    {/* NEW: État */}
-                    <div className="form-group">
-                      <label>{t("adminPortail.fields.etat") || "État"} *</label>
-                      <select
-                        value={formProjet.etat}
-                        onChange={(e) =>
-                          setFormProjet({ ...formProjet, etat: e.target.value })
-                        }
-                        required
-                      >
-                        <option value="EN_COURS">
-                          {t("adminPortail.projetEtat.EN_COURS") || "En cours"}
-                        </option>
-                        <option value="ACHEVEE">
-                          {t("adminPortail.projetEtat.ACHEVEE") || "Achevée"}
-                        </option>
-                      </select>
-                    </div>
-
-                    <div className="form-group">
-                      <label>{t("adminPortail.fields.status")} *</label>
-                      <select
-                        value={formProjet.status}
-                        onChange={(e) =>
-                          setFormProjet({
-                            ...formProjet,
-                            status: e.target.value,
-                          })
-                        }
-                        required
-                      >
-                        <option value="BROUILLON">
-                          {t("adminPortail.status.BROUILLON")}
-                        </option>
-                        <option value="PUBLIE">
-                          {t("adminPortail.status.PUBLIE")}
-                        </option>
-                        <option value="ARCHIVE">
-                          {t("adminPortail.status.ARCHIVE")}
-                        </option>
-                      </select>
-                    </div>
-
-                    {/* Translations panel */}
                     <fieldset className="i18n-panel">
                       <legend>
                         {t("adminPortail.fields.translationsLegend")}
@@ -1249,7 +1121,6 @@ function AdminPortail() {
                           </select>
                         </div>
                       </div>
-
                       <div className="form-group">
                         <label>{t("adminPortail.fields.title")} *</label>
                         <input
@@ -1264,7 +1135,6 @@ function AdminPortail() {
                           required={!editMode}
                         />
                       </div>
-
                       <div className="form-group">
                         <label>{t("adminPortail.fields.description")}</label>
                         <textarea
@@ -1281,32 +1151,35 @@ function AdminPortail() {
                     </fieldset>
                   </>
                 ) : (
+                  // DOCUMENTS / DOCUMENTS-ANNEXES
                   <>
-                    {/* DOCUMENTS / DOCUMENTS ANNEXES */}
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label>{t("adminPortail.fields.type")} *</label>
-                        <select
-                          value={formDocument.docTypeId}
-                          onChange={(e) =>
-                            setFormDocument({
-                              ...formDocument,
-                              docTypeId: e.target.value,
-                            })
-                          }
-                          required
-                        >
-                          <option value="">
-                            {t("adminPortail.fields.selectPlaceholder")}
-                          </option>
-                          {typeDocs.map((td) => (
-                            <option key={td.id} value={td.id}>
-                              {td.libelle}
+                    {activeTab === "documents" && (
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>{t("adminPortail.fields.type")} *</label>
+                          <select
+                            value={formDocument.docTypeId}
+                            onChange={(e) =>
+                              setFormDocument({
+                                ...formDocument,
+                                docTypeId: e.target.value,
+                              })
+                            }
+                            required
+                          >
+                            <option value="">
+                              {t("adminPortail.fields.selectPlaceholder")}
                             </option>
-                          ))}
-                        </select>
+                            {typeDocs.map((td) => (
+                              <option key={td.id} value={td.id}>
+                                {td.libelle}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
                       </div>
-                    </div>
+                    )}
+
                     <div className="form-group">
                       <label>{t("adminPortail.fields.file")} *</label>
                       <input
@@ -1316,6 +1189,7 @@ function AdminPortail() {
                           setDocumentFile(e.target.files?.[0] || null)
                         }
                         className="file-input"
+                        required={!editMode}
                       />
                       {documentFile && (
                         <p className="file-name">
@@ -1327,48 +1201,35 @@ function AdminPortail() {
                         </p>
                       )}
                     </div>
-                    <div className="form-group">
-                      <label>{t("adminPortail.fields.publicationDate")}</label>
-                      <DatePicker
-                        selected={formDocument.datePublication}
-                        onChange={(d) =>
-                          setFormDocument({
-                            ...formDocument,
-                            datePublication: d,
-                          })
-                        }
-                        dateFormat="dd/MM/yyyy"
-                        locale="fr"
-                        placeholderText={t("adminPortail.placeholders.date")}
-                        isClearable
-                        calendarStartDay={1}
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>{t("adminPortail.fields.status")} *</label>
-                      <select
-                        value={formDocument.status}
-                        onChange={(e) =>
-                          setFormDocument({
-                            ...formDocument,
-                            status: e.target.value,
-                          })
-                        }
-                        required
-                      >
-                        <option value="BROUILLON">
-                          {t("adminPortail.status.BROUILLON")}
-                        </option>
-                        <option value="PUBLIE">
-                          {t("adminPortail.status.PUBLIE")}
-                        </option>
-                        <option value="ARCHIVE">
-                          {t("adminPortail.status.ARCHIVE")}
-                        </option>
-                      </select>
-                    </div>
 
-                    {/* Translations panel */}
+                    {editMode ? (
+                      <div className="form-group">
+                        <label>{t("adminPortail.fields.status")} *</label>
+                        <select
+                          value={formDocument.status}
+                          onChange={(e) =>
+                            setFormDocument({
+                              ...formDocument,
+                              status: e.target.value,
+                            })
+                          }
+                          required
+                        >
+                          <option value="BROUILLON">
+                            {t("adminPortail.status.BROUILLON")}
+                          </option>
+                          <option value="PUBLIE">
+                            {t("adminPortail.status.PUBLIE")}
+                          </option>
+                          <option value="ARCHIVE">
+                            {t("adminPortail.status.ARCHIVE")}
+                          </option>
+                        </select>
+                      </div>
+                    ) : (
+                      <input type="hidden" value="PUBLIE" />
+                    )}
+
                     <fieldset className="i18n-panel">
                       <legend>
                         {t("adminPortail.fields.translationsLegend")}

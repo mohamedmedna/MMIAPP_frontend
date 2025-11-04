@@ -4,20 +4,17 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import MapComponent from "./MapComponent";
 import banniereMinistere from "../assets/banniere-ministere.jpg";
-import {
-  FileText,
-  Download,
-  Calendar,
-  Tag,
-  Layers,
-  ExternalLink,
-} from "lucide-react";
+import { FileText, Calendar, Layers } from "lucide-react";
 import "../Styles/PlateformeGestion.css";
 import { useTranslation } from "react-i18next";
 
 const API_BASE = window.__APP_CONFIG__?.API_BASE;
-
 const LOCALE_MAP = { fr: "fr-FR", en: "en-GB", ar: "ar-MA" };
+
+// compact spacing
+const SECTION_STYLE = { padding: "18px 0", margin: "0" };
+const SECTION_HEADER_STYLE = { marginBottom: 10 };
+const GRID_GAP_STYLE = { gap: 10 };
 
 const formatDate = (d, locale) => {
   if (!d) return "-";
@@ -37,18 +34,6 @@ const toText = (html) => {
   const div = document.createElement("div");
   div.innerHTML = html || "";
   return (div.textContent || "").trim();
-};
-
-const formatBytes = (bytes) => {
-  if (!bytes && bytes !== 0) return "";
-  const units = ["B", "KB", "MB", "GB", "TB"];
-  let i = 0;
-  let val = bytes;
-  while (val >= 1024 && i < units.length - 1) {
-    val /= 1024;
-    i++;
-  }
-  return `${val.toFixed(val < 10 && i > 0 ? 1 : 0)} ${units[i]}`;
 };
 
 const absolutize = (u) => {
@@ -77,7 +62,12 @@ function Pager({ page, pageSize, total, onPage, isRTL = false }) {
   const nextSymbol = isRTL ? "«" : "»";
 
   return (
-    <nav className="pager" aria-label="Pagination" dir={isRTL ? "rtl" : "ltr"}>
+    <nav
+      className="pager"
+      aria-label="Pagination"
+      dir={isRTL ? "rtl" : "ltr"}
+      style={{ marginTop: 8 }}
+    >
       <button className="pager-btn" onClick={prev} disabled={page === 1}>
         {prevSymbol}
       </button>
@@ -142,23 +132,20 @@ function PlateformeGestion() {
   const [actuTotal, setActuTotal] = useState(0);
 
   const [docPage, setDocPage] = useState(1);
-  const [docPageSize, setDocPageSize] = useState(3);
+  const [docPageSize, setDocPageSize] = useState(5);
   const [docTotal, setDocTotal] = useState(0);
 
   const [annexPage, setAnnexPage] = useState(1);
-  const [annexPageSize, setAnnexPageSize] = useState(3);
+  const [annexPageSize, setAnnexPageSize] = useState(5);
   const [annexTotal, setAnnexTotal] = useState(0);
 
   const [projetPage, setProjetPage] = useState(1);
-  const [projetPageSize, setProjetPageSize] = useState(6);
+  const [projetPageSize, setProjetPageSize] = useState(9);
   const [projetTotal, setProjetTotal] = useState(0);
 
-  // NEW: projets etat filter
-  const [projetEtatFilter, setProjetEtatFilter] = useState(""); // "", "EN_COURS", "ACHEVEE"
-
+  // Only docs type filter remains
   const [typeDocs, setTypeDocs] = useState([]);
   const [docTypeFilter, setDocTypeFilter] = useState("");
-  const [annexTypeFilter, setAnnexTypeFilter] = useState("");
 
   const typeMap = useMemo(() => {
     const m = {};
@@ -184,14 +171,12 @@ function PlateformeGestion() {
     }
   });
 
-  // Apply document-level dir/lang so EVERYTHING flips in Arabic
   useEffect(() => {
     const isRTL = lang === "ar";
     document.documentElement.setAttribute("dir", isRTL ? "rtl" : "ltr");
     document.documentElement.setAttribute("lang", lang);
   }, [lang]);
 
-  // react to i18n and other tabs
   useEffect(() => {
     const onChange = (lng) => setLang((lng || "fr").slice(0, 2));
     i18n.on("languageChanged", onChange);
@@ -208,7 +193,7 @@ function PlateformeGestion() {
   const currentLocale = LOCALE_MAP[lang] || "fr-FR";
   const isRTL = lang === "ar";
 
-  // types with lang
+  // types for docs
   useEffect(() => {
     (async () => {
       try {
@@ -218,7 +203,7 @@ function PlateformeGestion() {
     })();
   }, [lang]);
 
-  // actualités with lang
+  // Actualités
   useEffect(() => {
     if (actuAbortRef.current) actuAbortRef.current.abort();
     const controller = new AbortController();
@@ -262,9 +247,8 @@ function PlateformeGestion() {
             id: a.id,
             titre: a.titre,
             image: absolutize(url) || "/images/placeholder-news.jpg",
-            categorie: "",
             date: a.datePublication,
-            extrait: text.length > 160 ? text.slice(0, 160) + "…" : text,
+            extrait: text.length > 140 ? text.slice(0, 140) + "…" : text,
           };
         });
 
@@ -280,7 +264,7 @@ function PlateformeGestion() {
     return () => controller.abort();
   }, [actuPage, actuPageSize, lang, initialLoading, actualites.length]);
 
-  // documents with lang + filter
+  // Documents (hide size + publication date in UI)
   useEffect(() => {
     if (docAbortRef.current) docAbortRef.current.abort();
     const controller = new AbortController();
@@ -328,10 +312,8 @@ function PlateformeGestion() {
             id: d.id,
             titre: d.titre,
             description: d.description || "",
-            type: typeMap[d.docTypeId] || "Document",
-            date: d.datePublication,
-            categorie: "",
-            taille: m?.tailleOctets ? formatBytes(m.tailleOctets) : "",
+            type: typeMap[d.docTypeId] || "Document", // kept internally
+            date: d.datePublication, // kept in data (not displayed)
             url: absolutize(m?.url),
           };
         });
@@ -347,7 +329,7 @@ function PlateformeGestion() {
     return () => controller.abort();
   }, [docPage, docPageSize, docTypeFilter, typeMap, lang]);
 
-  // documents annexes with lang + filter
+  // Documents annexes (no Type selector; hide Type badge; keep date)
   useEffect(() => {
     if (annexAbortRef.current) annexAbortRef.current.abort();
     const controller = new AbortController();
@@ -364,11 +346,12 @@ function PlateformeGestion() {
           pageSize: String(annexPageSize),
           lang,
         });
-        if (annexTypeFilter) qs.set("typeId", annexTypeFilter);
 
         const res = await fetch(
           `${API_BASE}/api/documents-annexes?${qs.toString()}`,
-          { signal: controller.signal }
+          {
+            signal: controller.signal,
+          }
         );
         if (!res.ok) throw new Error("API documents annexes non disponible");
         const json = await res.json();
@@ -396,10 +379,8 @@ function PlateformeGestion() {
             id: d.id,
             titre: d.titre,
             description: d.description || "",
-            type: typeMap[d.docTypeId] || "Document",
+            type: typeMap[d.docTypeId] || "Document", // not displayed
             date: d.datePublication,
-            categorie: "",
-            taille: m?.tailleOctets ? formatBytes(m.tailleOctets) : "",
             url: absolutize(m?.url),
           };
         });
@@ -413,9 +394,9 @@ function PlateformeGestion() {
     })();
 
     return () => controller.abort();
-  }, [annexPage, annexPageSize, annexTypeFilter, typeMap, lang]);
+  }, [annexPage, annexPageSize, typeMap, lang]);
 
-  // projets with lang + etat filter
+  // Projets (no État selector, no status chip)
   useEffect(() => {
     if (projetAbortRef.current) projetAbortRef.current.abort();
     const controller = new AbortController();
@@ -432,7 +413,6 @@ function PlateformeGestion() {
           pageSize: String(projetPageSize),
           lang,
         });
-        if (projetEtatFilter) qs.set("etat", projetEtatFilter);
 
         const res = await fetch(`${API_BASE}/api/projets?${qs.toString()}`, {
           signal: controller.signal,
@@ -442,7 +422,6 @@ function PlateformeGestion() {
         const items = Array.isArray(json.data) ? json.data : [];
         setProjetTotal(json.total ?? items.length);
 
-        // media map
         const ids = [
           ...new Set(items.map((p) => p.fichierMediaId).filter(Boolean)),
         ];
@@ -458,28 +437,21 @@ function PlateformeGestion() {
           })
         );
 
-        // adapt
-        const adaptedRaw = items.map((p) => {
+        const adapted = items.map((p) => {
           const m = p.fichierMediaId ? mediaMap[p.fichierMediaId] : null;
           const excerpt =
-            (p.description || "").length > 140
-              ? (p.description || "").slice(0, 140) + "…"
+            (p.description || "").length > 120
+              ? (p.description || "").slice(0, 120) + "…"
               : p.description || "";
           return {
             id: p.id,
             titre: p.titre,
             description: excerpt,
             date: p.datePublication,
-            etat: p.etat || "EN_COURS",
             url: absolutize(m?.url),
-            taille: m?.tailleOctets ? formatBytes(m.tailleOctets) : "",
+            etat: p.etat || "EN_COURS", // kept, not shown
           };
         });
-
-        // client-side fallback filter if backend ignores ?etat=
-        const adapted = projetEtatFilter
-          ? adaptedRaw.filter((x) => x.etat === projetEtatFilter)
-          : adaptedRaw;
 
         setProjets(adapted);
       } catch (e) {
@@ -490,21 +462,39 @@ function PlateformeGestion() {
     })();
 
     return () => controller.abort();
-  }, [projetPage, projetPageSize, lang, projetEtatFilter]);
+  }, [projetPage, projetPageSize, lang]);
 
-  // reset pages on filter changes
+  // Reset pages on the only remaining filter (docs type)
+  useEffect(() => setDocPage(1), [docTypeFilter]);
+
+  // Clamp page if totals change
   useEffect(() => {
-    setDocPage(1);
-  }, [docTypeFilter]);
+    const pages = Math.max(1, Math.ceil(actuTotal / Math.max(1, actuPageSize)));
+    if (actuPage > pages) setActuPage(pages);
+  }, [actuTotal, actuPageSize, actuPage]);
 
   useEffect(() => {
-    setAnnexPage(1);
-  }, [annexTypeFilter]);
+    const pages = Math.max(1, Math.ceil(docTotal / Math.max(1, docPageSize)));
+    if (docPage > pages) setDocPage(pages);
+  }, [docTotal, docPageSize, docPage]);
 
   useEffect(() => {
-    setProjetPage(1);
-  }, [projetEtatFilter]);
+    const pages = Math.max(
+      1,
+      Math.ceil(annexTotal / Math.max(1, annexPageSize))
+    );
+    if (annexPage > pages) setAnnexPage(pages);
+  }, [annexTotal, annexPageSize, annexPage]);
 
+  useEffect(() => {
+    const pages = Math.max(
+      1,
+      Math.ceil(projetTotal / Math.max(1, projetPageSize))
+    );
+    if (projetPage > pages) setProjetPage(pages);
+  }, [projetTotal, projetPageSize, projetPage]);
+
+  // Scroll helpers
   const goActuPage = (p) => {
     setActuPage(p);
     newsSectionRef.current?.scrollIntoView({
@@ -534,9 +524,6 @@ function PlateformeGestion() {
     });
   };
 
-  // derived total for projets (handles client-side filter fallback)
-  const derivedProjetTotal = projets.length || projetTotal;
-
   return (
     <>
       <Header />
@@ -544,17 +531,15 @@ function PlateformeGestion() {
         className={`plateforme-gestion-container ${isRTL ? "rtl" : ""}`}
         dir={isRTL ? "rtl" : "ltr"}
       >
-        {/* Hero */}
         <section
           className="hero hero--compact section"
           role="banner"
           style={{
+            position: "relative",
             backgroundImage: `url(${banniereMinistere})`,
             backgroundPosition: "center",
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
-            position: "relative",
-            overflow: "hidden",
           }}
         >
           <div className="digital-animation" aria-hidden="true">
@@ -569,18 +554,23 @@ function PlateformeGestion() {
           className="news section"
           aria-labelledby="news-title"
           ref={newsSectionRef}
+          style={SECTION_STYLE}
         >
           <div className="container">
-            <div className="section-header">
+            <div className="section-header" style={SECTION_HEADER_STYLE}>
               <div>
-                <h2 className="section-title" id="news-title">
+                <h2
+                  className="section-title"
+                  id="news-title"
+                  style={{ marginBottom: 4 }}
+                >
                   {t("plateformeGestion.actualites.title")}
                 </h2>
-                <p className="section-subtitle">
+                <p className="section-subtitle" style={{ margin: 0 }}>
                   {t("plateformeGestion.actualites.subtitle")}
                 </p>
               </div>
-              <div className="section-controls">
+              <div className="section-controls" style={{ gap: 6 }}>
                 <label className="filter-label">
                   {t("plateformeGestion.actualites.resultsPerPage")}&nbsp;
                   <select
@@ -606,12 +596,12 @@ function PlateformeGestion() {
             </div>
 
             {initialLoading && actualites.length === 0 ? (
-              <div className="loading-spinner">
+              <div className="loading-spinner" style={{ marginTop: 8 }}>
                 <div className="spinner"></div>
                 <p>{t("plateformeGestion.actualites.loading")}</p>
               </div>
             ) : actualites.length === 0 ? (
-              <div className="no-data">
+              <div className="no-data" style={{ marginTop: 8 }}>
                 <p>❌ {t("plateformeGestion.actualites.noData")}</p>
                 {errorActu ? (
                   <small style={{ opacity: 0.7 }}>({errorActu})</small>
@@ -622,41 +612,32 @@ function PlateformeGestion() {
                 {pagingActu && (
                   <div className="thin-loader" aria-hidden="true" />
                 )}
-
-                <div className="news-grid">
-                  {actualites.map((actualite, index) => (
+                <div className="news-grid" style={GRID_GAP_STYLE}>
+                  {actualites.map((a, idx) => (
                     <article
-                      key={actualite.id}
+                      key={a.id}
                       className={`news-card animate-fade-in-up delay-${
-                        index % 3
+                        idx % 3
                       }`}
-                      tabIndex="0"
+                      style={{ marginBottom: 8 }}
                     >
                       <div className="news-image-wrapper">
                         <img
-                          src={actualite.image}
-                          alt={actualite.titre}
+                          src={a.image}
+                          alt={a.titre}
                           className="news-image"
                         />
-                        {actualite.categorie ? (
-                          <span className="news-category">
-                            {actualite.categorie}
-                          </span>
-                        ) : null}
                       </div>
                       <div className="news-content">
                         <div className="news-meta">
                           <Calendar size={16} />
                           <span dir={isRTL ? "ltr" : undefined}>
-                            {formatDate(actualite.date, currentLocale)}
+                            {formatDate(a.date, currentLocale)}
                           </span>
                         </div>
-                        <h3 className="news-title">{actualite.titre}</h3>
-                        <p className="news-excerpt">{actualite.extrait}</p>
-                        <Link
-                          to={`/actualite/${actualite.id}`}
-                          className="news-link"
-                        >
+                        <h3 className="news-title">{a.titre}</h3>
+                        <p className="news-excerpt">{a.extrait}</p>
+                        <Link to={`/actualite/${a.id}`} className="news-link">
                           {t("plateformeGestion.actualites.readMore")}{" "}
                         </Link>
                       </div>
@@ -676,21 +657,25 @@ function PlateformeGestion() {
           </div>
         </section>
 
-        {/* === Unified Hub: Documents | Banque des projets | Documents annexes === */}
+        {/* Hub */}
         <section
           className="hub section"
           aria-labelledby="hub-title"
-          ref={docsSectionRef} // keep this for scroll-to on docs pager; annex/projets refs are used below
+          style={SECTION_STYLE}
         >
           <div className="container">
-            <div className="section-header">
+            <div className="section-header" style={SECTION_HEADER_STYLE}>
               <div>
-                <h2 className="section-title" id="hub-title">
+                <h2
+                  className="section-title"
+                  id="hub-title"
+                  style={{ marginBottom: 4 }}
+                >
                   {t("plateformeGestion.hub.title", {
                     defaultValue: "Espace documentaire et projets",
                   })}
                 </h2>
-                <p className="section-subtitle">
+                <p className="section-subtitle" style={{ margin: 0 }}>
                   {t("plateformeGestion.hub.subtitle", {
                     defaultValue:
                       "Consultez les documents, la banque des projets et les documents annexes dans un seul espace.",
@@ -702,18 +687,19 @@ function PlateformeGestion() {
             <div
               className={`hub-grid ${isRTL ? "rtl" : ""}`}
               dir={isRTL ? "rtl" : "ltr"}
+              style={GRID_GAP_STYLE}
             >
-              {/* --- Column 1: Documents --- */}
+              {/* Documents */}
               <section
                 className="hub-col"
                 aria-labelledby="hub-docs-title"
                 ref={docsSectionRef}
               >
-                <header className="hub-col-header">
+                <header className="hub-col-header" style={{ marginBottom: 8 }}>
                   <h3 className="hub-col-title" id="hub-docs-title">
                     {t("plateformeGestion.documents.title")}
                   </h3>
-                  <div className="section-controls">
+                  <div className="section-controls" style={{ gap: 6 }}>
                     <label className="filter-label">
                       {t("plateformeGestion.documents.typeFilter")}&nbsp;
                       <select
@@ -730,7 +716,6 @@ function PlateformeGestion() {
                         ))}
                       </select>
                     </label>
-
                     <label className="filter-label">
                       {t("plateformeGestion.documents.resultsPerPage")}&nbsp;
                       <select
@@ -753,16 +738,23 @@ function PlateformeGestion() {
                 )}
 
                 {documents.length === 0 && !pagingDoc && !errorDoc ? (
-                  <div className="no-data">
+                  <div className="no-data" style={{ marginTop: 8 }}>
                     <p>{t("plateformeGestion.documents.noData")}</p>
                   </div>
                 ) : (
                   <>
-                    <ul className="note-list">
+                    <ul
+                      className="note-list"
+                      style={{ ...GRID_GAP_STYLE, marginTop: 6 }}
+                    >
                       {documents.map((doc) => {
                         const href = doc?.url || `/document/${doc.id}`;
                         return (
-                          <li key={doc.id} className="note-card">
+                          <li
+                            key={doc.id}
+                            className="note-card"
+                            style={{ padding: 8 }}
+                          >
                             <a
                               href={href}
                               target="_blank"
@@ -775,24 +767,7 @@ function PlateformeGestion() {
                               </span>
                               <span className="note-main">
                                 <span className="note-title">{doc.titre}</span>
-                                <span className="note-meta">
-                                  <span className="note-badge">{doc.type}</span>
-                                  <span className="note-dot">•</span>
-                                  <span
-                                    className="note-date"
-                                    dir={isRTL ? "ltr" : undefined}
-                                  >
-                                    {formatDate(doc.date, currentLocale)}
-                                  </span>
-                                  {doc.taille ? (
-                                    <>
-                                      <span className="note-dot">•</span>
-                                      <span className="note-size">
-                                        {doc.taille}
-                                      </span>
-                                    </>
-                                  ) : null}
-                                </span>
+                                {/* size + publication date removed */}
                               </span>
                             </a>
                           </li>
@@ -808,7 +783,7 @@ function PlateformeGestion() {
                       isRTL={isRTL}
                     />
                     {errorDoc ? (
-                      <div className="no-data" style={{ marginTop: 8 }}>
+                      <div className="no-data" style={{ marginTop: 6 }}>
                         <small style={{ opacity: 0.7 }}>({errorDoc})</small>
                       </div>
                     ) : null}
@@ -816,46 +791,19 @@ function PlateformeGestion() {
                 )}
               </section>
 
-              {/* --- Column 2: Banque des projets --- */}
+              {/* Projets (no État selector, no status chip) */}
               <section
                 className="hub-col"
                 aria-labelledby="hub-projets-title"
                 ref={projetsSectionRef}
               >
-                <header className="hub-col-header">
+                <header className="hub-col-header" style={{ marginBottom: 8 }}>
                   <h3 className="hub-col-title" id="hub-projets-title">
                     {t("plateformeGestion.projects.title", {
                       defaultValue: "Banque des projets",
                     })}
                   </h3>
-                  <div className="section-controls">
-                    <label className="filter-label">
-                      {t("plateformeGestion.projects.stateFilter", {
-                        defaultValue: "État",
-                      })}
-                      &nbsp;
-                      <select
-                        value={projetEtatFilter}
-                        onChange={(e) => setProjetEtatFilter(e.target.value)}
-                      >
-                        <option value="">
-                          {t("plateformeGestion.projects.allStates", {
-                            defaultValue: "Tous",
-                          })}
-                        </option>
-                        <option value="EN_COURS">
-                          {t("adminPortail.projetEtat.EN_COURS", {
-                            defaultValue: "En cours",
-                          })}
-                        </option>
-                        <option value="ACHEVEE">
-                          {t("adminPortail.projetEtat.ACHEVEE", {
-                            defaultValue: "Achevée",
-                          })}
-                        </option>
-                      </select>
-                    </label>
-
+                  <div className="section-controls" style={{ gap: 6 }}>
                     <label className="filter-label">
                       {t("plateformeGestion.projects.resultsPerPage", {
                         defaultValue: "Résultats / page",
@@ -881,7 +829,7 @@ function PlateformeGestion() {
                 )}
 
                 {projets.length === 0 && !pagingProjet && !errorProjet ? (
-                  <div className="no-data">
+                  <div className="no-data" style={{ marginTop: 8 }}>
                     <p>
                       {t("plateformeGestion.projects.noData", {
                         defaultValue: "Aucun projet pour le moment.",
@@ -890,12 +838,19 @@ function PlateformeGestion() {
                   </div>
                 ) : (
                   <>
-                    <ul className="note-list">
+                    <ul
+                      className="note-list"
+                      style={{ ...GRID_GAP_STYLE, marginTop: 6 }}
+                    >
                       {projets.map((p) => {
                         const href =
                           p?.detailUrl || p?.url || `/projet/${p.id}`;
                         return (
-                          <li key={p.id} className="note-card">
+                          <li
+                            key={p.id}
+                            className="note-card"
+                            style={{ padding: 8 }}
+                          >
                             <a
                               href={href}
                               target="_blank"
@@ -908,38 +863,7 @@ function PlateformeGestion() {
                               </span>
                               <span className="note-main">
                                 <span className="note-title">{p.titre}</span>
-                                <span className="note-meta">
-                                  <span
-                                    className={`note-chip ${
-                                      p.etat === "ACHEVEE"
-                                        ? "chip-done"
-                                        : "chip-progress"
-                                    }`}
-                                  >
-                                    {p.etat === "ACHEVEE"
-                                      ? t("adminPortail.projetEtat.ACHEVEE", {
-                                          defaultValue: "Achevée",
-                                        })
-                                      : t("adminPortail.projetEtat.EN_COURS", {
-                                          defaultValue: "En cours",
-                                        })}
-                                  </span>
-                                  <span className="note-dot">•</span>
-                                  <span
-                                    className="note-date"
-                                    dir={isRTL ? "ltr" : undefined}
-                                  >
-                                    {formatDate(p.date, currentLocale)}
-                                  </span>
-                                  {p.taille ? (
-                                    <>
-                                      <span className="note-dot">•</span>
-                                      <span className="note-size">
-                                        {p.taille}
-                                      </span>
-                                    </>
-                                  ) : null}
-                                </span>
+                                <span className="note-meta"></span>
                               </span>
                             </a>
                           </li>
@@ -950,12 +874,12 @@ function PlateformeGestion() {
                     <Pager
                       page={projetPage}
                       pageSize={projetPageSize}
-                      total={derivedProjetTotal}
+                      total={projetTotal}
                       onPage={goProjetPage}
                       isRTL={isRTL}
                     />
                     {errorProjet ? (
-                      <div className="no-data" style={{ marginTop: 8 }}>
+                      <div className="no-data" style={{ marginTop: 6 }}>
                         <small style={{ opacity: 0.7 }}>({errorProjet})</small>
                       </div>
                     ) : null}
@@ -963,34 +887,16 @@ function PlateformeGestion() {
                 )}
               </section>
 
-              {/* --- Column 3: Documents annexes --- */}
               <section
                 className="hub-col"
                 aria-labelledby="hub-annex-title"
                 ref={annexSectionRef}
               >
-                <header className="hub-col-header">
+                <header className="hub-col-header" style={{ marginBottom: 8 }}>
                   <h3 className="hub-col-title" id="hub-annex-title">
                     {t("plateformeGestion.documentsAnnexes.title")}
                   </h3>
-                  <div className="section-controls">
-                    <label className="filter-label">
-                      {t("plateformeGestion.documentsAnnexes.typeFilter")}&nbsp;
-                      <select
-                        value={annexTypeFilter}
-                        onChange={(e) => setAnnexTypeFilter(e.target.value)}
-                      >
-                        <option value="">
-                          {t("plateformeGestion.documentsAnnexes.allTypes")}
-                        </option>
-                        {typeDocs.map((tDoc) => (
-                          <option key={tDoc.id} value={tDoc.id}>
-                            {tDoc.libelle}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-
+                  <div className="section-controls" style={{ gap: 6 }}>
                     <label className="filter-label">
                       {t("plateformeGestion.documentsAnnexes.resultsPerPage")}
                       &nbsp;
@@ -1016,16 +922,23 @@ function PlateformeGestion() {
                 {documentsAnnexes.length === 0 &&
                 !pagingAnnex &&
                 !errorAnnex ? (
-                  <div className="no-data">
+                  <div className="no-data" style={{ marginTop: 8 }}>
                     <p>{t("plateformeGestion.documentsAnnexes.noData")}</p>
                   </div>
                 ) : (
                   <>
-                    <ul className="note-list">
+                    <ul
+                      className="note-list"
+                      style={{ ...GRID_GAP_STYLE, marginTop: 6 }}
+                    >
                       {documentsAnnexes.map((doc) => {
                         const href = doc?.url || `/document-annexe/${doc.id}`;
                         return (
-                          <li key={doc.id} className="note-card">
+                          <li
+                            key={doc.id}
+                            className="note-card"
+                            style={{ padding: 8 }}
+                          >
                             <a
                               href={href}
                               target="_blank"
@@ -1038,24 +951,7 @@ function PlateformeGestion() {
                               </span>
                               <span className="note-main">
                                 <span className="note-title">{doc.titre}</span>
-                                <span className="note-meta">
-                                  <span className="note-badge">{doc.type}</span>
-                                  <span className="note-dot">•</span>
-                                  <span
-                                    className="note-date"
-                                    dir={isRTL ? "ltr" : undefined}
-                                  >
-                                    {formatDate(doc.date, currentLocale)}
-                                  </span>
-                                  {doc.taille ? (
-                                    <>
-                                      <span className="note-dot">•</span>
-                                      <span className="note-size">
-                                        {doc.taille}
-                                      </span>
-                                    </>
-                                  ) : null}
-                                </span>
+                                <span className="note-meta"></span>
                               </span>
                             </a>
                           </li>
@@ -1071,7 +967,7 @@ function PlateformeGestion() {
                       isRTL={isRTL}
                     />
                     {errorAnnex ? (
-                      <div className="no-data" style={{ marginTop: 8 }}>
+                      <div className="no-data" style={{ marginTop: 6 }}>
                         <small style={{ opacity: 0.7 }}>({errorAnnex})</small>
                       </div>
                     ) : null}
@@ -1082,15 +978,23 @@ function PlateformeGestion() {
           </div>
         </section>
 
-        <section className="map-block section" aria-labelledby="map-title">
+        {/* Map */}
+        <section
+          className="map-block section"
+          aria-labelledby="map-title"
+          style={SECTION_STYLE}
+        >
           <div className="container">
-            <div className="section-header">
-              <h2 className="section-title" id="map-title">
+            <div className="section-header" style={{ marginBottom: 8 }}>
+              <h2
+                className="section-title"
+                id="map-title"
+                style={{ margin: 0 }}
+              >
                 {t("map.title")}
               </h2>
             </div>
-
-            <div className="map-block-content">
+            <div className="map-block-content" style={{ marginTop: 6 }}>
               <MapComponent />
             </div>
           </div>
