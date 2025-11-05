@@ -118,7 +118,6 @@ function FormBoulangerie({ user, setNotif, setError }) {
           // Documents boulangerie
           demande_ministere_file: null,
           carte_identite_proprietaire_file: null,
-          coordonnees_file: null,
           titre_foncier_file: null,
           etude_faisabilite_file: null,
           cahier_charges_file: null,

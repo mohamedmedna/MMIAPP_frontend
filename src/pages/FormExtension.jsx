@@ -27,7 +27,6 @@ function FormExtension({ user, setNotif, setError }) {
     etude_faisabilite_file: null,
     fiche_technique_machines_file: null,
     lettre_demande_extension_file: null,
-    coordonnees_gps_file: null,
     titre_foncier_file: null,
     copie_certificat_enregistrement_file: null
   });
