@@ -18,6 +18,8 @@ export default function Contact() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const baseUrl = window.__APP_CONFIG__?.API_BASE;
+  const primaryContact = t("contact.primary_contact", { returnObjects: true }) || {};
+  const secondaryContact = t("contact.secondary_contact", { returnObjects: true }) || {};
 
   const onFinish = async (values) => {
     setError("");
@@ -73,7 +75,7 @@ export default function Contact() {
               </div>
               <div className="contact-info-content">
                 <Text strong>{t("contact.email_label")}</Text>
-                <Text>contact@mmi.gov.mr</Text>
+              <Text>{t("contact.email_value")}</Text>
               </div>
             </div>
 
@@ -83,9 +85,19 @@ export default function Contact() {
               </div>
               <div className="contact-info-content">
                 <Text strong>{t("contact.phone_label")}</Text>
-                <Text>+222 45 25 28 01</Text>
+              <Text>{t("contact.phone_value")}</Text>
               </div>
             </div>
+
+          <div className="contact-info-item">
+            <div className="contact-info-icon">
+              <i className="fas fa-mail-bulk"></i>
+            </div>
+            <div className="contact-info-content">
+              <Text strong>{t("contact.postal_label")}</Text>
+              <Text>{t("contact.postal_value")}</Text>
+            </div>
+          </div>
 
             <div className="contact-info-item">
               <div className="contact-info-icon">
@@ -106,6 +118,55 @@ export default function Contact() {
                 <Text>{t("contact.hours_value")}</Text>
               </div>
             </div>
+
+          <div className="contact-people">
+            {[primaryContact, secondaryContact]
+              .filter((contact) => contact && Object.keys(contact).length > 0)
+              .map((contact, index) => (
+                <div key={index} className="contact-person-card">
+                  {contact.title && (
+                    <h4 className="contact-person-title">{contact.title}</h4>
+                  )}
+
+                  {contact.name && (
+                    <div className="contact-person-line">
+                      <Text strong className="contact-person-label">
+                        {t("contact.person_name_label")}
+                      </Text>
+                      <Text>{contact.name}</Text>
+                    </div>
+                  )}
+
+                  {contact.role && (
+                    <div className="contact-person-line">
+                      <Text strong className="contact-person-label">
+                        {t("contact.person_structure_label")}
+                      </Text>
+                      <Text>{contact.role}</Text>
+                    </div>
+                  )}
+
+                  {Array.isArray(contact.phones) &&
+                    contact.phones.map((phone, idx) => (
+                      <div key={idx} className="contact-person-line">
+                        <Text strong className="contact-person-label">
+                          {t("contact.phone_with_index", { index: idx + 1 })}
+                        </Text>
+                        <Text>{phone}</Text>
+                      </div>
+                    ))}
+
+                  {contact.email && (
+                    <div className="contact-person-line">
+                      <Text strong className="contact-person-label">
+                        {t("contact.person_email_label")}
+                      </Text>
+                      <Text>{contact.email}</Text>
+                    </div>
+                  )}
+                </div>
+              ))}
+          </div>
 
             <div className="contact-social">
               <Title level={4}>{t("contact.follow_us")}</Title>

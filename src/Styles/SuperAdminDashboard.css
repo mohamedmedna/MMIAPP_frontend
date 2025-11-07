@@ -1057,3 +1057,313 @@
     font-size: 0.9rem;
   }
 }
+
+/* ================== SECTION MESSAGES DE CONTACT ================== */
+.contact-messages-section {
+  margin-top: 3rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+}
+
+.contact-messages-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.contact-messages-header h2 {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--dark-color);
+}
+
+.contact-messages-description {
+  margin: 0.35rem 0 0;
+  color: #4b5563;
+  max-width: 640px;
+  line-height: 1.55;
+}
+
+.contact-refresh-btn {
+  background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+  color: white;
+  border: none;
+  padding: 0.65rem 1.5rem;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.contact-refresh-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.contact-refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.contact-message-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.contact-filter-btn {
+  background: rgba(34, 197, 94, 0.09);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  color: var(--dark-green);
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  font-weight: 600;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.contact-filter-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.contact-filter-btn.active {
+  background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: var(--shadow-md);
+}
+
+.contact-messages-error {
+  margin-bottom: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #fef2f2, #fecaca);
+  color: var(--danger-color);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.contact-messages-empty {
+  padding: 1.5rem;
+  text-align: center;
+  border-radius: 12px;
+  background: rgba(34, 197, 94, 0.08);
+  color: #047857;
+  font-weight: 600;
+}
+
+.contact-message-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.contact-message-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(34, 197, 94, 0.16);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  border-left: 6px solid var(--primary-green);
+}
+
+.contact-message-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.contact-message-card.status-nouveau {
+  border-left-color: var(--info-color);
+}
+
+.contact-message-card.status-en_cours {
+  border-left-color: var(--warning-color);
+}
+
+.contact-message-card.status-traite {
+  border-left-color: var(--success-color);
+}
+
+.contact-message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.contact-message-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--dark-color);
+}
+
+.contact-message-email {
+  color: #2563eb;
+  font-size: 0.92rem;
+  word-break: break-word;
+}
+
+.contact-message-date {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.contact-message-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+  align-items: center;
+}
+
+.contact-message-label {
+  font-weight: 600;
+  color: var(--dark-green);
+}
+
+.contact-message-text {
+  margin: 1.1rem 0;
+  padding: 1rem;
+  background: rgba(236, 253, 245, 0.65);
+  border-radius: 12px;
+  border: 1px solid rgba(34, 197, 94, 0.18);
+}
+
+.contact-message-text p {
+  margin: 0;
+  color: #1f2937;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.contact-message-notes {
+  color: #374151;
+  white-space: pre-wrap;
+}
+
+.contact-message-actions {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.contact-message-action {
+  border: none;
+  border-radius: 999px;
+  padding: 0.55rem 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  background: rgba(15, 118, 110, 0.08);
+  color: var(--dark-green);
+}
+
+.contact-message-action:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.contact-message-action:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.contact-message-action.action-secondary {
+  background: rgba(59, 130, 246, 0.12);
+  color: #1d4ed8;
+}
+
+.contact-message-action.action-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #b45309;
+}
+
+.contact-message-action.action-success {
+  background: rgba(16, 185, 129, 0.15);
+  color: #047857;
+}
+
+.contact-message-action.action-note {
+  background: rgba(168, 85, 247, 0.15);
+  color: #6b21a8;
+}
+
+.contact-message-action.action-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #b91c1c;
+}
+
+.contact-status-badge {
+  font-size: 0.75rem;
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.contact-status-badge.status-nouveau {
+  background: rgba(59, 130, 246, 0.15);
+  color: #1d4ed8;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.contact-status-badge.status-en_cours {
+  background: rgba(245, 158, 11, 0.18);
+  color: #b45309;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.contact-status-badge.status-traite {
+  background: rgba(16, 185, 129, 0.18);
+  color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+@media (max-width: 1024px) {
+  .contact-messages-section {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-message-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .contact-message-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .contact-message-action {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-messages-section {
+    padding: 1.25rem;
+  }
+
+  .contact-message-text {
+    padding: 0.75rem;
+  }
+}

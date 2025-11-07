@@ -23,22 +23,6 @@
     "admin_desc": "وصول مخصص للإدارة",
     "acceder": "الوصول"
   },
-
-  "stats": {
-    "title": "الإحصائيات",
-    "noData": "لا توجد تراخيص لعرضها.",
-    "authorized": "التراخيص المعتمدة",
-    "authorizedByType": "التراخيص حسب النوع"
-  },
-  "types": {
-    "usine": "مصنع",
-    "boulangerie": "مخبز",
-    "atelier": "ورشة",
-    "restaurant": "مطعم",
-    "magasin": "متجر",
-    "entrepot": "مستودع",
-    "autre": "أخرى"
-  },
   "main": {
     "management_platform": "منصة الإدارة",
     "management_desc": "الوصول إلى مساحات مقدم الطلب والإدارة",
@@ -1409,6 +1393,45 @@
       "subtext": "يجب أن يحتوي الرمز على 8 أحرف بأحرف كبيرة وصغيرة ورقم ورمز خاص",
       "button": "إدارة رمز الوصول"
     },
+    "contactMessages": {
+      "title": "رسائل الاتصال",
+      "description": "استعرض وتتبع الرسائل المرسلة عبر نموذج الاتصال.",
+      "refresh": "تحديث",
+      "loading": "جاري تحميل الرسائل...",
+      "noData": "لا توجد رسائل حالياً.",
+      "fetchError": "تعذر استرجاع رسائل الاتصال.",
+      "updateSuccess": "تم تحديث الرسالة بنجاح.",
+      "updateError": "حدث خطأ أثناء تحديث الرسالة.",
+      "filters": {
+        "all": "الكل"
+      },
+      "statuses": {
+        "NOUVEAU": "جديد",
+        "EN_COURS": "قيد المعالجة",
+        "TRAITE": "تمت المعالجة"
+      },
+      "subjectLabel": "الموضوع",
+      "messageLabel": "الرسالة",
+      "statusLabel": "الحالة",
+      "notesLabel": "ملاحظات داخلية",
+      "notesPlaceholder": "لا توجد ملاحظات حالياً",
+      "notesPrompt": "ملاحظات داخلية (اتركه فارغاً للحذف):",
+      "phoneLabel": "الهاتف",
+      "noPhone": "غير متوفر",
+      "handledBy": "تمت المعالجة بواسطة",
+      "handledAt": "تم التحديث في",
+      "notHandled": "لم تتم معالجته بعد",
+      "confirmDelete": "هل تريد حذف هذه الرسالة؟",
+      "deleteSuccess": "تم حذف الرسالة.",
+      "deleteError": "حدث خطأ أثناء حذف الرسالة.",
+      "actions": {
+        "markNew": "وضع كجديد",
+        "markInProgress": "وضع قيد المعالجة",
+        "markDone": "وضع كمكتمل",
+        "editNotes": "تعديل الملاحظات",
+        "delete": "حذف"
+      }
+    },
     "roles": {
       "SuperAdmin": "المشرف العام",
       "Secrétariat Central": "الأمانة المركزية",
@@ -1993,7 +2016,11 @@
     "email_label": "البريد الإلكتروني",
     "phone_label": "الهاتف",
     "address_label": "العنوان",
-    "address_value": "نواكشوط، موريتانيا",
+    "address_value": "إيلوت C 102 و103 / شارع أبوبكر بن عامر",
+    "postal_label": "صندوق البريد",
+    "postal_value": "BP 4921",
+    "phone_value": "00 222 45 24 25 41",
+    "email_value": "contact-mmi@mmi.gov.mr",
     "hours_label": "ساعات العمل",
     "hours_value": "الإثنين - الجمعة: 8:00 صباحاً - 4:00 مساءً",
     "follow_us": "تابعنا",
@@ -2025,6 +2052,38 @@
     "success_message": "تم إرسال رسالتك بنجاح!",
     "error_title": "خطأ في الإرسال",
     "error_message": "حدث خطأ أثناء إرسال الرسالة",
-    "error_network": "خطأ في الشبكة. يرجى التحقق من اتصالك."
+    "error_network": "خطأ في الشبكة. يرجى التحقق من اتصالك.",
+    "person_name_label": "الاسم",
+    "person_structure_label": "الهيكل",
+    "person_email_label": "البريد الإلكتروني",
+    "phone_with_index": "الهاتف {{index}}",
+    "primary_contact": {
+      "title": "جهة الاتصال الرئيسية",
+      "name": "بابكر محمد بابا",
+      "role": "مدير التنمية والترويج الصناعي (DDPI)",
+      "phones": [
+        "00 222 43 45 11 00",
+        "00 222 22 84 61 23"
+      ],
+      "email": "b.mbaba@mmi.gov.mr"
+    },
+    "secondary_contact": {
+      "title": "جهة الاتصال الرئيسية لبرنامج PMN",
+      "name": "خديجتو عبد الوهاب",
+      "role": "مديرة إعادة هيكلة وترقية الشركات (DRMNE)",
+      "phones": [
+        "00 222 42 14 86 11",
+        "00 222 28 22 58 33"
+      ],
+      "email": "k.abdelwehab@mmi.gov.mr"
+    }
+  }
+  ,
+  "statistics": {
+    "title": "الإحصائيات",
+    "authorized": "مصرح بها",
+    "authorizedByType": "المصرح بها حسب النوع",
+    "usine": "المصنع",
+    "boulangerie": "المخبزة"
   }
 }

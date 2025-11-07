@@ -409,13 +409,13 @@ function MapComponent() {
           <div className="stats-panel">
             <div className="stats-header">
               <BarChart3 size={22} color="#667eea" />
-              <h2>{t("stats.title")}</h2>
+              <h2>{t("statistics.title")}</h2>
             </div>
 
             {/* If no authorized data at all */}
             {statistics.acceptedTotal === 0 ? (
               <div style={{ color: "#6b7280", fontWeight: 700 }}>
-                {t("stats.noData")}
+                Aucune autorisation à afficher.
               </div>
             ) : (
               <>
@@ -427,7 +427,7 @@ function MapComponent() {
                   <div className="metric-chip">
                     <span className="label">
                       <CheckCircle size={16} />
-                      {t("stats.authorized")}
+                      {t("statistics.authorized")}
                     </span>
                     <span className="value">{statistics.acceptedTotal}</span>
                   </div>
@@ -438,7 +438,7 @@ function MapComponent() {
                   <>
                     <div className="stats-group-title">
                       <FileText size={18} />
-                      {t("stats.authorizedByType")}
+                      {t("statistics.authorizedByType")}
                     </div>
                     <div
                       className="stat-grid"
@@ -461,7 +461,7 @@ function MapComponent() {
                                 color: "#111827",
                               }}
                             >
-                              {t(`types.${type}`)}
+                              {t(`statistics.${type}`)}
                             </span>
                           </div>
                           <div className="count-chip">

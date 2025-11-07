@@ -24,23 +24,6 @@
     "admin_desc": "Accès réservé à l'administration",
     "acceder": "Accéder"
   },
-
-  "stats": {
-    "title": "Statistiques",
-    "noData": "Aucune autorisation à afficher.",
-    "authorized": "Autorisées",
-    "authorizedByType": "Autorisées par type"
-  },
-  "types": {
-    "usine": "Usine",
-    "boulangerie": "Boulangerie",
-    "atelier": "Atelier",
-    "restaurant": "Restaurant",
-    "magasin": "Magasin",
-    "entrepot": "Entrepôt",
-    "autre": "Autre"
-  },
-
   "main": {
     "management_platform": "Plateforme de Gestion",
     "management_desc": "Accès aux espaces Demandeur et Administration",
@@ -183,7 +166,7 @@
     "error_network": "Erreur réseau ou serveur"
   },
   "logindgi": {
-    "title": "Espace de DGI",
+    "title": "Espace DGI",
     "email": "Email",
     "password": "Mot de passe",
     "submit": "Se connecter",
@@ -1029,6 +1012,45 @@
       "subtext": "Le code doit contenir 8 caractères avec majuscule, minuscule, chiffre et caractère spécial",
       "button": "Gérer le Code d'Accès"
     },
+    "contactMessages": {
+      "title": "Messages de contact",
+      "description": "Consultez et suivez les messages envoyés via le formulaire de contact.",
+      "refresh": "Actualiser",
+      "loading": "Chargement des messages...",
+      "noData": "Aucun message pour le moment.",
+      "fetchError": "Impossible de récupérer les messages de contact.",
+      "updateSuccess": "Message mis à jour avec succès.",
+      "updateError": "Erreur lors de la mise à jour du message.",
+      "filters": {
+        "all": "Tous"
+      },
+      "statuses": {
+        "NOUVEAU": "Nouveau",
+        "EN_COURS": "En cours",
+        "TRAITE": "Traité"
+      },
+      "subjectLabel": "Sujet",
+      "messageLabel": "Message",
+      "statusLabel": "Statut",
+      "notesLabel": "Notes internes",
+      "notesPlaceholder": "Aucune note pour le moment",
+      "notesPrompt": "Notes internes (laissez vide pour effacer) :",
+      "phoneLabel": "Téléphone",
+      "noPhone": "Non communiqué",
+      "handledBy": "Traité par",
+      "handledAt": "Mis à jour le",
+      "notHandled": "Non encore traité",
+      "confirmDelete": "Supprimer ce message ?",
+      "deleteSuccess": "Message supprimé.",
+      "deleteError": "Erreur lors de la suppression du message.",
+      "actions": {
+        "markNew": "Marquer comme nouveau",
+        "markInProgress": "Marquer en cours",
+        "markDone": "Marquer traité",
+        "editNotes": "Modifier les notes",
+        "delete": "Supprimer"
+      }
+    },
     "roles": {
       "SuperAdmin": "SuperAdmin",
       "Secrétariat Central": "Secrétariat Central",
@@ -1131,7 +1153,7 @@
     "success": "Votre demande a été déposée avec succès !"
   },
   "pnme": {
-    "title": "Programme de Mise à Niveau des Entreprises (PMNE)",
+  "title": "Programme de Mise à Niveau des Entreprises (PMNE)",
     "raison_sociale": "Raison sociale",
     "rc": "Registre du Commerce",
     "nif": "Numéro d'identification fiscale",
@@ -1938,7 +1960,11 @@
     "email_label": "Email",
     "phone_label": "Téléphone",
     "address_label": "Adresse",
-    "address_value": "Nouakchott, Mauritanie",
+    "address_value": "Ilot C 102 et 103 / Av Aboubecar Ben Amer",
+    "postal_label": "Boîte Postale",
+    "postal_value": "BP 4921",
+    "phone_value": "00 222 45 24 25 41",
+    "email_value": "contact-mmi@mmi.gov.mr",
     "hours_label": "Horaires d'ouverture",
     "hours_value": "Lundi - Vendredi : 8h00 - 16h00",
     "follow_us": "Suivez-nous",
@@ -1970,6 +1996,38 @@
     "success_message": "Votre message a été envoyé avec succès !",
     "error_title": "Erreur d'envoi",
     "error_message": "Une erreur s'est produite lors de l'envoi du message",
-    "error_network": "Erreur réseau. Veuillez vérifier votre connexion."
+    "error_network": "Erreur réseau. Veuillez vérifier votre connexion.",
+    "person_name_label": "Nom",
+    "person_structure_label": "Structure",
+    "person_email_label": "E-mail",
+    "phone_with_index": "Téléphone {{index}}",
+    "primary_contact": {
+      "title": "Contact Principal",
+      "name": "Babacar Mohamed Baba",
+      "role": "Directeur du Développement et de la Promotion Industrielle (DDPI)",
+      "phones": [
+        "00 222 43 45 11 00",
+        "00 222 22 84 61 23"
+      ],
+      "email": "b.mbaba@mmi.gov.mr"
+    },
+    "secondary_contact": {
+      "title": "Contact Principal PMN",
+      "name": "Khadijetou ABDELWEHAB",
+      "role": "Directrice de la Restructuration et Mise à Niveau des Entreprises (DRMNE)",
+      "phones": [
+        "00 222 42 14 86 11",
+        "00 222 28 22 58 33"
+      ],
+      "email": "k.abdelwehab@mmi.gov.mr"
+    }
+  }
+  ,
+  "statistics": {
+    "title": "Statistiques",
+    "authorized": "Autorisées",
+    "authorizedByType": "Autorisées par type",
+    "usine": "Usine",
+    "boulangerie": "Boulangerie"
   }
 }

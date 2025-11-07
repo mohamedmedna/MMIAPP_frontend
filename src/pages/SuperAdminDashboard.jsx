@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -21,8 +21,46 @@ function SuperAdminDashboard() {
   });
   const [notif, setNotif] = useState("");
   const [error, setError] = useState("");
+  const [contactMessages, setContactMessages] = useState([]);
+  const [contactLoading, setContactLoading] = useState(false);
+  const [contactError, setContactError] = useState("");
+  const [messageFilter, setMessageFilter] = useState("ALL");
 
   const baseUrl = window.__APP_CONFIG__?.API_BASE;
+  const statusFilters = ["ALL", "NOUVEAU", "EN_COURS", "TRAITE"];
+
+  const statusLabels = {
+    NOUVEAU: t("superAdminDashboard.contactMessages.statuses.NOUVEAU"),
+    EN_COURS: t("superAdminDashboard.contactMessages.statuses.EN_COURS"),
+    TRAITE: t("superAdminDashboard.contactMessages.statuses.TRAITE"),
+  };
+
+  const filterLabels = {
+    ALL: t("superAdminDashboard.contactMessages.filters.all"),
+    NOUVEAU: statusLabels.NOUVEAU,
+    EN_COURS: statusLabels.EN_COURS,
+    TRAITE: statusLabels.TRAITE,
+  };
+
+  const getSubjectLabel = (subject) => {
+    const mapping = {
+      demande_info: t("contact.subject_info"),
+      assistance_technique: t("contact.subject_technical"),
+      probleme_demande: t("contact.subject_request_issue"),
+      suggestion: t("contact.subject_suggestion"),
+      autre: t("contact.subject_other"),
+    };
+    return mapping[subject] || subject;
+  };
+
+  const formatDateTime = (value) => {
+    if (!value) return "—";
+    try {
+      return new Date(value).toLocaleString();
+    } catch (err) {
+      return value;
+    }
+  };
 
   // Déconnexion (SPA redirect to respect basename)
   const handleLogout = () => {
@@ -117,6 +155,140 @@ function SuperAdminDashboard() {
       }
     } catch {
       setError("Erreur réseau lors du renvoi");
+      setTimeout(() => setError(""), 5000);
+    }
+  };
+
+  const fetchContactMessages = useCallback(
+    async (filter = messageFilter) => {
+      setContactLoading(true);
+      setContactError("");
+      try {
+        const query =
+          filter && filter !== "ALL"
+            ? `?statut=${encodeURIComponent(filter)}`
+            : "";
+        const response = await fetch(
+          `${baseUrl}/api/admin/contact-messages${query}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+            },
+          }
+        );
+        const data = await response.json();
+        if (response.ok) {
+          setContactMessages(data.messages || []);
+        } else {
+          setContactError(
+            data.error ||
+              t("superAdminDashboard.contactMessages.fetchError")
+          );
+        }
+      } catch (err) {
+        setContactError(
+          t("superAdminDashboard.contactMessages.fetchError")
+        );
+      } finally {
+        setContactLoading(false);
+      }
+    },
+    [baseUrl, messageFilter, t]
+  );
+
+  useEffect(() => {
+    fetchContactMessages(messageFilter);
+  }, [fetchContactMessages, messageFilter]);
+
+  const handleFilterChange = (filter) => {
+    setMessageFilter(filter);
+  };
+
+  const handleRefreshMessages = () => {
+    fetchContactMessages(messageFilter);
+  };
+
+  const updateContactMessage = async (id, payload) => {
+    try {
+      const response = await fetch(
+        `${baseUrl}/api/admin/contact-messages/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setContactMessages((prev) =>
+          prev.map((msg) => (msg.id === id ? data.message : msg))
+        );
+        setContactError("");
+        setNotif(t("superAdminDashboard.contactMessages.updateSuccess"));
+        setTimeout(() => setNotif(""), 5000);
+      } else {
+        const errorMessage =
+          data.error || t("superAdminDashboard.contactMessages.updateError");
+        setError(errorMessage);
+        setTimeout(() => setError(""), 5000);
+      }
+    } catch (err) {
+      setError(t("superAdminDashboard.contactMessages.updateError"));
+      setTimeout(() => setError(""), 5000);
+    }
+  };
+
+  const handleSetStatus = (message, nextStatus) => {
+    updateContactMessage(message.id, { statut: nextStatus });
+  };
+
+  const handleEditNotes = (message) => {
+    const note = window.prompt(
+      t("superAdminDashboard.contactMessages.notesPrompt"),
+      message.notes_admin || ""
+    );
+    if (note === null) return;
+    updateContactMessage(message.id, { notes_admin: note });
+  };
+
+  const handleDeleteMessage = async (message) => {
+    if (
+      !window.confirm(
+        t("superAdminDashboard.contactMessages.confirmDelete")
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${baseUrl}/api/admin/contact-messages/${message.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setContactMessages((prev) =>
+          prev.filter((msg) => msg.id !== message.id)
+        );
+        setNotif(t("superAdminDashboard.contactMessages.deleteSuccess"));
+        setTimeout(() => setNotif(""), 5000);
+      } else {
+        setError(
+          (data && data.error) ||
+            t("superAdminDashboard.contactMessages.deleteError")
+        );
+        setTimeout(() => setError(""), 5000);
+      }
+    } catch (err) {
+      setError(t("superAdminDashboard.contactMessages.deleteError"));
       setTimeout(() => setError(""), 5000);
     }
   };
@@ -267,6 +439,190 @@ function SuperAdminDashboard() {
               {t("superAdminDashboard.accessCode.button")}
             </button>
           </div>
+        </div>
+
+        <div className="contact-messages-section">
+          <div className="contact-messages-header">
+            <div>
+              <h2>{t("superAdminDashboard.contactMessages.title")}</h2>
+              <p className="contact-messages-description">
+                {t("superAdminDashboard.contactMessages.description")}
+              </p>
+            </div>
+            <button
+              className="contact-refresh-btn"
+              onClick={handleRefreshMessages}
+              disabled={contactLoading}
+            >
+              {t("superAdminDashboard.contactMessages.refresh")}
+            </button>
+          </div>
+
+          <div className="contact-message-filters">
+            {statusFilters.map((filter) => (
+              <button
+                key={filter}
+                className={`contact-filter-btn ${
+                  messageFilter === filter ? "active" : ""
+                }`}
+                onClick={() => handleFilterChange(filter)}
+                disabled={contactLoading && messageFilter === filter}
+              >
+                {filterLabels[filter] || filter}
+              </button>
+            ))}
+          </div>
+
+          {contactError && (
+            <div className="contact-messages-error">{contactError}</div>
+          )}
+
+          {contactLoading ? (
+            <div className="contact-messages-empty">
+              {t("superAdminDashboard.contactMessages.loading")}
+            </div>
+          ) : contactMessages.length === 0 ? (
+            <div className="contact-messages-empty">
+              {t("superAdminDashboard.contactMessages.noData")}
+            </div>
+          ) : (
+            <div className="contact-message-cards">
+              {contactMessages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`contact-message-card status-${msg.statut.toLowerCase()}`}
+                >
+                  <div className="contact-message-header">
+                    <div>
+                      <div className="contact-message-name">{msg.nom}</div>
+                      <div className="contact-message-email">{msg.email}</div>
+                    </div>
+                    <div className="contact-message-date">
+                      {formatDateTime(msg.created_at)}
+                    </div>
+                  </div>
+
+                  <div className="contact-message-meta">
+                    <span className="contact-message-label">
+                      {t("superAdminDashboard.contactMessages.subjectLabel")}:
+                    </span>
+                    <span>{getSubjectLabel(msg.sujet)}</span>
+                  </div>
+
+                  <div className="contact-message-meta">
+                    <span className="contact-message-label">
+                      {t("superAdminDashboard.contactMessages.phoneLabel")}:
+                    </span>
+                    <span>
+                      {msg.telephone ||
+                        t("superAdminDashboard.contactMessages.noPhone")}
+                    </span>
+                  </div>
+
+                  <div className="contact-message-meta">
+                    <span className="contact-message-label">
+                      {t("superAdminDashboard.contactMessages.statusLabel")}:
+                    </span>
+                    <span
+                      className={`status-badge contact-status-badge status-${msg.statut.toLowerCase()}`}
+                    >
+                      {statusLabels[msg.statut] || msg.statut}
+                    </span>
+                  </div>
+
+                  <div className="contact-message-text">
+                    <span className="contact-message-label">
+                      {t("superAdminDashboard.contactMessages.messageLabel")}:
+                    </span>
+                    <p>{msg.message}</p>
+                  </div>
+
+                  <div className="contact-message-meta">
+                    <span className="contact-message-label">
+                      {t("superAdminDashboard.contactMessages.notesLabel")}:
+                    </span>
+                    <span className="contact-message-notes">
+                      {msg.notes_admin
+                        ? msg.notes_admin
+                        : t(
+                            "superAdminDashboard.contactMessages.notesPlaceholder"
+                          )}
+                    </span>
+                  </div>
+
+                  <div className="contact-message-meta">
+                    <span className="contact-message-label">
+                      {t("superAdminDashboard.contactMessages.handledBy")}:
+                    </span>
+                    <span>
+                      {msg.handled_by
+                        ? msg.handled_by
+                        : t(
+                            "superAdminDashboard.contactMessages.notHandled"
+                          )}
+                    </span>
+                  </div>
+
+                  {msg.handled_at && (
+                    <div className="contact-message-meta">
+                      <span className="contact-message-label">
+                        {t("superAdminDashboard.contactMessages.handledAt")}
+                        :
+                      </span>
+                      <span>{formatDateTime(msg.handled_at)}</span>
+                    </div>
+                  )}
+
+                  <div className="contact-message-actions">
+                    <button
+                      className="contact-message-action action-secondary"
+                      onClick={() => handleSetStatus(msg, "NOUVEAU")}
+                      disabled={contactLoading}
+                    >
+                      {t(
+                        "superAdminDashboard.contactMessages.actions.markNew"
+                      )}
+                    </button>
+                    <button
+                      className="contact-message-action action-warning"
+                      onClick={() => handleSetStatus(msg, "EN_COURS")}
+                      disabled={contactLoading}
+                    >
+                      {t(
+                        "superAdminDashboard.contactMessages.actions.markInProgress"
+                      )}
+                    </button>
+                    <button
+                      className="contact-message-action action-success"
+                      onClick={() => handleSetStatus(msg, "TRAITE")}
+                      disabled={contactLoading}
+                    >
+                      {t(
+                        "superAdminDashboard.contactMessages.actions.markDone"
+                      )}
+                    </button>
+                    <button
+                      className="contact-message-action action-note"
+                      onClick={() => handleEditNotes(msg)}
+                    >
+                      {t(
+                        "superAdminDashboard.contactMessages.actions.editNotes"
+                      )}
+                    </button>
+                    <button
+                      className="contact-message-action action-danger"
+                      onClick={() => handleDeleteMessage(msg)}
+                      disabled={contactLoading}
+                    >
+                      {t(
+                        "superAdminDashboard.contactMessages.actions.delete"
+                      )}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {showForm && (

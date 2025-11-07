@@ -23,22 +23,6 @@
     "admin_desc": "Reserved access for administration",
     "acceder": "Access"
   },
-
-  "stats": {
-    "title": "Statistics",
-    "noData": "No authorization to display.",
-    "authorized": "Authorized",
-    "authorizedByType": "Authorized by type"
-  },
-  "types": {
-    "usine": "Factory",
-    "boulangerie": "Bakery",
-    "atelier": "Workshop",
-    "restaurant": "Restaurant",
-    "magasin": "Store",
-    "entrepot": "Warehouse",
-    "autre": "Other"
-  },
   "main": {
     "management_platform": "Management Platform",
     "management_desc": "Access to Applicant and Administration spaces",
@@ -246,7 +230,7 @@
     "error_password": "Please enter your password!"
   },
   "logindgi": {
-    "title": "DGI Space",
+  "title": "DGI Space",
     "email": "Email",
     "password": "Password",
     "submit": "Log in",
@@ -1350,6 +1334,45 @@
       "subtext": "The code must contain 8 characters with uppercase, lowercase, number and special character",
       "button": "Manage Access Code"
     },
+    "contactMessages": {
+      "title": "Contact Messages",
+      "description": "Review and track messages sent via the contact form.",
+      "refresh": "Refresh",
+      "loading": "Loading messages...",
+      "noData": "No messages to display yet.",
+      "fetchError": "Unable to fetch contact messages.",
+      "updateSuccess": "Message updated successfully.",
+      "updateError": "Error while updating the message.",
+      "filters": {
+        "all": "All"
+      },
+      "statuses": {
+        "NOUVEAU": "New",
+        "EN_COURS": "In progress",
+        "TRAITE": "Handled"
+      },
+      "subjectLabel": "Subject",
+      "messageLabel": "Message",
+      "statusLabel": "Status",
+      "notesLabel": "Internal notes",
+      "notesPlaceholder": "No notes yet",
+      "notesPrompt": "Internal notes (leave empty to clear):",
+      "phoneLabel": "Phone",
+      "noPhone": "Not provided",
+      "handledBy": "Handled by",
+      "handledAt": "Updated on",
+      "notHandled": "Not handled yet",
+      "confirmDelete": "Delete this message?",
+      "deleteSuccess": "Message deleted.",
+      "deleteError": "Error while deleting the message.",
+      "actions": {
+        "markNew": "Mark as new",
+        "markInProgress": "Mark in progress",
+        "markDone": "Mark handled",
+        "editNotes": "Edit notes",
+        "delete": "Delete"
+      }
+    },
     "roles": {
       "SuperAdmin": "SuperAdmin",
       "Secrétariat Central": "Central Secretariat",
@@ -1917,7 +1940,11 @@
     "email_label": "Email",
     "phone_label": "Phone",
     "address_label": "Address",
-    "address_value": "Nouakchott, Mauritania",
+    "address_value": "Ilot C 102 and 103 / Av Aboubecar Ben Amer",
+    "postal_label": "P.O. Box",
+    "postal_value": "BP 4921",
+    "phone_value": "00 222 45 24 25 41",
+    "email_value": "contact-mmi@mmi.gov.mr",
     "hours_label": "Opening Hours",
     "hours_value": "Monday - Friday: 8:00 AM - 4:00 PM",
     "follow_us": "Follow Us",
@@ -1949,6 +1976,38 @@
     "success_message": "Your message has been sent successfully!",
     "error_title": "Sending Error",
     "error_message": "An error occurred while sending the message",
-    "error_network": "Network error. Please check your connection."
+    "error_network": "Network error. Please check your connection.",
+    "person_name_label": "Name",
+    "person_structure_label": "Organization",
+    "person_email_label": "E-mail",
+    "phone_with_index": "Phone {{index}}",
+    "primary_contact": {
+      "title": "Primary Contact",
+      "name": "Babacar Mohamed Baba",
+      "role": "Director of Industrial Development and Promotion (DDPI)",
+      "phones": [
+        "00 222 43 45 11 00",
+        "00 222 22 84 61 23"
+      ],
+      "email": "b.mbaba@mmi.gov.mr"
+    },
+    "secondary_contact": {
+      "title": "Primary PMN Contact",
+      "name": "Khadijetou ABDELWEHAB",
+      "role": "Director of Enterprise Restructuring and Upgrading (DRMNE)",
+      "phones": [
+        "00 222 42 14 86 11",
+        "00 222 28 22 58 33"
+      ],
+      "email": "k.abdelwehab@mmi.gov.mr"
+    }
+  }
+  ,
+  "statistics": {
+    "title": "Statistics",
+    "authorized": "Authorized",
+    "authorizedByType": "Authorized by type",
+    "usine": "Factory",
+    "boulangerie": "Bakery"
   }
 }
