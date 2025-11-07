@@ -23,6 +23,22 @@
     "admin_desc": "وصول مخصص للإدارة",
     "acceder": "الوصول"
   },
+
+  "stats": {
+    "title": "الإحصائيات",
+    "noData": "لا توجد تراخيص لعرضها.",
+    "authorized": "التراخيص المعتمدة",
+    "authorizedByType": "التراخيص حسب النوع"
+  },
+  "types": {
+    "usine": "مصنع",
+    "boulangerie": "مخبز",
+    "atelier": "ورشة",
+    "restaurant": "مطعم",
+    "magasin": "متجر",
+    "entrepot": "مستودع",
+    "autre": "أخرى"
+  },
   "main": {
     "management_platform": "منصة الإدارة",
     "management_desc": "الوصول إلى مساحات مقدم الطلب والإدارة",

@@ -24,6 +24,23 @@
     "admin_desc": "Accès réservé à l'administration",
     "acceder": "Accéder"
   },
+
+  "stats": {
+    "title": "Statistiques",
+    "noData": "Aucune autorisation à afficher.",
+    "authorized": "Autorisées",
+    "authorizedByType": "Autorisées par type"
+  },
+  "types": {
+    "usine": "Usine",
+    "boulangerie": "Boulangerie",
+    "atelier": "Atelier",
+    "restaurant": "Restaurant",
+    "magasin": "Magasin",
+    "entrepot": "Entrepôt",
+    "autre": "Autre"
+  },
+
   "main": {
     "management_platform": "Plateforme de Gestion",
     "management_desc": "Accès aux espaces Demandeur et Administration",
@@ -1114,7 +1131,7 @@
     "success": "Votre demande a été déposée avec succès !"
   },
   "pnme": {
-  "title": "Programme de Mise à Niveau des Entreprises (PMNE)",
+    "title": "Programme de Mise à Niveau des Entreprises (PMNE)",
     "raison_sociale": "Raison sociale",
     "rc": "Registre du Commerce",
     "nif": "Numéro d'identification fiscale",

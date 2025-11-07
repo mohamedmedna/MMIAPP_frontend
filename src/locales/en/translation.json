@@ -23,6 +23,22 @@
     "admin_desc": "Reserved access for administration",
     "acceder": "Access"
   },
+
+  "stats": {
+    "title": "Statistics",
+    "noData": "No authorization to display.",
+    "authorized": "Authorized",
+    "authorizedByType": "Authorized by type"
+  },
+  "types": {
+    "usine": "Factory",
+    "boulangerie": "Bakery",
+    "atelier": "Workshop",
+    "restaurant": "Restaurant",
+    "magasin": "Store",
+    "entrepot": "Warehouse",
+    "autre": "Other"
+  },
   "main": {
     "management_platform": "Management Platform",
     "management_desc": "Access to Applicant and Administration spaces",
