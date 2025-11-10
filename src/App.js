@@ -74,6 +74,7 @@ import Archive from "./pages/Archive";
 import ActualiteDetail from "./pages/ActualiteDetail";
 import AdminPortail from "./pages/AdminPortail";
 import Contact from "./pages/Contact";
+import RenouvellementUsine from "./pages/RenouvellementUsine";
 
 // ---------- Basename helpers ----------
 function normalizeBase(base) {
@@ -238,6 +239,16 @@ function App() {
             element={
               user ? (
                 <SuiviDemandes user={user} logout={logoutUser} />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/renouvellement/:demandeId"
+            element={
+              user ? (
+                <RenouvellementUsine user={user} />
               ) : (
                 <Navigate to="/login" />
               )

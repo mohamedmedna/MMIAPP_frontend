@@ -298,6 +298,7 @@ export default function MesDemandes({ user }) {
                     <th>{t("mesDemandes.dateDepot")}</th>
                     <th>{t("mesDemandes.type")}</th>
                     <th>{t("mesDemandes.statut")}</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -325,6 +326,31 @@ export default function MesDemandes({ user }) {
                         >
                           {STATUTS[demande.statut] || demande.statut}
                         </span>
+                      </td>
+                      <td>
+                        <div className="table-actions">
+                          <button
+                            type="button"
+                            className="btn-consulter"
+                            onClick={() => setPopup(demande)}
+                          >
+                            Détails
+                          </button>
+                          {demande.type === "usine" &&
+                            ["AUTORISATION_SIGNEE", "CLOTUREE"].includes(
+                              demande.statut
+                            ) && (
+                              <button
+                                type="button"
+                                className="btn-renouveler"
+                                onClick={() =>
+                                  navigate(`/renouvellement/${demande.id}`)
+                                }
+                              >
+                                Renouveler
+                              </button>
+                            )}
+                        </div>
                       </td>
                     </tr>
                   ))}

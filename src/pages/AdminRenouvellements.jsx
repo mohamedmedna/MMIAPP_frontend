@@ -32,7 +32,8 @@ import {
   CalendarOutlined,
   ExclamationCircleOutlined,
   SendOutlined,
-  DownloadOutlined
+  DownloadOutlined,
+  PrinterOutlined
 } from '@ant-design/icons';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -248,6 +249,36 @@ function AdminRenouvellements({ user }) {
     }
   };
 
+  const handleImprimer = async (renouvellement) => {
+    try {
+      const response = await fetch(`${baseUrl}/api/admin/renouvellement/${renouvellement.id}/impression`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || 'Erreur lors de la génération du PDF');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `renouvellement-${renouvellement.reference}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      message.success('PDF généré avec succès');
+    } catch (error) {
+      console.error('Erreur impression:', error);
+      message.error(error.message || 'Impossible de générer le PDF');
+    }
+  };
+
   const columns = [
     {
       title: 'Référence',
@@ -309,6 +340,15 @@ function AdminRenouvellements({ user }) {
               onClick={() => handleVoirDetails(record.id)}
             />
           </Tooltip>
+          {user?.role_id === 6 && (
+            <Tooltip title="Imprimer le formulaire">
+              <Button
+                icon={<PrinterOutlined />}
+                size="small"
+                onClick={() => handleImprimer(record)}
+              />
+            </Tooltip>
+          )}
           {getActionsForStatut(record.statut, user.role_id).map(action => 
             React.cloneElement(action, { 
               key: `${action.key}-${record.id}`,
@@ -575,4 +615,5 @@ function AdminRenouvellements({ user }) {
 }
 
 export default AdminRenouvellements;
+
 

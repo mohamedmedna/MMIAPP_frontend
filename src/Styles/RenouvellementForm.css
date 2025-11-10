@@ -1,0 +1,307 @@
+.renewal-page-wrapper {
+  background: #f4f5f7;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.renewal-container {
+  max-width: 1220px;
+  margin: 30px auto 40px auto;
+  padding: 0 20px;
+}
+
+.renewal-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(8, 15, 52, 0.12);
+  padding: 28px 32px 40px 32px;
+  position: relative;
+}
+
+.renewal-header {
+  text-align: center;
+  margin-bottom: 26px;
+  position: relative;
+  padding-bottom: 18px;
+  border-bottom: 2px solid #1e6a8e22;
+}
+
+.renewal-header h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.renewal-header p {
+  margin: 0;
+  font-size: 14px;
+  color: #475569;
+}
+
+.renewal-pages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+  gap: 24px;
+}
+
+.renewal-page {
+  border: 1.5px solid #1f2933;
+  border-radius: 8px;
+  padding: 24px;
+  background: #fff;
+  min-height: 980px;
+  position: relative;
+}
+
+.renewal-page h2 {
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #1f2937;
+}
+
+.renewal-page .section {
+  margin-bottom: 22px;
+}
+
+.renewal-page .section-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.renewal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 16px;
+}
+
+.renewal-grid.full {
+  grid-template-columns: 1fr;
+}
+
+.renewal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.renewal-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f172a;
+  text-transform: uppercase;
+}
+
+.renewal-input,
+.renewal-textarea,
+.renewal-select {
+  border: 1px solid #cbd5f5;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: "Segoe UI", sans-serif;
+  color: #0f172a;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.renewal-input:focus,
+.renewal-textarea:focus,
+.renewal-select:focus {
+  outline: none;
+  border-color: #1e6a8e;
+  box-shadow: 0 0 0 2px rgba(30, 106, 142, 0.15);
+}
+
+.renewal-textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+
+.renewal-input.readonly,
+.renewal-textarea.readonly {
+  background: #f8fafc;
+  cursor: not-allowed;
+  color: #475569;
+}
+
+.renewal-checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  padding: 6px 0;
+}
+
+.renewal-checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #0f172a;
+}
+
+.renewal-checkbox-group input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+
+.renewal-subtitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.renewal-note {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.renewal-actions {
+  margin-top: 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.renewal-btn {
+  border: none;
+  padding: 12px 22px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.renewal-btn.primary {
+  background: linear-gradient(90deg, #1e6a8e, #235d94);
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(30, 106, 142, 0.25);
+}
+
+.renewal-btn.secondary {
+  background: #e2e8f0;
+  color: #1f2937;
+}
+
+.renewal-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.renewal-btn:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 24px rgba(15, 23, 42, 0.15);
+}
+
+.renewal-divider {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(30, 106, 142, 0.25), transparent);
+  margin: 18px 0;
+}
+
+.renewal-flex {
+  display: flex;
+  gap: 12px;
+}
+
+.renewal-flex .renewal-field {
+  flex: 1;
+}
+
+.signature-upload {
+  background: #f8fafc;
+  border: 1px dashed #94a3b8;
+  border-radius: 8px;
+  padding: 14px 16px;
+  text-align: center;
+  font-size: 13px;
+  color: #475569;
+}
+
+.signature-upload input {
+  margin-top: 10px;
+}
+
+.renewal-alert {
+  background: #dbeafe;
+  border: 1px solid #93c5fd;
+  color: #1d4ed8;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.renewal-statusBox {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  color: #92400e;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.renewal-last-info {
+  font-size: 12px;
+  margin-top: 4px;
+  color: #1f2937;
+}
+
+.renewal-two-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+  .renewal-page-wrapper,
+  .renewal-container,
+  .renewal-card,
+  .renewal-pages,
+  .renewal-page {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    background: #fff !important;
+  }
+  .renewal-actions,
+  header,
+  footer {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .renewal-page {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .renewal-card {
+    padding: 18px 16px 28px 16px;
+  }
+  .renewal-pages {
+    grid-template-columns: 1fr;
+  }
+}
+

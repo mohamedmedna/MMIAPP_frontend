@@ -242,6 +242,32 @@
   transform: translateY(-1px);
 }
 
+.table-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-renouveler {
+  background: #1e6a8e;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-renouveler:hover {
+  background: #184f6b;
+  transform: translateY(-1px);
+}
+
 .btn-telecharger {
   background: #28a745;
   color: white;
