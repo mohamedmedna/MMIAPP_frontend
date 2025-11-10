@@ -116,7 +116,9 @@ function RenouvellementUsine({ user }) {
   const [error, setError] = useState(null);
   const [stableData, setStableData] = useState(null);
   const [dynamicData, setDynamicData] = useState(defaultDynamic());
-  const [financeYears, setFinanceYears] = useState({ "2023": "", "2024": "" });
+  const [financeYears, setFinanceYears] = useState([
+    { annee: new Date().getFullYear().toString(), valeur: "" },
+  ]);
   const [varietes, setVarietes] = useState(["", "", "", ""]);
   const [defisText, setDefisText] = useState("");
   const [signatureDataUrl, setSignatureDataUrl] = useState(null);
@@ -168,15 +170,23 @@ function RenouvellementUsine({ user }) {
         setDynamicData(mergedDynamic);
         setTemplateMeta(payload.meta || {});
 
-        const annees =
-          mergedDynamic.economie?.donnees_financieres?.annees || [];
-        const yearsMap = { "2023": "", "2024": "" };
-        annees.forEach((item) => {
-          if (item && item.annee && Object.prototype.hasOwnProperty.call(yearsMap, item.annee)) {
-            yearsMap[item.annee] = item.valeur || "";
-          }
-        });
-        setFinanceYears(yearsMap);
+        const annees = Array.isArray(
+          mergedDynamic.economie?.donnees_financieres?.annees
+        )
+          ? mergedDynamic.economie.donnees_financieres.annees
+          : [];
+        if (annees.length > 0) {
+          setFinanceYears(
+            annees.map((item) => ({
+              annee: item?.annee ? String(item.annee) : "",
+              valeur: item?.valeur ? String(item.valeur) : "",
+            }))
+          );
+        } else {
+          setFinanceYears([
+            { annee: new Date().getFullYear().toString(), valeur: "" },
+          ]);
+        }
 
         const varietesList =
           mergedDynamic.economie?.capacite_production?.varietes || [];
@@ -218,11 +228,31 @@ function RenouvellementUsine({ user }) {
     });
   };
 
-  const handleFinanceYearChange = (year, value) => {
-    setFinanceYears((prev) => ({
+  const addFinanceYear = () => {
+    setFinanceYears((prev) => [
       ...prev,
-      [year]: value,
-    }));
+      { annee: "", valeur: "" },
+    ]);
+  };
+
+  const updateFinanceYear = (index, key, value) => {
+    setFinanceYears((prev) => {
+      const next = [...prev];
+      next[index] = {
+        ...next[index],
+        [key]: value,
+      };
+      return next;
+    });
+  };
+
+  const removeFinanceYear = (index) => {
+    setFinanceYears((prev) => {
+      if (prev.length === 1) {
+        return [{ annee: "", valeur: "" }];
+      }
+      return prev.filter((_, i) => i !== index);
+    });
   };
 
   const handleVarieteChange = (index, value) => {
@@ -289,12 +319,12 @@ function RenouvellementUsine({ user }) {
     setError(null);
 
     try {
-      const annees = Object.entries(financeYears)
-        .filter(([, montant]) => montant && montant.trim() !== "")
-        .map(([annee, valeur]) => ({
-          annee,
-          valeur: valeur.trim(),
-        }));
+      const annees = financeYears
+        .map((item) => ({
+          annee: item?.annee ? String(item.annee).trim() : "",
+          valeur: item?.valeur ? String(item.valeur).trim() : "",
+        }))
+        .filter(({ annee, valeur }) => annee && valeur);
 
       const varietesNonVides = varietes
         .map((v) => v.trim())
@@ -910,27 +940,48 @@ function RenouvellementUsine({ user }) {
                         </label>
                       </div>
 
-                      <div className="renewal-subtitle">Données financières (Tonnes ou MRU)</div>
-                      <div className="renewal-grid">
-                        <div className="renewal-field">
-                          <label className="renewal-label">Année 2023</label>
-                          <input
-                            className="renewal-input"
-                            value={financeYears["2023"]}
-                            onChange={(e) => handleFinanceYearChange("2023", e.target.value)}
-                            placeholder="Entrer la production ou valeur 2023"
-                          />
+                      <div className="renewal-subtitle">Données états financiers</div>
+                      {financeYears.map((item, index) => (
+                        <div className="renewal-flex" key={`finance-year-${index}`}>
+                          <div className="renewal-field">
+                            <label className="renewal-label">Année</label>
+                            <input
+                              className="renewal-input"
+                              value={item.annee}
+                              onChange={(e) =>
+                                updateFinanceYear(index, "annee", e.target.value)
+                              }
+                              placeholder="Ex : 2025"
+                            />
+                          </div>
+                          <div className="renewal-field">
+                            <label className="renewal-label">Montant / Production</label>
+                            <input
+                              className="renewal-input"
+                              value={item.valeur}
+                              onChange={(e) =>
+                                updateFinanceYear(index, "valeur", e.target.value)
+                              }
+                              placeholder="Ex : 12 000 Tonnes ou 45 M MRU"
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            className="renewal-btn secondary"
+                            onClick={() => removeFinanceYear(index)}
+                          >
+                            Retirer
+                          </button>
                         </div>
-                        <div className="renewal-field">
-                          <label className="renewal-label">Année 2024</label>
-                          <input
-                            className="renewal-input"
-                            value={financeYears["2024"]}
-                            onChange={(e) => handleFinanceYearChange("2024", e.target.value)}
-                            placeholder="Entrer la production ou valeur 2024"
-                          />
-                        </div>
-                      </div>
+                      ))}
+                      <button
+                        type="button"
+                        className="renewal-btn secondary"
+                        onClick={addFinanceYear}
+                        style={{ marginTop: 10 }}
+                      >
+                        Ajouter une année
+                      </button>
 
                       <div className="renewal-field">
                         <label className="renewal-label">Commentaires financiers</label>
