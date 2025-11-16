@@ -94,6 +94,24 @@
   gap: 4px;
 }
 
+.renewal-field.full-width {
+  grid-column: 1 / -1;
+}
+
+.renewal-link {
+  color: #1e6a8e;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.renewal-link:hover {
+  text-decoration: underline;
+}
+
+.renewal-select-multi {
+  width: 100%;
+}
+
 .renewal-label {
   font-size: 12px;
   font-weight: 600;

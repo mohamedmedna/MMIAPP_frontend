@@ -1,11 +1,199 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Spin, Alert, message } from "antd";
+import { Spin, Alert, message, Select } from "antd";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import "../Styles/RenouvellementForm.css";
 
 const baseUrl = window.__APP_CONFIG__.API_BASE;
+
+const COUNTRIES = [
+  "Afghanistan",
+  "Afrique du Sud",
+  "Albanie",
+  "Algérie",
+  "Allemagne",
+  "Andorre",
+  "Angola",
+  "Arabie saoudite",
+  "Argentine",
+  "Arménie",
+  "Australie",
+  "Autriche",
+  "Azerbaïdjan",
+  "Bahreïn",
+  "Bangladesh",
+  "Belgique",
+  "Belize",
+  "Bénin",
+  "Bhoutan",
+  "Biélorussie",
+  "Bolivie",
+  "Bosnie-Herzégovine",
+  "Botswana",
+  "Brésil",
+  "Brunei",
+  "Bulgarie",
+  "Burkina Faso",
+  "Burundi",
+  "Cambodge",
+  "Cameroun",
+  "Canada",
+  "Cap-Vert",
+  "Chili",
+  "Chine",
+  "Chypre",
+  "Colombie",
+  "Comores",
+  "Congo (Brazzaville)",
+  "Congo (RDC)",
+  "Corée du Nord",
+  "Corée du Sud",
+  "Costa Rica",
+  "Côte d'Ivoire",
+  "Croatie",
+  "Cuba",
+  "Danemark",
+  "Djibouti",
+  "Dominique",
+  "Égypte",
+  "Émirats arabes unis",
+  "Équateur",
+  "Érythrée",
+  "Espagne",
+  "Estonie",
+  "Eswatini",
+  "États-Unis",
+  "Éthiopie",
+  "Fidji",
+  "Finlande",
+  "France",
+  "Gabon",
+  "Gambie",
+  "Géorgie",
+  "Ghana",
+  "Grèce",
+  "Guatemala",
+  "Guinée",
+  "Guinée-Bissau",
+  "Guinée équatoriale",
+  "Guyana",
+  "Haïti",
+  "Honduras",
+  "Hongrie",
+  "Inde",
+  "Indonésie",
+  "Irak",
+  "Iran",
+  "Irlande",
+  "Islande",
+  "Israël",
+  "Italie",
+  "Jamaïque",
+  "Japon",
+  "Jordanie",
+  "Kazakhstan",
+  "Kenya",
+  "Kirghizistan",
+  "Kiribati",
+  "Koweït",
+  "Laos",
+  "Lesotho",
+  "Lettonie",
+  "Liban",
+  "Libéria",
+  "Libye",
+  "Liechtenstein",
+  "Lituanie",
+  "Luxembourg",
+  "Madagascar",
+  "Malaisie",
+  "Malawi",
+  "Maldives",
+  "Mali",
+  "Malte",
+  "Maroc",
+  "Maurice",
+  "Mauritanie",
+  "Mexique",
+  "Micronésie",
+  "Moldavie",
+  "Monaco",
+  "Mongolie",
+  "Monténégro",
+  "Mozambique",
+  "Namibie",
+  "Népal",
+  "Nicaragua",
+  "Niger",
+  "Nigéria",
+  "Norvège",
+  "Nouvelle-Zélande",
+  "Oman",
+  "Ouganda",
+  "Ouzbékistan",
+  "Pakistan",
+  "Palaos",
+  "Panama",
+  "Papouasie-Nouvelle-Guinée",
+  "Paraguay",
+  "Pays-Bas",
+  "Pérou",
+  "Philippines",
+  "Pologne",
+  "Portugal",
+  "Qatar",
+  "République centrafricaine",
+  "République tchèque",
+  "Roumanie",
+  "Royaume-Uni",
+  "Russie",
+  "Rwanda",
+  "Saint-Kitts-et-Nevis",
+  "Sainte-Lucie",
+  "Saint-Marin",
+  "Saint-Vincent-et-les-Grenadines",
+  "Salomon (Îles)",
+  "Salvador",
+  "Samoa",
+  "Sao Tomé-et-Principe",
+  "Sénégal",
+  "Serbie",
+  "Seychelles",
+  "Sierra Leone",
+  "Singapour",
+  "Slovaquie",
+  "Slovénie",
+  "Somalie",
+  "Soudan",
+  "Soudan du Sud",
+  "Sri Lanka",
+  "Suède",
+  "Suisse",
+  "Suriname",
+  "Syrie",
+  "Tadjikistan",
+  "Tanzanie",
+  "Tchad",
+  "Thaïlande",
+  "Timor oriental",
+  "Togo",
+  "Tonga",
+  "Trinité-et-Tobago",
+  "Tunisie",
+  "Turkménistan",
+  "Turquie",
+  "Tuvalu",
+  "Ukraine",
+  "Uruguay",
+  "Vanuatu",
+  "Vatican",
+  "Venezuela",
+  "Vietnam",
+  "Yémen",
+  "Zambie",
+  "Zimbabwe",
+];
 
 const defaultDynamic = () => ({
   emplois: {
@@ -50,6 +238,9 @@ const defaultDynamic = () => ({
   defis: {
     principaux: [],
   },
+  responsable: {
+    nationalite: "",
+  },
 });
 
 const mergeDynamic = (template = {}) => {
@@ -62,6 +253,8 @@ const mergeDynamic = (template = {}) => {
   const capacite = economie.capacite_production || {};
   const donneesFin = economie.donnees_financieres || {};
   const defis = template.defis || {};
+  const responsable = template.responsable || {};
+  const documents = template.documents || {};
 
   return {
     emplois: {
@@ -105,6 +298,14 @@ const mergeDynamic = (template = {}) => {
         ? defis.principaux
         : base.defis.principaux,
     },
+    responsable: {
+      ...base.responsable,
+      ...responsable,
+    },
+    documents: {
+      ...base.documents,
+      ...documents,
+    },
   };
 };
 
@@ -125,8 +326,85 @@ function RenouvellementUsine({ user }) {
   const [signatureFilename, setSignatureFilename] = useState("");
   const [templateMeta, setTemplateMeta] = useState(null);
   const [lastRenouvellement, setLastRenouvellement] = useState(null);
+  const [statutFile, setStatutFile] = useState(null);
+  const [cnssFile, setCnssFile] = useState(null);
+  const [employeeNationalities, setEmployeeNationalities] = useState([]);
 
   const token = localStorage.getItem("token");
+
+  const loadTemplate = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        `${baseUrl}/api/demandeur/demandes/${demandeId}/renouvellement/template`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "Impossible de charger le formulaire.");
+      }
+
+      const data = await response.json();
+      const payload = data.payload || {};
+
+      setStableData(payload.stable || {});
+      const mergedDynamic = mergeDynamic(payload.dynamic || {});
+      setDynamicData(mergedDynamic);
+      setTemplateMeta(payload.meta || {});
+
+      const annees = Array.isArray(
+        mergedDynamic.economie?.donnees_financieres?.annees
+      )
+        ? mergedDynamic.economie.donnees_financieres.annees
+        : [];
+      if (annees.length > 0) {
+        setFinanceYears(
+          annees.map((item) => ({
+            annee: item?.annee ? String(item.annee) : "",
+            valeur: item?.valeur ? String(item.valeur) : "",
+          }))
+        );
+      } else {
+        setFinanceYears([
+          { annee: new Date().getFullYear().toString(), valeur: "" },
+        ]);
+      }
+
+      const varietesList =
+        mergedDynamic.economie?.capacite_production?.varietes || [];
+      setVarietes([
+        varietesList[0] || "",
+        varietesList[1] || "",
+        varietesList[2] || "",
+        varietesList[3] || "",
+      ]);
+
+      const defisList = mergedDynamic.defis?.principaux || [];
+      setDefisText(defisList.join("\n"));
+      setLastRenouvellement(data.lastRenouvellement || null);
+      setStatutFile(null);
+      setCnssFile(null);
+
+      const nationalitesRaw = mergedDynamic.emplois?.nationalites || "";
+      const parsedNationalities = nationalitesRaw
+        .split(/[,;\n]/)
+        .map((item) => item.trim())
+        .filter((item) => COUNTRIES.includes(item));
+      setEmployeeNationalities(Array.from(new Set(parsedNationalities)));
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [demandeId, token]);
 
   useEffect(() => {
     if (!user) {
@@ -143,73 +421,8 @@ function RenouvellementUsine({ user }) {
       setLoading(false);
       return;
     }
-
-    async function loadTemplate() {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          `${baseUrl}/api/demandeur/demandes/${demandeId}/renouvellement/template`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          const data = await response.json().catch(() => ({}));
-          throw new Error(data.error || "Impossible de charger le formulaire.");
-        }
-
-        const data = await response.json();
-        const payload = data.payload || {};
-
-        setStableData(payload.stable || {});
-        const mergedDynamic = mergeDynamic(payload.dynamic || {});
-        setDynamicData(mergedDynamic);
-        setTemplateMeta(payload.meta || {});
-
-        const annees = Array.isArray(
-          mergedDynamic.economie?.donnees_financieres?.annees
-        )
-          ? mergedDynamic.economie.donnees_financieres.annees
-          : [];
-        if (annees.length > 0) {
-          setFinanceYears(
-            annees.map((item) => ({
-              annee: item?.annee ? String(item.annee) : "",
-              valeur: item?.valeur ? String(item.valeur) : "",
-            }))
-          );
-        } else {
-          setFinanceYears([
-            { annee: new Date().getFullYear().toString(), valeur: "" },
-          ]);
-        }
-
-        const varietesList =
-          mergedDynamic.economie?.capacite_production?.varietes || [];
-        setVarietes([
-          varietesList[0] || "",
-          varietesList[1] || "",
-          varietesList[2] || "",
-          varietesList[3] || "",
-        ]);
-
-        const defisList = mergedDynamic.defis?.principaux || [];
-        setDefisText(defisList.join("\n"));
-        setLastRenouvellement(data.lastRenouvellement || null);
-      } catch (err) {
-        console.error(err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-
     loadTemplate();
-  }, [demandeId, navigate, token, user]);
+  }, [demandeId, navigate, token, user, loadTemplate]);
 
   const handleNestedChange = (path, value) => {
     setDynamicData((prev) => {
@@ -263,6 +476,16 @@ function RenouvellementUsine({ user }) {
     });
   };
 
+  const handleStatutFileChange = (event) => {
+    const file = event.target.files?.[0] || null;
+    setStatutFile(file);
+  };
+
+  const handleCnssFileChange = (event) => {
+    const file = event.target.files?.[0] || null;
+    setCnssFile(file);
+  };
+
   const handleSignatureUpload = (event) => {
     const file = event.target.files?.[0];
     if (!file) {
@@ -290,9 +513,9 @@ function RenouvellementUsine({ user }) {
     const employ = dynamicData.emplois || {};
     const econ = dynamicData.economie || {};
     const capacite = econ.capacite_production || {};
+    const resp = dynamicData.responsable || {};
     return (
       employ.nombre_crees &&
-      employ.nationalites &&
       employ.administratifs &&
       employ.techniciens &&
       employ.ouvriers &&
@@ -300,9 +523,11 @@ function RenouvellementUsine({ user }) {
       econ.capital_social &&
       econ.matieres_premieres &&
       capacite.production_estimee &&
-      capacite.production_effective
+      capacite.production_effective &&
+      resp.nationalite &&
+      employeeNationalities.length > 0
     );
-  }, [dynamicData]);
+  }, [dynamicData, employeeNationalities]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -335,8 +560,14 @@ function RenouvellementUsine({ user }) {
         .map((line) => line.trim())
         .filter((line) => line.length > 0);
 
+      const nationalitesFinales = employeeNationalities.join(", ");
+
       const dynamicPayload = {
         ...dynamicData,
+        emplois: {
+          ...dynamicData.emplois,
+          nationalites: nationalitesFinales,
+        },
         economie: {
           ...dynamicData.economie,
           donnees_financieres: {
@@ -351,7 +582,23 @@ function RenouvellementUsine({ user }) {
         defis: {
           principaux: defisPrincipaux,
         },
+        documents: {
+          ...(dynamicData.documents || {}),
+        },
       };
+
+      const formData = new FormData();
+      formData.append("stable", JSON.stringify(stableData));
+      formData.append("dynamic", JSON.stringify(dynamicPayload));
+      if (signatureDataUrl) {
+        formData.append("signatureDataUrl", signatureDataUrl);
+      }
+      if (statutFile) {
+        formData.append("statut_juridique_file", statutFile);
+      }
+      if (cnssFile) {
+        formData.append("cnss_file", cnssFile);
+      }
 
       const response = await fetch(
         `${baseUrl}/api/demandeur/demandes/${demandeId}/renouvellement`,
@@ -359,13 +606,8 @@ function RenouvellementUsine({ user }) {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            stable: stableData,
-            dynamic: dynamicPayload,
-            signatureDataUrl: signatureDataUrl || null,
-          }),
+          body: formData,
         }
       );
 
@@ -381,6 +623,7 @@ function RenouvellementUsine({ user }) {
         ...(prev || {}),
         stableReadOnly: true,
       }));
+      await loadTemplate();
     } catch (err) {
       console.error(err);
       setError(err.message);
@@ -572,11 +815,24 @@ function RenouvellementUsine({ user }) {
                         </div>
                         <div className="renewal-field">
                           <label className="renewal-label">Nationalité</label>
-                          <input
-                            className="renewal-input readonly"
-                            value={stableData?.responsable?.nationalite || ""}
-                            readOnly
-                          />
+                          <select
+                            className="renewal-select"
+                            value={dynamicData.responsable?.nationalite || ""}
+                            onChange={(e) =>
+                              handleNestedChange(
+                                "responsable.nationalite",
+                                e.target.value
+                              )
+                            }
+                            required
+                          >
+                            <option value="">Sélectionnez une nationalité</option>
+                            {COUNTRIES.map((country) => (
+                              <option key={country} value={country}>
+                                {country}
+                              </option>
+                            ))}
+                          </select>
                         </div>
                         <div className="renewal-field">
                           <label className="renewal-label">Téléphone</label>
@@ -619,28 +875,10 @@ function RenouvellementUsine({ user }) {
                           />
                         </div>
                         <div className="renewal-field">
-                          <label className="renewal-label">Registre du commerce (date)</label>
-                          <input
-                            className="renewal-input readonly"
-                            value={
-                              stableData?.statut_legal?.registre_commerce?.date || ""
-                            }
-                            readOnly
-                          />
-                        </div>
-                        <div className="renewal-field">
                           <label className="renewal-label">N.I.F</label>
                           <input
                             className="renewal-input readonly"
                             value={stableData?.statut_legal?.nif?.numero || ""}
-                            readOnly
-                          />
-                        </div>
-                        <div className="renewal-field">
-                          <label className="renewal-label">N.I.F (date)</label>
-                          <input
-                            className="renewal-input readonly"
-                            value={stableData?.statut_legal?.nif?.date || ""}
                             readOnly
                           />
                         </div>
@@ -652,12 +890,52 @@ function RenouvellementUsine({ user }) {
                             readOnly
                           />
                         </div>
-                        <div className="renewal-field">
-                          <label className="renewal-label">CNSS (date)</label>
+                        <div className="renewal-field full-width">
+                          <label className="renewal-label">Statut juridique (pièce jointe)</label>
+                          {statutFile ? (
+                            <div className="renewal-note">
+                              Nouveau fichier sélectionné : {statutFile.name}
+                            </div>
+                          ) : dynamicData.documents?.statut_juridique ? (
+                            <a
+                              href={`${baseUrl}/uploads/${dynamicData.documents.statut_juridique}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="renewal-link"
+                            >
+                              Télécharger le document actuel
+                            </a>
+                          ) : (
+                            <div className="renewal-note">Aucun document disponible</div>
+                          )}
                           <input
-                            className="renewal-input readonly"
-                            value={stableData?.statut_legal?.cnss?.date || ""}
-                            readOnly
+                            type="file"
+                            accept=".pdf,.jpg,.png"
+                            onChange={handleStatutFileChange}
+                          />
+                        </div>
+                        <div className="renewal-field full-width">
+                          <label className="renewal-label">CNSS (pièce jointe)</label>
+                          {cnssFile ? (
+                            <div className="renewal-note">
+                              Nouveau fichier sélectionné : {cnssFile.name}
+                            </div>
+                          ) : dynamicData.documents?.cnss ? (
+                            <a
+                              href={`${baseUrl}/uploads/${dynamicData.documents.cnss}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="renewal-link"
+                            >
+                              Télécharger le document actuel
+                            </a>
+                          ) : (
+                            <div className="renewal-note">Aucun document disponible</div>
+                          )}
+                          <input
+                            type="file"
+                            accept=".pdf,.jpg,.png"
+                            onChange={handleCnssFileChange}
                           />
                         </div>
                       </div>
@@ -770,16 +1048,19 @@ function RenouvellementUsine({ user }) {
                             required
                           />
                         </div>
-                        <div className="renewal-field renewal-grid full">
+                        <div className="renewal-field full-width">
                           <label className="renewal-label">Nationalités des employés</label>
-                          <textarea
-                            className="renewal-textarea"
-                            value={dynamicData.emplois?.nationalites || ""}
-                            onChange={(e) =>
-                              handleNestedChange("emplois.nationalites", e.target.value)
-                            }
-                            placeholder="Détaillez les nationalités et répartitions..."
-                            required
+                          <Select
+                            mode="multiple"
+                            allowClear
+                            className="renewal-select-multi"
+                            placeholder="Sélectionnez toutes les nationalités présentes"
+                            value={employeeNationalities}
+                            onChange={(values) => setEmployeeNationalities(values)}
+                            options={COUNTRIES.map((country) => ({
+                              value: country,
+                              label: country,
+                            }))}
                           />
                         </div>
                       </div>

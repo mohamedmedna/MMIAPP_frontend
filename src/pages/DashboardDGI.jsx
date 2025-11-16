@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Layout,
   Menu,
@@ -16,6 +16,9 @@ import {
   Divider,
   notification,
   Dropdown,
+  Card,
+  Progress,
+  Space,
 } from "antd";
 import {
   DashboardOutlined,
@@ -33,8 +36,11 @@ import {
   ReloadOutlined,
   ApartmentOutlined,
   MoreOutlined,
+  BarChartOutlined,
+  LineChartOutlined,
+  PieChartOutlined,
 } from "@ant-design/icons";
-import { Bar, Pie, Doughnut } from "react-chartjs-2";
+import { Bar, Pie, Doughnut, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -44,6 +50,8 @@ import {
   Tooltip,
   Legend,
   ArcElement,
+  PointElement,
+  LineElement,
 } from "chart.js";
 import { saveAs } from "file-saver";
 import { useTranslation } from "react-i18next";
@@ -57,6 +65,8 @@ ChartJS.register(
   LinearScale,
   BarElement,
   ArcElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend
@@ -98,9 +108,344 @@ export default function DashboardDGI() {
   const [loading, setLoading] = useState(true);
   const [historiqueDGI, setHistoriqueDGI] = useState([]);
   const [loadingHist, setLoadingHist] = useState(false);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [analyticsError, setAnalyticsError] = useState(null);
+  const [generalAnalytics, setGeneralAnalytics] = useState(null);
+  const [delayAnalytics, setDelayAnalytics] = useState(null);
+  const [rejectionAnalytics, setRejectionAnalytics] = useState(null);
+  const [productionAnalytics, setProductionAnalytics] = useState(null);
+  const [defisAnalytics, setDefisAnalytics] = useState([]);
+  const [lastRenewals, setLastRenewals] = useState([]);
+  const [sectorDistribution, setSectorDistribution] = useState([]);
+  const [evolutionData, setEvolutionData] = useState([]);
+  const [employeeSummary, setEmployeeSummary] = useState({
+    total: 0,
+    nationals: 0,
+    foreigners: 0,
+  });
+  const [productionTable, setProductionTable] = useState([]);
+  const [analyticsSearch, setAnalyticsSearch] = useState("");
+
   const token = localStorage.getItem("adminToken");
 
   const API_BASE = window.__APP_CONFIG__?.API_BASE;
+
+  const parseNumber = (value) => {
+    if (value === null || value === undefined) return 0;
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+    const clean = String(value).replace(/[^\d.,-]/g, "").replace(",", ".");
+    const parsed = parseFloat(clean);
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+
+  const formatNumber = (value, options = {}) =>
+    new Intl.NumberFormat("fr-FR", {
+      maximumFractionDigits: 1,
+      ...options,
+    }).format(value || 0);
+
+  const parseNationalitiesCounts = (value, totalEmployees) => {
+    if (!value) {
+      return {
+        nationals: 0,
+        foreigners: totalEmployees || 0,
+      };
+    }
+
+    const entries = String(value)
+      .split(/[,;]+/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    let nationals = 0;
+    let foreigners = 0;
+    let hasNational = false;
+    let hasOther = false;
+
+    entries.forEach((entry) => {
+      const match = entry.match(/(.+?)[\s:=|-]*(\d+)/);
+      const country = match ? match[1].trim() : entry;
+      const count = match ? parseNumber(match[2]) : null;
+      const isMauritania =
+        country.toLowerCase().includes("mauritan") ||
+        country.toLowerCase().includes("mauritania") ||
+        country.toLowerCase().includes("maurit");
+
+      if (count !== null && count > 0) {
+        if (isMauritania) {
+          nationals += count;
+        } else {
+          foreigners += count;
+        }
+      } else {
+        if (isMauritania) {
+          hasNational = true;
+        } else {
+          hasOther = true;
+        }
+      }
+    });
+
+    const totalCounts = nationals + foreigners;
+    if (totalCounts === 0 && totalEmployees) {
+      if (hasNational && !hasOther) {
+        nationals = totalEmployees;
+      } else if (!hasNational && hasOther) {
+        foreigners = totalEmployees;
+      } else if (hasNational && hasOther) {
+        nationals = Math.round(totalEmployees * 0.5);
+        foreigners = totalEmployees - nationals;
+      } else {
+        foreigners = totalEmployees;
+      }
+    } else if (totalEmployees && totalCounts > totalEmployees) {
+      const scale = totalEmployees / totalCounts;
+      nationals = Math.round(nationals * scale);
+      foreigners = Math.max(totalEmployees - nationals, 0);
+    }
+
+    return {
+      nationals,
+      foreigners,
+    };
+  };
+
+  const deriveSectorDistribution = (renewals) => {
+    const counts = new Map();
+    renewals.forEach((renewal) => {
+      const secteur =
+        renewal?.entreprise?.activite_principale ||
+        renewal?.demande?.type ||
+        "Non précisé";
+      counts.set(secteur, (counts.get(secteur) || 0) + 1);
+    });
+    return Array.from(counts.entries()).map(([label, count]) => ({
+      label,
+      count,
+    }));
+  };
+
+  const deriveEvolutionData = (renewals) => {
+    const dates = [];
+    renewals.forEach((renewal) => {
+      const stable = renewal?.donnees_formulaire?.stable?.identification || {};
+      const dateValue =
+        stable.date_demarrage_unite ||
+        stable.date_debut_production ||
+        stable.date_creation ||
+        null;
+      if (!dateValue) return;
+      const date = new Date(dateValue);
+      if (Number.isNaN(date.getTime())) return;
+      dates.push(date);
+    });
+
+    dates.sort((a, b) => a.getTime() - b.getTime());
+    const cumulative = [];
+    let total = 0;
+    dates.forEach((date) => {
+      total += 1;
+      cumulative.push({
+        date: date.toISOString().slice(0, 10),
+        total,
+      });
+    });
+    return cumulative;
+  };
+
+  const deriveEmployeeSummary = (renewals) => {
+    let total = 0;
+    let nationals = 0;
+    let foreigners = 0;
+
+    renewals.forEach((renewal) => {
+      const emplois = renewal?.donnees_formulaire?.dynamic?.emplois || {};
+      const administratifs = parseNumber(emplois.administratifs);
+      const techniciens = parseNumber(emplois.techniciens);
+      const ouvriers = parseNumber(emplois.ouvriers);
+      const totalUnit =
+        parseNumber(emplois.nombre_crees) ||
+        administratifs + techniciens + ouvriers;
+
+      total += totalUnit;
+
+      const { nationals: natCount, foreigners: foreignCount } =
+        parseNationalitiesCounts(emplois.nationalites, totalUnit);
+
+      nationals += natCount;
+      foreigners += foreignCount;
+    });
+
+    if (total === 0 && renewals.length > 0) {
+      // fallback pour éviter division par zéro
+      return {
+        total: renewals.length,
+        nationals: renewals.length,
+        foreigners: 0,
+      };
+    }
+
+    return { total, nationals, foreigners: Math.max(foreigners, 0) };
+  };
+
+  const deriveProductionTable = (renewals) => {
+    return renewals.map((renewal) => {
+      const stable = renewal?.donnees_formulaire?.stable?.identification || {};
+      const economie = renewal?.donnees_formulaire?.dynamic?.economie || {};
+      const capacite = economie.capacite_production || {};
+
+      return {
+        key: renewal.id,
+        entreprise: renewal?.entreprise?.denomination || "N/A",
+        numero_enregistrement:
+          stable.numero_enregistrement_usine || "N/A",
+        secteur:
+          renewal?.entreprise?.activite_principale ||
+          renewal?.demande?.type ||
+          "Non précisé",
+        production_estimee: parseNumber(capacite.production_estimee),
+        production_effective: parseNumber(capacite.production_effective),
+        capital_social: parseNumber(economie.capital_social),
+        date_validation: renewal.date_validation,
+      };
+    });
+  };
+
+  const analyticsTableData = useMemo(() => {
+    const term = analyticsSearch.trim().toLowerCase();
+    return lastRenewals
+      .map((renewal) => {
+        const stable = renewal?.donnees_formulaire?.stable?.identification || {};
+        return {
+          key: renewal.id,
+          entreprise: renewal?.entreprise?.denomination || "N/A",
+          numero_enregistrement:
+            stable.numero_enregistrement_usine || "N/A",
+          secteur:
+            renewal?.entreprise?.activite_principale ||
+            renewal?.demande?.type ||
+            "Non précisé",
+          statut: renewal?.statut || "N/A",
+          email: renewal?.demandeur?.email || "",
+          telephone: renewal?.demandeur?.telephone || "",
+          date_validation: renewal?.date_validation || renewal?.date_soumission,
+        };
+      })
+      .filter((row) => {
+        if (!term) return true;
+        return (
+          row.entreprise.toLowerCase().includes(term) ||
+          row.numero_enregistrement.toLowerCase().includes(term) ||
+          row.secteur.toLowerCase().includes(term) ||
+          row.statut.toLowerCase().includes(term) ||
+          row.email.toLowerCase().includes(term)
+        );
+      });
+  }, [analyticsSearch, lastRenewals]);
+
+  const filteredProductionTable = useMemo(() => {
+    const term = analyticsSearch.trim().toLowerCase();
+    return productionTable.filter((row) => {
+      if (!term) return true;
+      return (
+        row.entreprise?.toLowerCase().includes(term) ||
+        row.secteur?.toLowerCase().includes(term) ||
+        row.numero_enregistrement?.toLowerCase().includes(term)
+      );
+    });
+  }, [analyticsSearch, productionTable]);
+
+  const delayChartData = useMemo(() => {
+    return {
+      labels: ["Autorisations", "Renouvellements"],
+      datasets: [
+        {
+          label: "Délai moyen (jours)",
+          data: [
+            Number(delayAnalytics?.delai_moyen_autorisations || 0),
+            Number(delayAnalytics?.delai_moyen_renouvellements || 0),
+          ],
+          backgroundColor: ["#1890ff", "#52c41a"],
+        },
+      ],
+    };
+  }, [delayAnalytics]);
+
+  const sectorChartData = useMemo(() => {
+    return {
+      labels: sectorDistribution.map((item) => item.label),
+      datasets: [
+        {
+          label: "Unités",
+          data: sectorDistribution.map((item) => item.count),
+          backgroundColor: chartColors,
+        },
+      ],
+    };
+  }, [sectorDistribution]);
+
+  const employeePieData = useMemo(() => {
+    const nationals = employeeSummary.nationals || 0;
+    const foreigners = employeeSummary.foreigners || 0;
+    return {
+      labels: ["Nationaux", "Étrangers"],
+      datasets: [
+        {
+          data: [nationals, foreigners],
+          backgroundColor: ["#28a745", "#fa541c"],
+        },
+      ],
+    };
+  }, [employeeSummary]);
+
+  const evolutionChartData = useMemo(() => {
+    return {
+      labels: evolutionData.map((item) => item.date),
+      datasets: [
+        {
+          label: "Unités cumulées",
+          data: evolutionData.map((item) => item.total),
+          fill: false,
+          backgroundColor: "#1890ff",
+          borderColor: "#1890ff",
+          tension: 0.3,
+        },
+      ],
+    };
+  }, [evolutionData]);
+
+  const productionBarData = useMemo(() => {
+    return {
+      labels: [
+        "Production estimée (t/j)",
+        "Production effective (t/j)",
+        "Capital social (MRU)",
+      ],
+      datasets: [
+        {
+          label: "Totaux",
+          data: [
+            Number(productionAnalytics?.production_estimee_totale || 0),
+            Number(productionAnalytics?.production_effective_totale || 0),
+            Number(productionAnalytics?.chiffre_affaires_total || 0),
+          ],
+          backgroundColor: ["#52c41a", "#1890ff", "#faad14"],
+        },
+      ],
+    };
+  }, [productionAnalytics]);
+
+  const rejectionPercent = Math.round(
+    ((rejectionAnalytics?.taux_rejet_global || 0) * 100 + Number.EPSILON) * 10
+  ) / 10;
+
+  const nationalPercent =
+    employeeSummary.total > 0
+      ? Math.round(
+          ((employeeSummary.nationals || 0) / employeeSummary.total) * 1000
+        ) / 10
+      : 0;
+  const foreignPercent = Math.max(100 - nationalPercent, 0);
 
   // Auth check
   useEffect(() => {
@@ -170,7 +515,7 @@ export default function DashboardDGI() {
   const fetchStats = async () => {
     try {
       console.log("🔄 [DGI Dashboard] Fetching stats...");
-      const res = await fetch(`${API_BASE}/api/dgi/stats`, {
+      const res = await fetch(`${API_BASE}/api/dgi/stats/general`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) {
@@ -178,7 +523,7 @@ export default function DashboardDGI() {
       }
       const data = await res.json();
       console.log("✅ [DGI Dashboard] Stats loaded:", data);
-      setStats(data.stats || []);
+      setStats(data.data || []);
     } catch (error) {
       console.error("❌ [DGI Dashboard] Error fetching stats:", error);
     }
@@ -228,10 +573,76 @@ export default function DashboardDGI() {
     setLoadingHist(false);
   };
 
+  const fetchAnalytics = useCallback(async () => {
+    if (!token) return;
+    setAnalyticsLoading(true);
+    setAnalyticsError(null);
+
+    try {
+      const headers = { Authorization: `Bearer ${token}` };
+      const [
+        generalRes,
+        delayRes,
+        rejectionRes,
+        productionRes,
+        defisRes,
+        lastRes,
+      ] = await Promise.all([
+        fetch(`${API_BASE}/api/dgi/stats/general`, { headers }),
+        fetch(`${API_BASE}/api/dgi/stats/delais`, { headers }),
+        fetch(`${API_BASE}/api/dgi/stats/rejets`, { headers }),
+        fetch(`${API_BASE}/api/dgi/stats/production`, { headers }),
+        fetch(`${API_BASE}/api/dgi/stats/defis`, { headers }),
+        fetch(`${API_BASE}/api/dgi/renouvellements/last`, { headers }),
+      ]);
+
+      if (
+        !generalRes.ok ||
+        !delayRes.ok ||
+        !rejectionRes.ok ||
+        !productionRes.ok ||
+        !defisRes.ok ||
+        !lastRes.ok
+      ) {
+        throw new Error("Impossible de charger les statistiques analytiques");
+      }
+
+      const generalData = await generalRes.json();
+      const delayData = await delayRes.json();
+      const rejectionData = await rejectionRes.json();
+      const productionData = await productionRes.json();
+      const defisData = await defisRes.json();
+      const lastData = await lastRes.json();
+
+      const renewals = lastData.renouvellements || [];
+      setGeneralAnalytics(generalData.data || {});
+      setDelayAnalytics(delayData.data || {});
+      setRejectionAnalytics(rejectionData.data || {});
+      setProductionAnalytics(productionData.data || {});
+      setDefisAnalytics(defisData.data || []);
+      setLastRenewals(renewals);
+      setSectorDistribution(deriveSectorDistribution(renewals));
+      setEvolutionData(deriveEvolutionData(renewals));
+      setEmployeeSummary(deriveEmployeeSummary(renewals));
+      setProductionTable(deriveProductionTable(renewals));
+    } catch (error) {
+      console.error("❌ [DGI Dashboard] Erreur analytics:", error);
+      setAnalyticsError(error.message);
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  }, [API_BASE, token]);
+
   useEffect(() => {
     if (activeSidebarLink === "historique") fetchHistoriqueDGI();
     // eslint-disable-next-line
   }, [activeSidebarLink]);
+
+  useEffect(() => {
+    if (activeSidebarLink === "analytics") {
+      fetchAnalytics();
+    }
+  }, [activeSidebarLink, fetchAnalytics]);
 
   // Actions
   const handleConsulter = async (demande) => {
@@ -1076,6 +1487,16 @@ export default function DashboardDGI() {
 
             <button
               className={`nav-item ${
+                activeSidebarLink === "analytics" ? "active" : ""
+              }`}
+              onClick={() => setActiveSidebarLink("analytics")}
+            >
+              <BarChartOutlined />
+              Analytique
+            </button>
+
+            <button
+              className={`nav-item ${
                 activeSidebarLink === "demandes" ? "active" : ""
               }`}
               onClick={() => setActiveSidebarLink("demandes")}
@@ -1191,6 +1612,337 @@ export default function DashboardDGI() {
                 </Button>
               </div>
             </>
+          )}
+
+          {activeSidebarLink === "analytics" && (
+            <div className="analytics-section">
+              <h2>Tableau de bord analytique</h2>
+              {analyticsError && (
+                <Alert
+                  type="error"
+                  showIcon
+                  message="Erreur lors du chargement des statistiques"
+                  description={analyticsError}
+                  style={{ marginBottom: 16 }}
+                />
+              )}
+              {analyticsLoading ? (
+                <div className="analytics-spinner">
+                  <Spin size="large" />
+                </div>
+              ) : (
+                <>
+                  <Row gutter={16} className="analytics-kpi-row">
+                    <Col xs={24} md={8}>
+                      <Card className="analytics-kpi-card">
+                        <Statistic
+                          title="Total d'unités autorisées"
+                          value={generalAnalytics?.total_unites_autorisees || 0}
+                        />
+                      </Card>
+                    </Col>
+                    <Col xs={24} md={8}>
+                      <Card className="analytics-kpi-card">
+                        <Statistic
+                          title="Nombre de boulangeries"
+                          value={generalAnalytics?.total_boulangeries || 0}
+                        />
+                      </Card>
+                    </Col>
+                    <Col xs={24} md={8}>
+                      <Card className="analytics-kpi-card">
+                        <Statistic
+                          title="Demandes en cours"
+                          value={generalAnalytics?.demandes_en_cours || 0}
+                        />
+                      </Card>
+                    </Col>
+                  </Row>
+
+                  <Row gutter={16}>
+                    <Col xs={24} md={12}>
+                      <Card
+                        className="analytics-chart-card"
+                        title="Délai moyen de traitement (jours)"
+                      >
+                        <Bar
+                          data={delayChartData}
+                          options={{
+                            responsive: true,
+                            plugins: { legend: { display: false } },
+                          }}
+                        />
+                      </Card>
+                    </Col>
+                    <Col xs={24} md={12}>
+                      <Card
+                        className="analytics-chart-card"
+                        title="Taux de rejet global"
+                      >
+                        <div className="analytics-gauge">
+                          <Progress
+                            type="dashboard"
+                            percent={Math.max(
+                              Math.min(rejectionPercent, 100),
+                              0
+                            )}
+                            strokeColor="#f5222d"
+                          />
+                          <div className="analytics-gauge-info">
+                            <Statistic
+                              title="Dossiers rejetés"
+                              value={rejectionAnalytics?.dossiers_rejetes || 0}
+                            />
+                            <Statistic
+                              title="Dossiers incomplets"
+                              value={
+                                rejectionAnalytics?.dossiers_incomplets || 0
+                              }
+                            />
+                          </div>
+                        </div>
+                      </Card>
+                    </Col>
+                  </Row>
+
+                  <Row gutter={16}>
+                    <Col xs={24} md={12}>
+                      <Card
+                        className="analytics-chart-card"
+                        title="Répartition sectorielle (unités ayant renouvelé)"
+                      >
+                        <Bar
+                          data={sectorChartData}
+                          options={{
+                            responsive: true,
+                            plugins: { legend: { display: false } },
+                          }}
+                        />
+                      </Card>
+                    </Col>
+                    <Col xs={24} md={12}>
+                      <Card
+                        className="analytics-chart-card"
+                        title="Effectifs nationaux vs étrangers"
+                      >
+                        <Pie
+                          data={employeePieData}
+                          options={{ plugins: { legend: { position: "bottom" } } }}
+                        />
+                        <div className="analytics-employee-summary">
+                          <Statistic
+                            title="Effectif total"
+                            value={formatNumber(employeeSummary.total, {
+                              maximumFractionDigits: 0,
+                            })}
+                          />
+                          <Statistic
+                            title="% nationaux"
+                            value={`${nationalPercent.toFixed(1)} %`}
+                          />
+                          <Statistic
+                            title="% étrangers"
+                            value={`${foreignPercent.toFixed(1)} %`}
+                          />
+                        </div>
+                      </Card>
+                    </Col>
+                  </Row>
+
+                  <Row gutter={16}>
+                    <Col xs={24} md={12}>
+                      <Card
+                        className="analytics-chart-card"
+                        title="Évolution cumulée des usines autorisées"
+                      >
+                        {evolutionData.length > 0 ? (
+                          <Line
+                            data={evolutionChartData}
+                            options={{
+                              responsive: true,
+                              plugins: { legend: { display: false } },
+                            }}
+                          />
+                        ) : (
+                          <p>Aucune donnée disponible.</p>
+                        )}
+                      </Card>
+                    </Col>
+                    <Col xs={24} md={12}>
+                      <Card
+                        className="analytics-chart-card"
+                        title="Production & capital social (totaux)"
+                      >
+                        <Bar
+                          data={productionBarData}
+                          options={{
+                            responsive: true,
+                            plugins: { legend: { display: false } },
+                          }}
+                        />
+                      </Card>
+                    </Col>
+                  </Row>
+
+                  <Row gutter={16}>
+                    <Col xs={24} md={12}>
+                      <Card
+                        className="analytics-chart-card"
+                        title="Principaux défis déclarés"
+                      >
+                        {defisAnalytics.length ? (
+                          <Table
+                            size="small"
+                            pagination={false}
+                            dataSource={defisAnalytics.map((item, index) => ({
+                              key: index,
+                              defi: item.defi,
+                              occurrences: item.occurrences,
+                            }))}
+                            columns={[
+                              {
+                                title: "Défi",
+                                dataIndex: "defi",
+                                key: "defi",
+                                render: (text) =>
+                                  text.charAt(0).toUpperCase() + text.slice(1),
+                              },
+                              {
+                                title: "Occurrences",
+                                dataIndex: "occurrences",
+                                key: "occurrences",
+                              },
+                            ]}
+                          />
+                        ) : (
+                          <p>Aucun défi déclaré.</p>
+                        )}
+                      </Card>
+                    </Col>
+                    <Col xs={24} md={12}>
+                      <Card
+                        className="analytics-chart-card"
+                        title="Derniers renouvellements approuvés"
+                      >
+                        <Space
+                          direction="vertical"
+                          className="analytics-search"
+                          style={{ width: "100%" }}
+                        >
+                          <Input.Search
+                            allowClear
+                            placeholder="Rechercher une unité, un secteur, un NIF..."
+                            value={analyticsSearch}
+                            onChange={(e) => setAnalyticsSearch(e.target.value)}
+                          />
+                        </Space>
+                        <Table
+                          size="small"
+                          dataSource={analyticsTableData}
+                          pagination={{ pageSize: 6 }}
+                          columns={[
+                            {
+                              title: "Unité",
+                              dataIndex: "entreprise",
+                              key: "entreprise",
+                            },
+                            {
+                              title: "N° enregistrement",
+                              dataIndex: "numero_enregistrement",
+                              key: "numero_enregistrement",
+                            },
+                            {
+                              title: "Secteur",
+                              dataIndex: "secteur",
+                              key: "secteur",
+                            },
+                            {
+                              title: "Statut",
+                              dataIndex: "statut",
+                              key: "statut",
+                              render: (statut) => <Tag>{statut}</Tag>,
+                            },
+                            {
+                              title: "Dernière validation",
+                              dataIndex: "date_validation",
+                              key: "date_validation",
+                              render: (value) =>
+                                value
+                                  ? new Date(value).toLocaleDateString("fr-FR")
+                                  : "N/A",
+                            },
+                          ]}
+                        />
+                      </Card>
+                    </Col>
+                  </Row>
+
+                  <Card
+                    className="analytics-table-card"
+                    title="Production et capital social par unité"
+                  >
+                    <Table
+                      size="small"
+                      dataSource={filteredProductionTable.map((row) => ({
+                        ...row,
+                        production_estimee: formatNumber(
+                          row.production_estimee
+                        ),
+                        production_effective: formatNumber(
+                          row.production_effective
+                        ),
+                        capital_social: formatNumber(row.capital_social, {
+                          maximumFractionDigits: 0,
+                        }),
+                        date_validation: row.date_validation
+                          ? new Date(row.date_validation).toLocaleDateString(
+                              "fr-FR"
+                            )
+                          : "N/A",
+                      }))}
+                      pagination={{ pageSize: 8 }}
+                      columns={[
+                        {
+                          title: "Unité",
+                          dataIndex: "entreprise",
+                          key: "entreprise",
+                        },
+                        {
+                          title: "N° enregistrement",
+                          dataIndex: "numero_enregistrement",
+                          key: "numero_enregistrement",
+                        },
+                        {
+                          title: "Secteur",
+                          dataIndex: "secteur",
+                          key: "secteur",
+                        },
+                        {
+                          title: "Production estimée (t/j)",
+                          dataIndex: "production_estimee",
+                          key: "production_estimee",
+                        },
+                        {
+                          title: "Production effective (t/j)",
+                          dataIndex: "production_effective",
+                          key: "production_effective",
+                        },
+                        {
+                          title: "Capital social (MRU)",
+                          dataIndex: "capital_social",
+                          key: "capital_social",
+                        },
+                        {
+                          title: "Dernière validation",
+                          dataIndex: "date_validation",
+                          key: "date_validation",
+                        },
+                      ]}
+                    />
+                  </Card>
+                </>
+              )}
+            </div>
           )}
 
           {activeSidebarLink === "demandes" && (
