@@ -523,7 +523,7 @@ export default function DashboardMinistre() {
   const handleLogout = () => {
     localStorage.removeItem("adminToken");
     localStorage.removeItem("user");
-    window.location.href = "/login-ministre";
+    window.location.href = "mmiapp/login-ministre";
   };
 
   const columns = [

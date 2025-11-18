@@ -77,7 +77,7 @@ export default function LoginDGI() {
           </Text>
           <Divider style={{ borderColor: "#229954", margin: "24px 0" }} />
           <Title level={3} style={{ color: "#229954" }}>
-            {t("loginDGI.title")}
+            {t("logindgi.title")}
           </Title>
         </div>
 

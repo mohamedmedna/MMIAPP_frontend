@@ -1255,7 +1255,7 @@ export default function DashboardDGI() {
   const handleLogout = () => {
     localStorage.removeItem("adminToken");
     localStorage.removeItem("user");
-    window.location.href = "/login-dgi";
+    window.location.href = "mmiapp/login-dgi";
   };
 
   // Colonnes du tableau

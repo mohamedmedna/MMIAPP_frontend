@@ -229,8 +229,11 @@
     "error_email": "Please enter your email!",
     "error_password": "Please enter your password!"
   },
+  "loginDGI": {
+    "title:": "Connexion DGI"
+  },
   "logindgi": {
-  "title": "DGI Space",
+    "title": "DGI Space",
     "email": "Email",
     "password": "Password",
     "submit": "Log in",
@@ -1985,24 +1988,17 @@
       "title": "Primary Contact",
       "name": "Babacar Mohamed Baba",
       "role": "Director of Industrial Development and Promotion (DDPI)",
-      "phones": [
-        "00 222 43 45 11 00",
-        "00 222 22 84 61 23"
-      ],
+      "phones": ["00 222 43 45 11 00", "00 222 22 84 61 23"],
       "email": "b.mbaba@mmi.gov.mr"
     },
     "secondary_contact": {
       "title": "Primary PMN Contact",
       "name": "Khadijetou ABDELWEHAB",
       "role": "Director of Enterprise Restructuring and Upgrading (DRMNE)",
-      "phones": [
-        "00 222 42 14 86 11",
-        "00 222 28 22 58 33"
-      ],
+      "phones": ["00 222 42 14 86 11", "00 222 28 22 58 33"],
       "email": "k.abdelwehab@mmi.gov.mr"
     }
-  }
-  ,
+  },
   "statistics": {
     "title": "Statistics",
     "authorized": "Authorized",
