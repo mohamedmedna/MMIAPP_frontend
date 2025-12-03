@@ -35,7 +35,6 @@ export default function LoginComiteAntd() {
       if (response.ok && data.token && data.user && data.user.role_id === 8) {
         localStorage.setItem("adminToken", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        // SPA navigation so Router basename (e.g. /mmiapp) is honored
         navigate("/dashboard-comite");
       } else if (response.ok && data.user && data.user.role_id !== 8) {
         setError(t("logincomite.error_access"));

@@ -40,7 +40,6 @@ export default function LoginCommissionAntd() {
       ) {
         localStorage.setItem("adminToken", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        // SPA navigation (respects Router basename like /mmiapp)
         navigate("/dashboard/commission");
       } else if (
         response.ok &&

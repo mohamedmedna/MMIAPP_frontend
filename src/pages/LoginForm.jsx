@@ -37,7 +37,6 @@ export default function LoginFormAntd({ setUser }) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         setUser(data.user);
-        // With BrowserRouter basename="/mmiapp", this becomes /mmiapp/dashboard
         navigate("/dashboard");
       } else {
         setError(

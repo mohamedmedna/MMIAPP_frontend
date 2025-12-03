@@ -34,7 +34,6 @@ export default function LoginDDPIAntd() {
       if (response.ok && data.token && data.user && data.user.role_id === 5) {
         localStorage.setItem("adminToken", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        // SPA navigation (respects basename like /mmiapp)
         navigate("/dashboard-ddpi");
       } else if (response.ok && data.user && data.user.role_id !== 5) {
         setError(t("loginddpi.error_access"));

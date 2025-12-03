@@ -79,7 +79,7 @@ app.post("/api/inscription", async (req, res) => {
     await conn.end();
 
     // Envoi du mail d'activation
-    const activationLink = `http://localhost:3000/mmiapp/activation/${activationToken}`;
+    const activationLink = `${process.env.FRONTEND_URL}/activation/${activationToken}`;
     await transporter.sendMail({
       from: '"Ministère des Mines et de l’Industrie" <oumar.parhe-sow@richat-partners.com>',
       to: destinataire,

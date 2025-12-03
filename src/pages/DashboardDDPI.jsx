@@ -737,7 +737,7 @@ export default function DashboardDDPI() {
     localStorage.removeItem("adminToken");
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    window.location.href = "mmiapp/login-ddpi";
+    window.location.href = "/login-ddpi";
   };
 
   // Colonnes du tableau

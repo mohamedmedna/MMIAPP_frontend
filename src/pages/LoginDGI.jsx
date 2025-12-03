@@ -33,7 +33,6 @@ export default function LoginDGI() {
       if (response.ok && data.token && data.user) {
         localStorage.setItem("adminToken", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        // SPA navigation so basename (/mmiapp) is respected
         navigate("/dashboard-dgi");
       } else {
         setError(data.error || t("logindgi.error_login"));

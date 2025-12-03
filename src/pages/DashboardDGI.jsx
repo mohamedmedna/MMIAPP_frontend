@@ -133,7 +133,9 @@ export default function DashboardDGI() {
   const parseNumber = (value) => {
     if (value === null || value === undefined) return 0;
     if (typeof value === "number" && Number.isFinite(value)) return value;
-    const clean = String(value).replace(/[^\d.,-]/g, "").replace(",", ".");
+    const clean = String(value)
+      .replace(/[^\d.,-]/g, "")
+      .replace(",", ".");
     const parsed = parseFloat(clean);
     return Number.isFinite(parsed) ? parsed : 0;
   };
@@ -297,8 +299,7 @@ export default function DashboardDGI() {
       return {
         key: renewal.id,
         entreprise: renewal?.entreprise?.denomination || "N/A",
-        numero_enregistrement:
-          stable.numero_enregistrement_usine || "N/A",
+        numero_enregistrement: stable.numero_enregistrement_usine || "N/A",
         secteur:
           renewal?.entreprise?.activite_principale ||
           renewal?.demande?.type ||
@@ -315,12 +316,12 @@ export default function DashboardDGI() {
     const term = analyticsSearch.trim().toLowerCase();
     return lastRenewals
       .map((renewal) => {
-        const stable = renewal?.donnees_formulaire?.stable?.identification || {};
+        const stable =
+          renewal?.donnees_formulaire?.stable?.identification || {};
         return {
           key: renewal.id,
           entreprise: renewal?.entreprise?.denomination || "N/A",
-          numero_enregistrement:
-            stable.numero_enregistrement_usine || "N/A",
+          numero_enregistrement: stable.numero_enregistrement_usine || "N/A",
           secteur:
             renewal?.entreprise?.activite_principale ||
             renewal?.demande?.type ||
@@ -435,9 +436,10 @@ export default function DashboardDGI() {
     };
   }, [productionAnalytics]);
 
-  const rejectionPercent = Math.round(
-    ((rejectionAnalytics?.taux_rejet_global || 0) * 100 + Number.EPSILON) * 10
-  ) / 10;
+  const rejectionPercent =
+    Math.round(
+      ((rejectionAnalytics?.taux_rejet_global || 0) * 100 + Number.EPSILON) * 10
+    ) / 10;
 
   const nationalPercent =
     employeeSummary.total > 0
@@ -1255,7 +1257,7 @@ export default function DashboardDGI() {
   const handleLogout = () => {
     localStorage.removeItem("adminToken");
     localStorage.removeItem("user");
-    window.location.href = "mmiapp/login-dgi";
+    window.location.href = "/login-dgi";
   };
 
   // Colonnes du tableau
@@ -1727,7 +1729,9 @@ export default function DashboardDGI() {
                       >
                         <Pie
                           data={employeePieData}
-                          options={{ plugins: { legend: { position: "bottom" } } }}
+                          options={{
+                            plugins: { legend: { position: "bottom" } },
+                          }}
                         />
                         <div className="analytics-employee-summary">
                           <Statistic

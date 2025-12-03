@@ -103,7 +103,7 @@ function LoginForm({ setUser }) {
             </Link>
           </p>
 
-          <Link to="/mmiapp" className="login-back-home">
+          <Link to="/" className="login-back-home">
             ← {t("loginform.back_home")}
           </Link>
         </div>

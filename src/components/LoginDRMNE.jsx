@@ -40,7 +40,6 @@ export default function LoginDRMNE() {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
 
-        // ✅ SPA navigation so Router basename (e.g. /mmiapp) is respected
         navigate("/dashboard-drmne");
       } else if (response.ok && data.user && data.user.role_id !== 11) {
         setError(t("loginDRMNE.error_access"));

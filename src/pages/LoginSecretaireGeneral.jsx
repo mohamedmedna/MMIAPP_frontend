@@ -35,7 +35,6 @@ export default function LoginSecretaireGeneral() {
       if (response.ok && data.token && data.user && data.user.role_id === 3) {
         localStorage.setItem("adminToken", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        // ✅ SPA navigation so Router basename (e.g. /mmiapp) is respected
         navigate("/dashboard-sg2");
       } else if (response.ok && data.user && data.user.role_id !== 3) {
         setError(t("loginSecretaireGeneral.accessDenied"));
