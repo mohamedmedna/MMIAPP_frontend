@@ -319,7 +319,7 @@ function MapComponent() {
 
 @media (max-width: 1200px) {
   .map-stats-layout { grid-template-columns: 1fr; }
-  .stats-panel { width: 100%; justify-self: stretch; }
+  .stats-panel { width: 100%; justify-self: stretch;margin-bottom: 50px; }
 }
 
         .stats-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; padding-bottom:10px; border-bottom:2px solid #e5e7eb; }
