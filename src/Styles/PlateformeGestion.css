@@ -503,6 +503,7 @@ body {
     width: 100%;
     justify-content: flex-start;
     flex-wrap: wrap;
+    justify-content: center;
   }
 
   .news-card {
