@@ -837,6 +837,18 @@ body {
   }
 }
 
+/* Map section - ensure it stays below footer */
+.map-block {
+  position: relative;
+  z-index: 1;
+}
+
+.map-block-content {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
 /* Extra Small Phones */
 @media (max-width: 360px) {
   .hero {

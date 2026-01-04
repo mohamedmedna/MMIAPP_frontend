@@ -319,7 +319,24 @@ function MapComponent() {
 
 @media (max-width: 1200px) {
   .map-stats-layout { grid-template-columns: 1fr; }
-  .stats-panel { width: 100%; justify-self: stretch;margin-bottom: 50px; }
+  .stats-panel { width: 100%; justify-self: stretch; }
+}
+
+@media (max-width: 768px) {
+  .map-container-wrapper { padding: 12px; padding-bottom: 60px; }
+  .map-display-area { height: 350px; }
+  .stats-panel { margin-bottom: 20px; }
+}
+
+@media (max-width: 480px) {
+  .map-container-wrapper { padding: 8px; padding-bottom: 80px; }
+  .map-display-area { height: 280px; border-radius: 8px; }
+  .stats-panel { padding: 6px 8px; margin-bottom: 16px; }
+  .stats-header h2 { font-size: 1rem; }
+  .metric-chip { padding: 8px 10px; }
+  .metric-chip .label { font-size: 0.85rem; }
+  .metric-chip .value { font-size: 1rem; }
+  .locations-counter { padding: 6px 10px; font-size: 0.8rem; bottom: 10px; left: 10px; }
 }
 
         .stats-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; padding-bottom:10px; border-bottom:2px solid #e5e7eb; }
@@ -375,13 +392,6 @@ function MapComponent() {
         .color-dot { width:14px; height:14px; border-radius:50%; box-shadow:0 1px 3px rgba(0,0,0,.15); }
         .count-chip { font-size:1.05rem; font-weight:800; color:#334155; background:#fff; padding:2px 10px; border-radius:999px; box-shadow:0 1px 2px rgba(0,0,0,.08); }
 
-        /* Responsive */
-        @media (max-width:1200px) {
-          .map-stats-layout { grid-template-columns: 1fr; }
-        }
-        @media (max-width:768px) {
-          .map-display-area { height: 480px; }
-        }
       `}</style>
 
       {loading ? (

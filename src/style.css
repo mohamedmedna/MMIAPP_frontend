@@ -573,6 +573,8 @@ body {
   font-weight: 500;
   background: linear-gradient(90deg, #006400 0%, #ffd700 100%);
   color: #fff;
+  position: relative;
+  z-index: 1000;
 }
 
 .footer a {
@@ -636,6 +638,8 @@ body {
   .apps-grid,
   .news-grid {
     grid-template-columns: 1fr;
+    justify-items: center;
+    justify-content: center;
   }
 
   .header-container {
@@ -648,10 +652,11 @@ body {
     gap: 12px;
     flex-wrap: wrap;
   }
+
 }
 
 .hero.section {
-  height: 40vh;
+  /* height: 40vh; */
 }
 
 .hero.section .digital-animation {
