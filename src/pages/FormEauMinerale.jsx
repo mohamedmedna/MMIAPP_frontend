@@ -37,11 +37,49 @@ function FormEauMinerale({ user, setNotif, setError }) {
   const [loading, setLoading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [showLocationGuide, setShowLocationGuide] = useState(false);
+  const [isLocating, setIsLocating] = useState(false);
+  const [locationError, setLocationError] = useState("");
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
   const handleFileChange = (e) =>
     setFiles({ ...files, [e.target.name]: e.target.files[0] });
+  const handleUseCurrentLocation = () => {
+    setLocationError("");
+    if (!navigator.geolocation) {
+      setLocationError(
+        "La géolocalisation n'est pas supportée par votre navigateur."
+      );
+      return;
+    }
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setForm((prev) => ({
+          ...prev,
+          latitude: latitude.toFixed(6),
+          longitude: longitude.toFixed(6),
+        }));
+        setIsLocating(false);
+      },
+      (error) => {
+        let message = "Impossible d'obtenir la position.";
+        if (error.code === 1) {
+          message =
+            "Autorisation refusée. Activez la géolocalisation et réessayez.";
+        } else if (error.code === 2) {
+          message =
+            "Position indisponible. Vérifiez votre connexion ou votre GPS.";
+        } else if (error.code === 3) {
+          message = "Délai dépassé. Réessayez.";
+        }
+        setLocationError(message);
+        setIsLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -376,13 +414,23 @@ function FormEauMinerale({ user, setNotif, setError }) {
               <h4 className="section-title">
                 📍 Coordonnées GPS de l'établissement
               </h4>
-              <button
-                type="button"
-                className="btn-guide-location"
-                onClick={() => setShowLocationGuide(true)}
-              >
-                ❓ Comment obtenir mes coordonnées ?
-              </button>
+              <div className="location-actions">
+                <button
+                  type="button"
+                  className="btn-current-location"
+                  onClick={handleUseCurrentLocation}
+                  disabled={isLocating}
+                >
+                  {isLocating ? "Localisation..." : "📍 Utiliser ma position"}
+                </button>
+                <button
+                  type="button"
+                  className="btn-guide-location"
+                  onClick={() => setShowLocationGuide(true)}
+                >
+                  ❓ Comment obtenir mes coordonnées ?
+                </button>
+              </div>
             </div>
 
             <div className="coordinates-inputs">
@@ -416,6 +464,11 @@ function FormEauMinerale({ user, setNotif, setError }) {
                 </small>
               </div>
             </div>
+            {locationError && (
+              <small className="field-help location-error" role="alert">
+                {locationError}
+              </small>
+            )}
           </div>
         </div>
 

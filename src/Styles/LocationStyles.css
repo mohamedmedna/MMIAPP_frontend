@@ -19,6 +19,13 @@
   gap: 10px;
 }
 
+.location-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .localisation-header .section-title {
   color: #1e6a8e;
   font-size: 1.2rem;
@@ -44,6 +51,45 @@
   align-items: center;
   gap: 5px;
   white-space: nowrap;
+}
+
+.btn-current-location {
+  background: linear-gradient(135deg, #1e6a8e 0%, #0f4c6a 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(30, 106, 142, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.btn-current-location:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(30, 106, 142, 0.4);
+  background: linear-gradient(135deg, #0f4c6a 0%, #0b3a52 100%);
+}
+
+.btn-current-location:active {
+  transform: translateY(0);
+}
+
+.btn-current-location:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.location-error {
+  color: #d32f2f;
+  font-style: normal;
 }
 
 .btn-guide-location:hover {
@@ -114,7 +160,8 @@
     align-items: flex-start;
   }
   
-  .btn-guide-location {
+  .btn-guide-location,
+  .btn-current-location {
     width: 100%;
     justify-content: center;
   }

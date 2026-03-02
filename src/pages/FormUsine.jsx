@@ -14,7 +14,9 @@ function FormUsine({ user, setNotif, setError }) {
     telephone_proprietaire: '',
     longitude: '',
     latitude: '',
-    nni_passeport: '',
+    nationalite: '',
+    nni: '',
+    passport_number: '',
     secteur: '',
     autre_secteur: '',
     sous_secteur: '',
@@ -31,7 +33,6 @@ function FormUsine({ user, setNotif, setError }) {
     // Documents spécifiques à l'usine
     etude_faisabilite_file: null,
     tdr_impact_file: null,
-    gps_file: null,
     fiches_techniques_file: null,
     demande_ministere_file: null,
     titre_foncier_file: null,
@@ -40,9 +41,59 @@ function FormUsine({ user, setNotif, setError }) {
   const [loading, setLoading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [showLocationGuide, setShowLocationGuide] = useState(false);
+  const [isLocating, setIsLocating] = useState(false);
+  const [locationError, setLocationError] = useState("");
 
-  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'nationalite') {
+      setForm((prev) => ({
+        ...prev,
+        nationalite: value,
+        nni: value === 'mauritanienne' ? prev.nni : '',
+        passport_number: value === 'autre' ? prev.passport_number : ''
+      }));
+      return;
+    }
+    setForm({ ...form, [name]: value });
+  };
   const handleFileChange = e => setFiles({ ...files, [e.target.name]: e.target.files[0] });
+  const handleUseCurrentLocation = () => {
+    setLocationError("");
+    if (!navigator.geolocation) {
+      setLocationError(
+        "La géolocalisation n'est pas supportée par votre navigateur."
+      );
+      return;
+    }
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setForm((prev) => ({
+          ...prev,
+          latitude: latitude.toFixed(6),
+          longitude: longitude.toFixed(6)
+        }));
+        setIsLocating(false);
+      },
+      (error) => {
+        let message = "Impossible d'obtenir la position.";
+        if (error.code === 1) {
+          message =
+            "Autorisation refusée. Activez la géolocalisation et réessayez.";
+        } else if (error.code === 2) {
+          message =
+            "Position indisponible. Vérifiez votre connexion ou votre GPS.";
+        } else if (error.code === 3) {
+          message = "Délai dépassé. Réessayez.";
+        }
+        setLocationError(message);
+        setIsLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
 
   // Options pour la liste déroulante du secteur
   const secteurOptions = [
@@ -66,8 +117,20 @@ function FormUsine({ user, setNotif, setError }) {
     setLoading(true);
 
     // Vérifier les champs texte
-    if (!form.telephone_proprietaire || !form.longitude || !form.latitude || !form.nni_passeport || !form.secteur || !form.activite_principale) {
+    if (!form.telephone_proprietaire || !form.longitude || !form.latitude || !form.nationalite || !form.secteur || !form.activite_principale) {
       setError('Tous les champs obligatoires doivent être remplis');
+      setLoading(false);
+      return;
+    }
+
+    if (form.nationalite === 'mauritanienne') {
+      if (!/^\d{10}$/.test(form.nni)) {
+        setError('Le NNI doit contenir exactement 10 chiffres.');
+        setLoading(false);
+        return;
+      }
+    } else if (!form.passport_number) {
+      setError('Le numéro de passeport est obligatoire pour les non-mauritaniens.');
       setLoading(false);
       return;
     }
@@ -92,7 +155,6 @@ function FormUsine({ user, setNotif, setError }) {
     const otherFiles = [
       'etude_faisabilite_file',
       'tdr_impact_file',
-      'gps_file',
       'fiches_techniques_file',
       'demande_ministere_file',
       'titre_foncier_file',
@@ -108,7 +170,18 @@ function FormUsine({ user, setNotif, setError }) {
     }
 
     const formData = new FormData();
-    Object.entries(form).forEach(([k, v]) => formData.append(k, v));
+    const identityValue =
+      form.nationalite === 'mauritanienne' ? form.nni : form.passport_number;
+    // Keep API payload backward-compatible with existing backend fields.
+    formData.append('telephone_proprietaire', form.telephone_proprietaire);
+    formData.append('longitude', form.longitude);
+    formData.append('latitude', form.latitude);
+    formData.append('nni_passeport', identityValue);
+    formData.append('secteur', form.secteur);
+    formData.append('autre_secteur', form.autre_secteur);
+    formData.append('sous_secteur', form.sous_secteur);
+    formData.append('activite_principale', form.activite_principale);
+    formData.append('filieres', form.filieres);
     Object.entries(files).forEach(([k, v]) => formData.append(k, v));
     formData.append('typeDemande', 'usine');
     formData.append('utilisateur_id', user.id);
@@ -125,7 +198,9 @@ function FormUsine({ user, setNotif, setError }) {
           telephone_proprietaire: '',
           longitude: '',
           latitude: '',
-          nni_passeport: '',
+          nationalite: '',
+          nni: '',
+          passport_number: '',
           secteur: '',
           autre_secteur: '',
           sous_secteur: '',
@@ -134,7 +209,7 @@ function FormUsine({ user, setNotif, setError }) {
         });
         setFiles({
           statut_juridique_file: null, registre_commerce_file: null, nif_file: null, cnss_file: null,
-          etude_faisabilite_file: null, tdr_impact_file: null, gps_file: null, fiches_techniques_file: null,
+          etude_faisabilite_file: null, tdr_impact_file: null, fiches_techniques_file: null,
           demande_ministere_file: null, titre_foncier_file: null, cahier_charges_file: null
         });
         setFormKey(Date.now());
@@ -248,12 +323,6 @@ function FormUsine({ user, setNotif, setError }) {
           </div>
 
           <div className="form-group">
-            <label>📍 {t('usine.gps')}</label>
-            <input type="file" name="gps_file" accept=".pdf,.jpg,.png" onChange={handleFileChange} required />
-            <small className="file-help">Format accepté: PDF, JPG, PNG</small>
-          </div>
-
-          <div className="form-group">
             <label>🔧 {t('usine.fiches_techniques')}</label>
             <input type="file" name="fiches_techniques_file" accept=".pdf" onChange={handleFileChange} required />
             <small className="file-help">Format accepté: PDF uniquement</small>
@@ -287,13 +356,23 @@ function FormUsine({ user, setNotif, setError }) {
           <div className="form-section-localisation">
             <div className="localisation-header">
               <h4 className="section-title">📍 Coordonnées GPS de l'établissement</h4>
-              <button 
-                type="button" 
-                className="btn-guide-location"
-                onClick={() => setShowLocationGuide(true)}
-              >
-                ❓ Comment obtenir mes coordonnées ?
-              </button>
+              <div className="location-actions">
+                <button 
+                  type="button" 
+                  className="btn-current-location"
+                  onClick={handleUseCurrentLocation}
+                  disabled={isLocating}
+                >
+                  {isLocating ? "Localisation..." : "📍 Utiliser ma position"}
+                </button>
+                <button 
+                  type="button" 
+                  className="btn-guide-location"
+                  onClick={() => setShowLocationGuide(true)}
+                >
+                  ❓ Comment obtenir mes coordonnées ?
+                </button>
+              </div>
             </div>
             
             <div className="coordinates-inputs">
@@ -323,6 +402,11 @@ function FormUsine({ user, setNotif, setError }) {
                 <small className="field-help">Format: nombre décimal (ex: 18.0735)</small>
               </div>
             </div>
+            {locationError && (
+              <small className="field-help location-error" role="alert">
+                {locationError}
+              </small>
+            )}
           </div>
 
           {/* Section Informations supplémentaires */}
@@ -330,16 +414,55 @@ function FormUsine({ user, setNotif, setError }) {
             <h4 className="section-title">📋 Informations supplémentaires</h4>
             
             <div className="form-group">
-              <label>🆔 NNI ou Passeport</label>
-              <input 
-                type="text" 
-                name="nni_passeport" 
-                value={form.nni_passeport} 
-                onChange={handleChange} 
-                placeholder="Ex: 1234567890123 ou P1234567"
-                required 
-              />
-              <small className="field-help">Numéro national d'identité ou numéro de passeport</small>
+              <label>🌍 Nationalité</label>
+              <select
+                name="nationalite"
+                value={form.nationalite}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Sélectionner la nationalité</option>
+                <option value="mauritanienne">Mauritanienne</option>
+                <option value="autre">Autre</option>
+              </select>
+            </div>
+
+            {form.nationalite === 'mauritanienne' && (
+              <div className="form-group">
+                <label>🆔 NNI</label>
+                <input
+                  type="text"
+                  name="nni"
+                  value={form.nni}
+                  onChange={handleChange}
+                  placeholder="Ex: 1234567890"
+                  pattern="\d{10}"
+                  maxLength={10}
+                  required
+                />
+                <small className="field-help">NNI obligatoire: exactement 10 chiffres</small>
+              </div>
+            )}
+
+            {form.nationalite === 'autre' && (
+              <div className="form-group">
+                <label>🛂 Numéro de passeport</label>
+                <input
+                  type="text"
+                  name="passport_number"
+                  value={form.passport_number}
+                  onChange={handleChange}
+                  placeholder="Ex: P1234567"
+                  required
+                />
+                <small className="field-help">Passeport obligatoire pour nationalité autre</small>
+              </div>
+            )}
+
+            <div className="form-group">
+              <small className="field-help">
+                Le système enregistre automatiquement NNI ou passeport selon la nationalité choisie.
+              </small>
             </div>
 
             <div className="form-group">

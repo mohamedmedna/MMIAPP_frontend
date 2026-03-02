@@ -10,7 +10,12 @@ function MapComponent() {
   const [error, setError] = useState(null);
   const mapRef = React.useRef(null);
   const mapInstanceRef = React.useRef(null);
+  const userLocationMarkerRef = React.useRef(null);
+  const userAccuracyCircleRef = React.useRef(null);
   const [L, setL] = useState(null);
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [userLocation, setUserLocation] = useState(null);
+  const [locationError, setLocationError] = useState("");
   const { t } = useTranslation();
 
   const typeBaseColors = {
@@ -78,7 +83,7 @@ function MapComponent() {
       raw?.demandeNom,
       raw?.demande?.nom,
       raw?.nom_demande,
-      raw?.name
+      raw?.name,
     );
     if (best) return best;
     const type = normalizeType(raw?.type);
@@ -89,8 +94,12 @@ function MapComponent() {
   // ONLY authorized + with GPS for map
   const mapLocations = useMemo(
     () => allLocations.filter((loc) => loc.latitude && loc.longitude),
-    [allLocations]
+    [allLocations],
   );
+  const filteredMapLocations = useMemo(() => {
+    if (typeFilter === "all") return mapLocations;
+    return mapLocations.filter((loc) => loc.type === typeFilter);
+  }, [mapLocations, typeFilter]);
 
   // Stats: authorized only
   const statistics = useMemo(() => {
@@ -108,7 +117,7 @@ function MapComponent() {
   // Types that actually have data (to avoid blanks)
   const typesWithData = useMemo(() => {
     return ["usine", "boulangerie"].filter(
-      (t) => (statistics.acceptedByType[t] || 0) > 0
+      (t) => (statistics.acceptedByType[t] || 0) > 0,
     );
   }, [statistics]);
 
@@ -160,7 +169,7 @@ function MapComponent() {
         });
 
         const authorizedOnly = formattedAll.filter((l) =>
-          isAuthorized(l.statut)
+          isAuthorized(l.statut),
         );
         setAllLocations(authorizedOnly);
       } catch (err) {
@@ -174,7 +183,7 @@ function MapComponent() {
 
   // Init / update map
   useEffect(() => {
-    if (!mapRef.current || mapLocations.length === 0 || !L) return;
+    if (!mapRef.current || !L) return;
 
     // cleanup old instance
     if (mapInstanceRef.current) {
@@ -202,7 +211,7 @@ function MapComponent() {
         maxZoom: 19,
       }).addTo(map);
 
-      mapLocations.forEach((loc) => {
+      filteredMapLocations.forEach((loc) => {
         const icon = createCustomIcon(loc.type);
         const popupContent = `
           <div style="padding:12px;min-width:250px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
@@ -224,8 +233,8 @@ function MapComponent() {
             <div style="margin-bottom:6px;">
               <strong style="color:#666;font-size:.8rem;text-transform:uppercase;">Coordonnées GPS</strong>
               <p style="margin:3px 0 0;color:#333;">${loc.latitude}, ${
-          loc.longitude
-        }</p>
+                loc.longitude
+              }</p>
             </div>
 
           
@@ -267,10 +276,61 @@ function MapComponent() {
           .addTo(map);
       });
 
+      if (navigator.geolocation) {
+        map.on("locationfound", (e) => {
+          setLocationError("");
+          setUserLocation({
+            latitude: e.latlng.lat,
+            longitude: e.latlng.lng,
+            accuracy: e.accuracy,
+          });
+
+          if (userLocationMarkerRef.current) {
+            map.removeLayer(userLocationMarkerRef.current);
+          }
+          if (userAccuracyCircleRef.current) {
+            map.removeLayer(userAccuracyCircleRef.current);
+          }
+
+          userLocationMarkerRef.current = L.circleMarker(e.latlng, {
+            radius: 7,
+            color: "#2563eb",
+            fillColor: "#3b82f6",
+            fillOpacity: 0.95,
+            weight: 2,
+          }).addTo(map);
+
+          userAccuracyCircleRef.current = L.circle(e.latlng, {
+            radius: e.accuracy,
+            color: "#3b82f6",
+            fillColor: "#93c5fd",
+            fillOpacity: 0.2,
+            weight: 1,
+          }).addTo(map);
+        });
+
+        map.on("locationerror", () => {
+          setLocationError(
+            "Impossible d'afficher votre position en temps reel. Verifiez l'autorisation GPS.",
+          );
+        });
+
+        map.locate({
+          watch: true,
+          enableHighAccuracy: true,
+          setView: false,
+          maximumAge: 10000,
+        });
+      } else {
+        setLocationError(
+          "La geolocalisation n'est pas prise en charge par votre navigateur.",
+        );
+      }
+
       // Fit bounds to visible markers
-      if (mapLocations.length > 0) {
+      if (filteredMapLocations.length > 0) {
         const bounds = L.latLngBounds(
-          mapLocations.map((l) => [l.latitude, l.longitude])
+          filteredMapLocations.map((l) => [l.latitude, l.longitude]),
         );
         try {
           map.fitBounds(bounds, { padding: [30, 30] });
@@ -283,18 +343,67 @@ function MapComponent() {
     return () => {
       if (mapInstanceRef.current) {
         try {
+          mapInstanceRef.current.stopLocate();
           mapInstanceRef.current.remove();
         } catch {}
         mapInstanceRef.current = null;
       }
+      userLocationMarkerRef.current = null;
+      userAccuracyCircleRef.current = null;
     };
-  }, [mapLocations, L, t]);
+  }, [filteredMapLocations, L, t]);
 
   return (
     <div className="map-container-wrapper">
       <style>{`
         .map-container-wrapper { width:100%; max-width:1600px; margin:0 auto; padding:20px; }
         .map-display-area { width:100%; height:560px; border-radius:12px; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,.1); position:relative; background:white; }
+        .map-panel { display:flex; flex-direction:column; gap:12px; min-width:0; }
+        .map-controls {
+          display:flex;
+          align-items:center;
+          gap:10px;
+          margin-bottom:12px;
+          flex-wrap:wrap;
+          background:#f8fafc;
+          border:1px solid #e2e8f0;
+          border-radius:12px;
+          padding:10px 12px;
+        }
+        .location-live-badge {
+          display:flex;
+          align-items:center;
+          gap:6px;
+          background:#eff6ff;
+          color:#1d4ed8;
+          border:1px solid #bfdbfe;
+          border-radius:999px;
+          padding:6px 10px;
+          font-size:.85rem;
+          font-weight:700;
+        }
+        .location-live-dot {
+          width:8px;
+          height:8px;
+          border-radius:50%;
+          background:#2563eb;
+          animation:live-pulse 1.4s infinite;
+        }
+        @keyframes live-pulse {
+          0% { opacity:1; transform:scale(1); }
+          70% { opacity:.35; transform:scale(1.7); }
+          100% { opacity:1; transform:scale(1); }
+        }
+        .location-error-inline {
+          width:auto;
+          color:#b91c1c;
+          font-weight:600;
+          font-size:.9rem;
+          background:#fef2f2;
+          border:1px solid #fecaca;
+          border-radius:8px;
+          padding:6px 8px;
+        }
         .map-stats-layout {
   display: grid;
   grid-template-columns: 1fr max-content; /* <- fit to content */
@@ -438,6 +547,26 @@ function MapComponent() {
           display:flex; align-items:center; gap:8px;
           font-size:1rem; font-weight:800; color:#374151; margin:10px 0 8px;
         }
+        .stats-group-actions {
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          gap:10px;
+        }
+        .show-all-btn {
+          border:1px solid #cbd5e1;
+          background:#fff;
+          color:#1e40af;
+          border-radius:999px;
+          padding:4px 10px;
+          font-size:.8rem;
+          font-weight:700;
+          cursor:pointer;
+        }
+        .show-all-btn:hover {
+          background:#eff6ff;
+          border-color:#93c5fd;
+        }
 
         .stat-grid {
           display:grid;
@@ -447,6 +576,21 @@ function MapComponent() {
         .stat-item {
           display:flex; align-items:center; justify-content:space-between; gap:12px;
           padding:10px 12px; background:#f8f9fa; border:1px solid #edf2f7; border-radius:10px;
+        }
+        .stat-item-button {
+          width:100%;
+          cursor:pointer;
+          text-align:left;
+          transition:all .18s ease;
+        }
+        .stat-item-button:hover {
+          border-color:#cbd5e1;
+          background:#f1f5f9;
+        }
+        .stat-item-active {
+          border-color:#93c5fd;
+          background:#eff6ff;
+          box-shadow:0 0 0 1px #bfdbfe inset;
         }
         .stat-left { display:flex; align-items:center; gap:10px; }
         .color-dot { width:14px; height:14px; border-radius:50%; box-shadow:0 1px 3px rgba(0,0,0,.15); }
@@ -466,12 +610,27 @@ function MapComponent() {
       ) : (
         <div className="map-stats-layout">
           {/* MAP */}
-          <div className="map-display-area">
-            <div id="map" ref={mapRef}></div>
-            <div className="locations-counter">
-              <MapPin size={16} />
-              {mapLocations.length} localisation
-              {mapLocations.length > 1 ? "s" : ""} (GPS)
+          <div className="map-panel">
+            {(userLocation || locationError) && (
+              <div className="map-controls">
+                {userLocation && (
+                  <span className="location-live-badge">
+                    <span className="location-live-dot" />
+                    Position utilisateur en temps reel
+                  </span>
+                )}
+                {locationError && (
+                  <span className="location-error-inline">{locationError}</span>
+                )}
+              </div>
+            )}
+            <div className="map-display-area">
+              <div id="map" ref={mapRef}></div>
+              <div className="locations-counter">
+                <MapPin size={16} />
+                {filteredMapLocations.length} localisation
+                {filteredMapLocations.length > 1 ? "s" : ""} (GPS)
+              </div>
             </div>
           </div>
 
@@ -506,9 +665,20 @@ function MapComponent() {
                 {/* Autorisées par type — render only for types that have data */}
                 {typesWithData.length > 0 && (
                   <>
-                    <div className="stats-group-title">
-                      <FileText size={18} />
-                      {t("statistics.authorizedByType")}
+                    <div className="stats-group-actions">
+                      <div className="stats-group-title">
+                        <FileText size={18} />
+                        {t("statistics.authorizedByType")}
+                      </div>
+                      {typeFilter !== "all" && (
+                        <button
+                          type="button"
+                          className="show-all-btn"
+                          onClick={() => setTypeFilter("all")}
+                        >
+                          Afficher tout
+                        </button>
+                      )}
                     </div>
                     <div
                       className="stat-grid"
@@ -518,7 +688,14 @@ function MapComponent() {
                       }}
                     >
                       {typesWithData.map((type) => (
-                        <div key={`acc-${type}`} className="stat-item">
+                        <button
+                          type="button"
+                          key={`acc-${type}`}
+                          className={`stat-item stat-item-button ${
+                            typeFilter === type ? "stat-item-active" : ""
+                          }`}
+                          onClick={() => setTypeFilter(type)}
+                        >
                           <div className="stat-left">
                             <div
                               className="color-dot"
@@ -537,7 +714,7 @@ function MapComponent() {
                           <div className="count-chip">
                             {statistics.acceptedByType[type] || 0}
                           </div>
-                        </div>
+                        </button>
                       ))}
                     </div>
                   </>
